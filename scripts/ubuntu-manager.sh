@@ -410,6 +410,102 @@ verify_post_update() {
 }
 
 # ================================================================
+# FONCTION DE CRÉATION D'UTILISATEURS MANUELLE
+# ================================================================
+create_user_manually() {
+    print_message "👤 CRÉATION MANUELLE D'UTILISATEUR" "$BLUE"
+    echo "═══════════════════════════════════════════════════════════════"
+    echo ""
+    
+    # Vérifier que la base de données est accessible
+    if [ ! -f "$DB_FILE" ]; then
+        print_message "❌ Base de données introuvable!" "$RED"
+        return 1
+    fi
+    
+    # Demander les informations de l'utilisateur
+    print_message "📝 Saisie des informations de l'utilisateur..." "$YELLOW"
+    echo ""
+    
+    read -p "🔑 Token Discord de l'utilisateur: " user_token
+    read -p "👤 Pseudo Discord: " user_username
+    read -p "🆔 ID Discord (optionnel): " user_id
+    read -p "📧 Email (optionnel): " user_email
+    
+    # Validation des champs obligatoires
+    if [ -z "$user_token" ] || [ -z "$user_username" ]; then
+        print_message "❌ Token et pseudo sont obligatoires!" "$RED"
+        return 1
+    fi
+    
+    # Vérifier si l'utilisateur existe déjà
+    EXISTING_USER=$(sqlite3 "$DB_FILE" "SELECT username FROM users WHERE token = '$user_token' OR username = '$user_username';" 2>/dev/null)
+    
+    if [ -n "$EXISTING_USER" ]; then
+        print_message "⚠️ Utilisateur déjà existant: $EXISTING_USER" "$YELLOW"
+        read -p "Voulez-vous continuer quand même? (y/N): " force_add
+        if [ "$force_add" != "y" ] && [ "$force_add" != "Y" ]; then
+            print_message "❌ Création annulée" "$RED"
+            return 1
+        fi
+    fi
+    
+    # Préparer les valeurs pour SQLite
+    if [ -z "$user_id" ]; then
+        user_id="NULL"
+    else
+        user_id="'$user_id'"
+    fi
+    
+    if [ -z "$user_email" ]; then
+        user_email="NULL"
+    else
+        user_email="'$user_email'"
+    fi
+    
+    # Insérer l'utilisateur dans la base de données
+    print_message "💾 Ajout de l'utilisateur à la base de données..." "$YELLOW"
+    
+    SQL_INSERT="INSERT INTO users (token, username, discord_id, email, created_at, last_login) VALUES ('$user_token', '$user_username', $user_id, $user_email, datetime('now'), datetime('now'));"
+    
+    if sqlite3 "$DB_FILE" "$SQL_INSERT" 2>/dev/null; then
+        print_message "✅ Utilisateur créé avec succès!" "$GREEN"
+        
+        # Afficher les détails de l'utilisateur créé
+        USER_DETAILS=$(sqlite3 "$DB_FILE" "SELECT id, username, discord_id, email, created_at FROM users WHERE token = '$user_token' ORDER BY id DESC LIMIT 1;" 2>/dev/null)
+        
+        if [ -n "$USER_DETAILS" ]; then
+            print_message "📋 Détails de l'utilisateur:" "$CYAN"
+            echo "$USER_DETAILS" | while IFS='|' read -r id username discord_id email created_at; do
+                echo "   ID: $id"
+                echo "   Pseudo: $username"
+                echo "   Discord ID: ${discord_id:-Non défini}"
+                echo "   Email: ${email:-Non défini}"
+                echo "   Créé le: $created_at"
+            done
+        fi
+        
+        # Créer une entrée dans user_data
+        USER_ID=$(sqlite3 "$DB_FILE" "SELECT id FROM users WHERE token = '$user_token' ORDER BY id DESC LIMIT 1;" 2>/dev/null)
+        if [ -n "$USER_ID" ]; then
+            sqlite3 "$DB_FILE" "INSERT INTO user_data (user_id, data_type, data_value, created_at) VALUES ($USER_ID, 'initial_setup', 'manual_creation', datetime('now'));" 2>/dev/null
+            print_message "✅ Données utilisateur initialisées" "$GREEN"
+        fi
+        
+    else
+        print_message "❌ Erreur lors de la création de l'utilisateur" "$RED"
+        return 1
+    fi
+    
+    # Afficher le nombre total d'utilisateurs
+    TOTAL_USERS=$(sqlite3 "$DB_FILE" "SELECT COUNT(*) FROM users;" 2>/dev/null || echo "0")
+    print_message "📊 Total d'utilisateurs dans la base: $TOTAL_USERS" "$BLUE"
+    
+    echo ""
+    print_message "🎯 Création terminée!" "$GREEN"
+}
+
+# ================================================================
 # FONCTION DE CORRECTION AUTOMATIQUE DES PERMISSIONS (AMÉLIORÉE)
 # ================================================================
 auto_fix_permissions() {
@@ -1962,7 +2058,8 @@ show_menu() {
     echo -e "${GREEN}15)${NC} 🔧 Réparation système avancée"
     echo -e "${GREEN}16)${NC} 📋 Logs centralisés"
     echo -e "${GREEN}17)${NC} 🔧 Corriger les permissions de la base de données"
-    echo -e "${GREEN}18)${NC} 🚨 Restauration d'urgence de la base de données"
+    echo -e "${GREEN}18)${NC} 👤 Créer un utilisateur manuellement"
+    echo -e "${GREEN}19)${NC} 🚨 Restauration d'urgence de la base de données"
     echo
     echo -e "${GREEN}0)${NC} ❌ Quitter"
     echo
@@ -2209,6 +2306,10 @@ main() {
                 read -p "Appuyez sur Entrée pour continuer..."
                 ;;
             18)
+                create_user_manually
+                read -p "Appuyez sur Entrée pour continuer..."
+                ;;
+            19)
                 print_message "🚨 Restauration d'urgence de la base de données..." "$YELLOW"
                 
                 echo "Backups disponibles:"
