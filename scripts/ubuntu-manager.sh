@@ -491,6 +491,34 @@ auto_fix_permissions() {
         sudo chmod 666 config/config.json 2>/dev/null
     fi
     
+    # 12. Correction des scripts
+    print_message "🔧 Correction des permissions des scripts..." "$YELLOW"
+    sudo chmod +x scripts/*.sh 2>/dev/null
+    chmod +x scripts/*.sh 2>/dev/null
+    
+    # 13. Vérification finale des permissions critiques
+    print_message "🔍 Vérification finale des permissions critiques..." "$CYAN"
+    
+    # Vérifier que les fichiers critiques sont accessibles
+    CRITICAL_FILES=(
+        "database/database.db"
+        "config/config.json"
+        "scripts/ubuntu-manager.sh"
+        "bot/bot.js"
+    )
+    
+    for file in "${CRITICAL_FILES[@]}"; do
+        if [ -f "$file" ]; then
+            if [ -r "$file" ] && [ -w "$file" ]; then
+                print_message "✅ $file: accessible" "$GREEN"
+            else
+                print_message "❌ $file: problème de permissions" "$RED"
+                # Forcer les permissions
+                sudo chmod 666 "$file" 2>/dev/null
+            fi
+        fi
+    done
+    
     print_message "✅ Correction automatique des permissions terminée" "$GREEN"
 }
 
@@ -577,7 +605,8 @@ update_from_github() {
             print_message "✅ Backups restaurés" "$GREEN"
         fi
         
-        # ÉTAPE 5: CORRECTION AUTOMATIQUE DES PERMISSIONS (NOUVELLE)
+        # ÉTAPE 5: CORRECTION AUTOMATIQUE DES PERMISSIONS (AMÉLIORÉE)
+        print_message "🔧 CORRECTION AUTOMATIQUE DES PERMISSIONS APRÈS MISE À JOUR..." "$BLUE"
         auto_fix_permissions
         
         # Installer les nouvelles dépendances
@@ -601,13 +630,33 @@ update_from_github() {
             fi
         fi
         
-        # ÉTAPE 6: NETTOYAGE ET VÉRIFICATION
+        # ÉTAPE 6: VÉRIFICATION FINALE ET CORRECTION SUPPLÉMENTAIRE
+        print_message "🔍 VÉRIFICATION FINALE DES PERMISSIONS..." "$CYAN"
+        
+        # Vérifier et corriger config.json spécifiquement
+        if [ -f "config/config.json" ]; then
+            if [ ! -r "config/config.json" ] || [ ! -w "config/config.json" ]; then
+                print_message "🔧 Correction des permissions de config.json..." "$YELLOW"
+                sudo chown www-data:www-data config/config.json 2>/dev/null
+                sudo chmod 664 config/config.json 2>/dev/null
+                sudo chmod 666 config/config.json 2>/dev/null
+            fi
+        fi
+        
+        # Vérifier et corriger les scripts
+        if [ ! -x "scripts/ubuntu-manager.sh" ]; then
+            print_message "🔧 Correction des permissions des scripts..." "$YELLOW"
+            sudo chmod +x scripts/*.sh 2>/dev/null
+            chmod +x scripts/*.sh 2>/dev/null
+        fi
+        
+        # Vérification finale
         verify_post_update
         
         # Nettoyer le dossier temporaire
         rm -rf "$TEMP_BACKUP_DIR"
         
-        print_message "✅ Mise à jour terminée avec PROTECTION des données et CORRECTION automatique des permissions!" "$GREEN"
+        print_message "✅ Mise à jour terminée avec PROTECTION des données et CORRECTION AUTOMATIQUE COMPLÈTE des permissions!" "$GREEN"
         
         # Redémarrer les services
         pm2 restart all 2>/dev/null || true
