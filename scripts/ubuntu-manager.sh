@@ -513,16 +513,106 @@ update_from_github() {
         # ÉTAPE 6: NETTOYAGE ET VÉRIFICATION
         verify_post_update
         
+        # ÉTAPE 7: CORRECTION COMPLÈTE DES PERMISSIONS (NOUVEAU)
+        print_message "🔧 Application des permissions complètes sur tout le projet..." "$YELLOW"
+        
+        # Corriger les permissions de TOUT le projet
+        print_message "📁 Correction des permissions sur tous les dossiers..." "$CYAN"
+        
+        # 1. Changer le propriétaire de tout le projet pour www-data
+        if sudo chown -R www-data:www-data "$PROJECT_DIR" 2>/dev/null; then
+            print_message "✅ Propriétaire défini sur tout le projet: www-data:www-data" "$GREEN"
+        else
+            print_message "⚠️ Impossible de changer le propriétaire complet" "$YELLOW"
+        fi
+        
+        # 2. Permissions des dossiers (755 = rwxr-xr-x)
+        if sudo find "$PROJECT_DIR" -type d -exec chmod 755 {} \; 2>/dev/null; then
+            print_message "✅ Permissions des dossiers: 755" "$GREEN"
+        else
+            print_message "⚠️ Problème avec les permissions des dossiers" "$YELLOW"
+        fi
+        
+        # 3. Permissions des fichiers (644 = rw-r--r--)
+        if sudo find "$PROJECT_DIR" -type f -exec chmod 644 {} \; 2>/dev/null; then
+            print_message "✅ Permissions des fichiers: 644" "$GREEN"
+        else
+            print_message "⚠️ Problème avec les permissions des fichiers" "$YELLOW"
+        fi
+        
+        # 4. Permissions spéciales pour les scripts exécutables
+        if sudo find "$PROJECT_DIR/scripts" -type f -name "*.sh" -exec chmod 755 {} \; 2>/dev/null; then
+            print_message "✅ Scripts exécutables: 755" "$GREEN"
+        fi
+        
+        # 5. Permissions spéciales pour la base de données (plus permissives)
+        if [ -f "$DB_FILE" ]; then
+            sudo chmod 666 "$DB_FILE" 2>/dev/null
+            print_message "✅ Base de données: 666 (lecture/écriture pour tous)" "$GREEN"
+        fi
+        
+        # 6. Permissions spéciales pour les dossiers de cache/logs
+        for dir in "$PROJECT_DIR/backups" "$PROJECT_DIR/logs" "$PROJECT_DIR/cache"; do
+            if [ -d "$dir" ]; then
+                sudo chmod 777 "$dir" 2>/dev/null
+                print_message "✅ Dossier $(basename $dir): 777" "$GREEN"
+            fi
+        done
+        
+        # 7. Ajouter ubuntu au groupe www-data
+        if sudo usermod -a -G www-data ubuntu 2>/dev/null; then
+            print_message "✅ Utilisateur ubuntu ajouté au groupe www-data" "$GREEN"
+        fi
+        
+        # 8. Permissions spéciales pour le dossier web (pour Nginx)
+        if [ -d "$PROJECT_DIR/web" ]; then
+            sudo chown -R www-data:www-data "$PROJECT_DIR/web" 2>/dev/null
+            sudo find "$PROJECT_DIR/web" -type d -exec chmod 755 {} \; 2>/dev/null
+            sudo find "$PROJECT_DIR/web" -type f -exec chmod 644 {} \; 2>/dev/null
+            print_message "✅ Dossier web configuré pour Nginx" "$GREEN"
+        fi
+        
+        # 9. Permissions pour le bot Discord
+        if [ -d "$PROJECT_DIR/bot" ]; then
+            sudo chown -R ubuntu:www-data "$PROJECT_DIR/bot" 2>/dev/null
+            sudo chmod -R 775 "$PROJECT_DIR/bot" 2>/dev/null
+            print_message "✅ Dossier bot configuré avec permissions mixtes" "$GREEN"
+        fi
+        
+        print_message "✅ Permissions complètes appliquées sur tout le projet!" "$GREEN"
+        
         # Nettoyer le dossier temporaire
         rm -rf "$TEMP_BACKUP_DIR"
         
-        print_message "✅ Mise à jour terminée avec PROTECTION des données!" "$GREEN"
+        print_message "✅ Mise à jour terminée avec PROTECTION des données et PERMISSIONS corrigées!" "$GREEN"
         
         # Redémarrer les services
         pm2 restart all 2>/dev/null || true
         
     else
         print_message "✅ Déjà à jour" "$GREEN"
+        
+        # APPLIQUER LES PERMISSIONS MÊME SI PAS DE MISE À JOUR
+        print_message "🔧 Vérification et correction des permissions..." "$YELLOW"
+        
+        # Mêmes corrections que ci-dessus
+        sudo chown -R www-data:www-data "$PROJECT_DIR" 2>/dev/null
+        sudo find "$PROJECT_DIR" -type d -exec chmod 755 {} \; 2>/dev/null
+        sudo find "$PROJECT_DIR" -type f -exec chmod 644 {} \; 2>/dev/null
+        sudo find "$PROJECT_DIR/scripts" -type f -name "*.sh" -exec chmod 755 {} \; 2>/dev/null
+        
+        if [ -f "$DB_FILE" ]; then
+            sudo chmod 666 "$DB_FILE" 2>/dev/null
+        fi
+        
+        if [ -d "$PROJECT_DIR/bot" ]; then
+            sudo chown -R ubuntu:www-data "$PROJECT_DIR/bot" 2>/dev/null
+            sudo chmod -R 775 "$PROJECT_DIR/bot" 2>/dev/null
+        fi
+        
+        sudo usermod -a -G www-data ubuntu 2>/dev/null
+        
+        print_message "✅ Permissions vérifiées et corrigées" "$GREEN"
     fi
     
     # Nettoyer le dossier temporaire en cas d'erreur
@@ -1802,6 +1892,7 @@ show_menu() {
     echo -e "${GREEN}16)${NC} 📋 Logs centralisés"
     echo -e "${GREEN}17)${NC} 🔧 Corriger les permissions de la base de données"
     echo -e "${GREEN}18)${NC} 🚨 Restauration d'urgence de la base de données"
+    echo -e "${GREEN}19)${NC} 🔐 Corriger TOUTES les permissions du projet"
     echo
     echo -e "${GREEN}0)${NC} ❌ Quitter"
     echo
@@ -1950,6 +2041,137 @@ install_critical_dependencies() {
 }
 
 # ================================================================
+# 19. CORRECTION COMPLÈTE DES PERMISSIONS (NOUVEAU)
+# ================================================================
+fix_all_permissions() {
+    clear
+    print_message "🔐 CORRECTION COMPLÈTE DES PERMISSIONS" "$BLUE"
+    echo "═══════════════════════════════════════════════════════════════"
+    echo ""
+    
+    print_message "Cette fonction va corriger TOUTES les permissions du projet :" "$CYAN"
+    echo "  • Propriétaire : www-data:www-data"
+    echo "  • Dossiers : 755 (rwxr-xr-x)"
+    echo "  • Fichiers : 644 (rw-r--r--)"
+    echo "  • Scripts : 755 (rwxr-xr-x)"
+    echo "  • Base de données : 666 (rw-rw-rw-)"
+    echo "  • Dossiers spéciaux : 777 (rwxrwxrwx)"
+    echo ""
+    
+    read -p "Voulez-vous continuer ? (o/N): " confirm
+    
+    if [[ ! $confirm =~ ^[Oo]$ ]]; then
+        print_message "❌ Correction annulée" "$RED"
+        return
+    fi
+    
+    echo ""
+    print_message "🔧 Correction des permissions en cours..." "$YELLOW"
+    
+    # 1. Propriétaire global
+    print_message "📁 Changement du propriétaire sur tout le projet..." "$CYAN"
+    if sudo chown -R www-data:www-data "$PROJECT_DIR" 2>/dev/null; then
+        print_message "✅ Propriétaire: www-data:www-data" "$GREEN"
+    else
+        print_message "⚠️ Problème avec le changement de propriétaire" "$YELLOW"
+    fi
+    
+    # 2. Permissions des dossiers
+    print_message "📂 Application des permissions 755 sur tous les dossiers..." "$CYAN"
+    if sudo find "$PROJECT_DIR" -type d -exec chmod 755 {} \; 2>/dev/null; then
+        print_message "✅ Dossiers: 755" "$GREEN"
+    else
+        print_message "⚠️ Problème avec les permissions des dossiers" "$YELLOW"
+    fi
+    
+    # 3. Permissions des fichiers
+    print_message "📄 Application des permissions 644 sur tous les fichiers..." "$CYAN"
+    if sudo find "$PROJECT_DIR" -type f -exec chmod 644 {} \; 2>/dev/null; then
+        print_message "✅ Fichiers: 644" "$GREEN"
+    else
+        print_message "⚠️ Problème avec les permissions des fichiers" "$YELLOW"
+    fi
+    
+    # 4. Scripts exécutables
+    print_message "🔧 Permissions 755 sur les scripts..." "$CYAN"
+    if sudo find "$PROJECT_DIR/scripts" -type f -name "*.sh" -exec chmod 755 {} \; 2>/dev/null; then
+        print_message "✅ Scripts: 755 (exécutables)" "$GREEN"
+    fi
+    
+    # 5. Base de données
+    if [ -f "$DB_FILE" ]; then
+        print_message "🗄️ Permissions spéciales pour la base de données..." "$CYAN"
+        sudo chmod 666 "$DB_FILE" 2>/dev/null
+        sudo chown www-data:www-data "$DB_FILE" 2>/dev/null
+        sudo chmod 777 "$(dirname "$DB_FILE")" 2>/dev/null
+        print_message "✅ Base de données: 666 (lecture/écriture pour tous)" "$GREEN"
+    fi
+    
+    # 6. Dossiers spéciaux
+    print_message "📁 Permissions 777 sur les dossiers spéciaux..." "$CYAN"
+    for dir in "$PROJECT_DIR/backups" "$PROJECT_DIR/logs" "$PROJECT_DIR/cache" "$PROJECT_DIR/temp"; do
+        if [ -d "$dir" ]; then
+            sudo chmod 777 "$dir" 2>/dev/null
+            print_message "✅ $(basename $dir): 777" "$GREEN"
+        fi
+    done
+    
+    # 7. Dossier web (Nginx)
+    if [ -d "$PROJECT_DIR/web" ]; then
+        print_message "🌐 Configuration spéciale pour le dossier web..." "$CYAN"
+        sudo chown -R www-data:www-data "$PROJECT_DIR/web" 2>/dev/null
+        sudo find "$PROJECT_DIR/web" -type d -exec chmod 755 {} \; 2>/dev/null
+        sudo find "$PROJECT_DIR/web" -type f -exec chmod 644 {} \; 2>/dev/null
+        # PHP files need to be readable
+        sudo find "$PROJECT_DIR/web" -name "*.php" -exec chmod 644 {} \; 2>/dev/null
+        print_message "✅ Dossier web configuré pour Nginx" "$GREEN"
+    fi
+    
+    # 8. Bot Discord
+    if [ -d "$PROJECT_DIR/bot" ]; then
+        print_message "🤖 Configuration spéciale pour le bot Discord..." "$CYAN"
+        sudo chown -R ubuntu:www-data "$PROJECT_DIR/bot" 2>/dev/null
+        sudo chmod -R 775 "$PROJECT_DIR/bot" 2>/dev/null
+        # node_modules peut nécessiter des permissions différentes
+        if [ -d "$PROJECT_DIR/bot/node_modules" ]; then
+            sudo chmod -R 755 "$PROJECT_DIR/bot/node_modules" 2>/dev/null
+        fi
+        print_message "✅ Bot Discord configuré avec permissions mixtes" "$GREEN"
+    fi
+    
+    # 9. Ajouter ubuntu au groupe www-data
+    print_message "👤 Ajout de l'utilisateur au groupe www-data..." "$CYAN"
+    if sudo usermod -a -G www-data ubuntu 2>/dev/null; then
+        print_message "✅ Utilisateur ubuntu ajouté au groupe www-data" "$GREEN"
+    else
+        print_message "⚠️ Utilisateur déjà dans le groupe ou erreur" "$YELLOW"
+    fi
+    
+    # 10. Permissions Git (si nécessaire)
+    if [ -d "$PROJECT_DIR/.git" ]; then
+        print_message "🔧 Correction des permissions Git..." "$CYAN"
+        sudo chown -R ubuntu:ubuntu "$PROJECT_DIR/.git" 2>/dev/null
+        print_message "✅ Dossier .git appartient à ubuntu" "$GREEN"
+    fi
+    
+    echo ""
+    print_message "═══════════════════════════════════════════════════════════════" "$BLUE"
+    print_message "✅ TOUTES LES PERMISSIONS ONT ÉTÉ CORRIGÉES !" "$GREEN"
+    echo ""
+    print_message "📋 Résumé des corrections appliquées :" "$CYAN"
+    echo "  ✅ Propriétaire global : www-data:www-data"
+    echo "  ✅ Permissions standards : 755/644"
+    echo "  ✅ Scripts exécutables : 755"
+    echo "  ✅ Base de données : 666 avec dossier 777"
+    echo "  ✅ Dossiers spéciaux : 777"
+    echo "  ✅ Configuration Nginx : OK"
+    echo "  ✅ Bot Discord : permissions mixtes"
+    echo ""
+    print_message "💡 Note : Vous devrez peut-être vous reconnecter pour que les changements de groupe prennent effet." "$YELLOW"
+    echo ""
+}
+
+# ================================================================
 # LOGIQUE PRINCIPALE
 # ================================================================
 main() {
@@ -2066,6 +2288,10 @@ main() {
                         print_message "❌ Backup invalide" "$RED"
                     fi
                 fi
+                read -p "Appuyez sur Entrée pour continuer..."
+                ;;
+            19)
+                fix_all_permissions
                 read -p "Appuyez sur Entrée pour continuer..."
                 ;;
             0)
