@@ -158,7 +158,10 @@ function logDatabase(operation, success, details = null) {
 let config;
 try {
     logInfo('Chargement de la configuration...');
-    const configData = fs.readFileSync('../config/config.json', 'utf8');
+    // Utiliser le chemin absolu depuis la racine du projet
+    const projectRoot = path.resolve(__dirname, '..');
+    const configPath = path.join(projectRoot, 'config', 'config.json');
+    const configData = fs.readFileSync(configPath, 'utf8');
     config = JSON.parse(configData);
     logSuccess('Configuration chargée avec succès', {
         app_name: config.app.name,
@@ -168,7 +171,7 @@ try {
 } catch (error) {
     logError('ERREUR CRITIQUE : Impossible de charger config/config.json', error);
     logError('Veuillez vérifier que le fichier config/config.json existe et est valide');
-    logError('Chemin attendu: ../config/config.json');
+    logError('Chemin attendu: /var/www/dashboard-multi-modules/config/config.json');
     process.exit(1);
 }
 
