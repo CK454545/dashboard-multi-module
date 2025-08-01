@@ -17,39 +17,132 @@ if [ ! -f "bot/bot.js" ]; then
     exit 1
 fi
 
-# Étape 1 : Arrêter le bot s'il est en cours d'exécution
-echo -e "${YELLOW}📋 Étape 1 : Arrêt du bot si nécessaire...${NC}"
-if pgrep -f "node bot/bot.js" > /dev/null; then
-    echo -e "${YELLOW}   Arrêt du bot en cours...${NC}"
-    pkill -f "node bot/bot.js"
-    sleep 2
-    echo -e "${GREEN}   ✅ Bot arrêté${NC}"
-else
-    echo -e "${GREEN}   ✅ Le bot n'est pas en cours d'exécution${NC}"
-fi
+# Menu de sélection
+echo -e "${YELLOW}Choisissez une option :${NC}"
+echo -e "1️⃣  ${BLUE}Diagnostic complet (recommandé)${NC}"
+echo -e "2️⃣  ${BLUE}Enregistrement global des commandes${NC}"
+echo -e "3️⃣  ${BLUE}Réparation par serveur${NC}"
+echo -e "4️⃣  ${BLUE}Vérification des permissions uniquement${NC}"
+echo -e ""
+read -p "Votre choix (1-4) : " choice
 
-echo ""
+case $choice in
+    1)
+        echo -e "\n${GREEN}🔍 DIAGNOSTIC COMPLET${NC}\n"
+        
+        # Étape 1 : Arrêter le bot s'il est en cours d'exécution
+        echo -e "${YELLOW}📋 Étape 1 : Arrêt du bot si nécessaire...${NC}"
+        if pgrep -f "node bot/bot.js" > /dev/null; then
+            echo -e "${YELLOW}   Arrêt du bot en cours...${NC}"
+            pkill -f "node bot/bot.js"
+            sleep 2
+            echo -e "${GREEN}   ✅ Bot arrêté${NC}"
+        else
+            echo -e "${GREEN}   ✅ Le bot n'est pas en cours d'exécution${NC}"
+        fi
 
-# Étape 2 : Vérifier les permissions du bot
-echo -e "${YELLOW}📋 Étape 2 : Vérification des permissions...${NC}"
-cd bot
-node check-bot-permissions.js
-cd ..
+        echo ""
 
-echo ""
-echo -e "${YELLOW}Appuyez sur Entrée pour continuer...${NC}"
-read
+        # Étape 2 : Diagnostic détaillé
+        echo -e "${YELLOW}📋 Étape 2 : Diagnostic détaillé...${NC}"
+        cd bot
+        node debug-commands.js
+        cd ..
 
-# Étape 3 : Réparer les commandes
-echo -e "${YELLOW}📋 Étape 3 : Réparation des commandes...${NC}"
-cd bot
-node fix-discord-commands.js
-cd ..
+        echo ""
+        echo -e "${YELLOW}Appuyez sur Entrée pour continuer...${NC}"
+        read
 
-echo ""
-echo -e "${GREEN}=================================================${NC}"
-echo -e "${GREEN}✅ RÉPARATION TERMINÉE !${NC}"
-echo -e "${GREEN}=================================================${NC}\n"
+        # Étape 3 : Essayer l'enregistrement global
+        echo -e "${YELLOW}📋 Étape 3 : Tentative d'enregistrement global...${NC}"
+        cd bot
+        node register-global-commands.js
+        cd ..
+
+        echo ""
+        echo -e "${GREEN}=================================================${NC}"
+        echo -e "${GREEN}✅ DIAGNOSTIC TERMINÉ !${NC}"
+        echo -e "${GREEN}=================================================${NC}\n"
+        ;;
+        
+    2)
+        echo -e "\n${GREEN}🌐 ENREGISTREMENT GLOBAL${NC}\n"
+        
+        # Arrêter le bot
+        echo -e "${YELLOW}📋 Arrêt du bot...${NC}"
+        if pgrep -f "node bot/bot.js" > /dev/null; then
+            pkill -f "node bot/bot.js"
+            sleep 2
+            echo -e "${GREEN}   ✅ Bot arrêté${NC}"
+        fi
+
+        echo ""
+
+        # Enregistrement global
+        echo -e "${YELLOW}📋 Enregistrement global des commandes...${NC}"
+        cd bot
+        node register-global-commands.js
+        cd ..
+
+        echo ""
+        echo -e "${GREEN}=================================================${NC}"
+        echo -e "${GREEN}✅ ENREGISTREMENT GLOBAL TERMINÉ !${NC}"
+        echo -e "${GREEN}=================================================${NC}\n"
+        ;;
+        
+    3)
+        echo -e "\n${GREEN}🔧 RÉPARATION PAR SERVEUR${NC}\n"
+        
+        # Étape 1 : Arrêter le bot
+        echo -e "${YELLOW}📋 Étape 1 : Arrêt du bot...${NC}"
+        if pgrep -f "node bot/bot.js" > /dev/null; then
+            pkill -f "node bot/bot.js"
+            sleep 2
+            echo -e "${GREEN}   ✅ Bot arrêté${NC}"
+        fi
+
+        echo ""
+
+        # Étape 2 : Vérifier les permissions
+        echo -e "${YELLOW}📋 Étape 2 : Vérification des permissions...${NC}"
+        cd bot
+        node check-bot-permissions.js
+        cd ..
+
+        echo ""
+        echo -e "${YELLOW}Appuyez sur Entrée pour continuer...${NC}"
+        read
+
+        # Étape 3 : Réparer les commandes
+        echo -e "${YELLOW}📋 Étape 3 : Réparation des commandes...${NC}"
+        cd bot
+        node fix-discord-commands.js
+        cd ..
+
+        echo ""
+        echo -e "${GREEN}=================================================${NC}"
+        echo -e "${GREEN}✅ RÉPARATION TERMINÉE !${NC}"
+        echo -e "${GREEN}=================================================${NC}\n"
+        ;;
+        
+    4)
+        echo -e "\n${GREEN}🔍 VÉRIFICATION DES PERMISSIONS${NC}\n"
+        
+        cd bot
+        node check-bot-permissions.js
+        cd ..
+
+        echo ""
+        echo -e "${GREEN}=================================================${NC}"
+        echo -e "${GREEN}✅ VÉRIFICATION TERMINÉE !${NC}"
+        echo -e "${GREEN}=================================================${NC}\n"
+        ;;
+        
+    *)
+        echo -e "${RED}❌ Choix invalide${NC}"
+        exit 1
+        ;;
+esac
 
 echo -e "${BLUE}📌 INSTRUCTIONS IMPORTANTES :${NC}\n"
 echo -e "1️⃣  ${YELLOW}Fermez complètement Discord${NC} (pas juste la fenêtre)"

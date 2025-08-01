@@ -26,7 +26,7 @@ const commands = [
     
     new SlashCommandBuilder()
         .setName('ping')
-        .setDescription('Ping pong')
+        .setDescription('Répond pong')
 ];
 
 client.once('ready', async () => {
@@ -35,98 +35,121 @@ client.once('ready', async () => {
     console.log(`${'='.repeat(60)}\n`);
     
     console.log(`✅ Bot connecté : ${client.user.tag}`);
-    console.log(`🆔 Bot ID : ${client.user.id}\n`);
+    console.log(`🆔 Bot ID : ${client.user.id}`);
+    console.log(`📊 Nombre de serveurs : ${client.guilds.cache.size}\n`);
     
     try {
-        // Test 1 : Vérifier les permissions du bot
-        console.log('📋 TEST 1 : Vérification des permissions...');
-        for (const guild of client.guilds.cache.values()) {
-            console.log(`\n📋 Serveur : ${guild.name} (${guild.id})`);
-            
-            const botMember = guild.members.cache.get(client.user.id);
-            if (!botMember) {
-                console.log('❌ Bot non membre du serveur');
-                continue;
-            }
-            
-            const hasManageGuild = botMember.permissions.has('ManageGuild');
-            const hasUseApplicationCommands = botMember.permissions.has('UseApplicationCommands');
-            
-            console.log(`  ✅ ManageGuild : ${hasManageGuild}`);
-            console.log(`  ✅ UseApplicationCommands : ${hasUseApplicationCommands}`);
-            
-            if (!hasManageGuild) {
-                console.log('  ⚠️  Le bot n\'a pas la permission "Gérer le serveur"');
-                console.log('  💡 Cette permission est nécessaire pour enregistrer des commandes');
+        // Test 1 : Vérifier l'accès à l'API Discord
+        console.log('🧪 Test 1 : Vérification de l\'accès à l\'API Discord...');
+        const rest = new REST({ version: '10' }).setToken(TOKEN);
+        
+        try {
+            const globalCommands = await rest.get(Routes.applicationCommands(client.user.id));
+            console.log(`✅ API accessible - ${globalCommands.length} commandes globales trouvées`);
+        } catch (error) {
+            console.log(`❌ Erreur API : ${error.message}`);
+            if (error.code === 50001) {
+                console.log('💡 Le bot n\'a pas les permissions pour gérer les commandes globales');
             }
         }
         
-        // Test 2 : Essayer d'enregistrer une seule commande
-        console.log('\n📋 TEST 2 : Test d\'enregistrement d\'une commande...');
+        // Test 2 : Vérifier chaque serveur individuellement
         for (const guild of client.guilds.cache.values()) {
-            console.log(`\n📋 Test sur : ${guild.name}`);
+            console.log(`\n📋 Test 2 : Diagnostic du serveur ${guild.name} (${guild.id})`);
+            console.log('─'.repeat(50));
             
             try {
-                // Essayer d'enregistrer une seule commande de test
-                console.log('  🔄 Tentative d\'enregistrement...');
-                await guild.commands.set([commands[0]]);
-                console.log('  ✅ Commande de test enregistrée avec succès !');
+                // Vérifier les permissions du bot
+                const botMember = guild.members.cache.get(client.user.id);
+                if (!botMember) {
+                    console.log('❌ Le bot n\'est pas membre de ce serveur');
+                    continue;
+                }
                 
-                // Vérifier
-                const testCommands = await guild.commands.fetch();
-                console.log(`  📊 Commandes après test : ${testCommands.size}`);
+                console.log('🔑 Permissions du bot :');
+                console.log(`  • Administrateur : ${botMember.permissions.has('Administrator') ? '✅' : '❌'}`);
+                console.log(`  • Gérer les applications : ${botMember.permissions.has('ManageGuild') ? '✅' : '❌'}`);
+                console.log(`  • Utiliser les commandes slash : ${botMember.permissions.has('UseApplicationCommands') ? '✅' : '❌'}`);
                 
-                // Nettoyer
-                await guild.commands.set([]);
-                console.log('  🧹 Nettoyage effectué');
+                // Test d'enregistrement d'une seule commande
+                console.log('\n🧪 Test d\'enregistrement d\'une commande simple...');
+                
+                try {
+                    // Supprimer d'abord toutes les commandes
+                    await guild.commands.set([]);
+                    console.log('✅ Commandes supprimées');
+                    
+                    // Attendre
+                    await new Promise(resolve => setTimeout(resolve, 1000));
+                    
+                    // Enregistrer une seule commande de test
+                    const testCommand = new SlashCommandBuilder()
+                        .setName('test')
+                        .setDescription('Commande de test');
+                    
+                    await guild.commands.create(testCommand);
+                    console.log('✅ Commande de test enregistrée');
+                    
+                    // Vérifier
+                    const registeredCommands = await guild.commands.fetch();
+                    console.log(`✅ ${registeredCommands.size} commandes maintenant enregistrées`);
+                    
+                    // Nettoyer
+                    await guild.commands.set([]);
+                    console.log('✅ Nettoyage effectué');
+                    
+                } catch (error) {
+                    console.log(`❌ Erreur lors de l'enregistrement : ${error.message}`);
+                    console.log(`   Code d'erreur : ${error.code}`);
+                    
+                    if (error.code === 50001) {
+                        console.log('💡 Le bot n\'a pas les permissions "applications.commands"');
+                    } else if (error.code === 50013) {
+                        console.log('💡 Le bot n\'a pas les permissions "Manage Guild"');
+                    } else if (error.code === 10008) {
+                        console.log('💡 Application inconnue - vérifiez l\'ID du bot');
+                    }
+                }
                 
             } catch (error) {
-                console.error(`  ❌ Erreur lors du test :`, error.message);
-                console.error(`  📍 Code d'erreur :`, error.code);
-                console.error(`  📍 Status :`, error.status);
-                
-                if (error.code === 50001) {
-                    console.log('  💡 Erreur 50001 : Le bot n\'a pas accès au serveur');
-                } else if (error.code === 50013) {
-                    console.log('  💡 Erreur 50013 : Permissions manquantes');
-                } else if (error.code === 50035) {
-                    console.log('  💡 Erreur 50035 : Payload invalide');
-                }
+                console.log(`❌ Erreur générale : ${error.message}`);
             }
         }
         
-        // Test 3 : Vérifier l'API Discord
-        console.log('\n📋 TEST 3 : Test de l\'API Discord...');
+        // Test 3 : Essayer l'enregistrement global
+        console.log('\n🧪 Test 3 : Tentative d\'enregistrement global...');
         try {
-            const rest = new REST({ version: '10' }).setToken(TOKEN);
-            const application = await rest.get(Routes.oauth2CurrentApplication());
-            console.log('  ✅ API Discord accessible');
-            console.log(`  📊 Application : ${application.name}`);
+            await rest.put(Routes.applicationCommands(client.user.id), { body: commands });
+            console.log('✅ Commandes globales enregistrées');
+            
+            // Vérifier
+            const globalCommands = await rest.get(Routes.applicationCommands(client.user.id));
+            console.log(`✅ ${globalCommands.length} commandes globales vérifiées`);
+            
         } catch (error) {
-            console.error('  ❌ Erreur API Discord :', error.message);
+            console.log(`❌ Erreur enregistrement global : ${error.message}`);
         }
         
-        // Test 4 : Générer un nouveau lien d'invitation avec toutes les permissions
-        console.log('\n📋 TEST 4 : Génération du lien d\'invitation...');
-        const permissionValue = BigInt(0);
-        permissionValue |= BigInt(0x8); // Administrator
-        permissionValue |= BigInt(0x20); // ManageGuild
-        permissionValue |= BigInt(0x8000000); // UseApplicationCommands
-        
-        const inviteLink = `https://discord.com/api/oauth2/authorize?client_id=${client.user.id}&permissions=${permissionValue}&scope=bot%20applications.commands`;
-        
-        console.log('🔗 LIEN D\'INVITATION AVEC PERMISSIONS ADMIN :');
-        console.log(inviteLink);
+        console.log('\n' + '='.repeat(60));
+        console.log('📋 RÉSUMÉ DU DIAGNOSTIC');
+        console.log('='.repeat(60));
+        console.log('\n💡 SOLUTIONS POSSIBLES :');
+        console.log('1. Réinvitez le bot avec le lien généré précédemment');
+        console.log('2. Vérifiez que le bot a le rôle "Administrateur" temporairement');
+        console.log('3. Essayez d\'enregistrer les commandes globalement au lieu de par serveur');
+        console.log('4. Vérifiez que le token du bot est correct');
+        console.log('\n🔗 Lien d\'invitation avec toutes les permissions :');
+        console.log(`https://discord.com/api/oauth2/authorize?client_id=${client.user.id}&permissions=8&scope=bot%20applications.commands`);
         
     } catch (error) {
         console.error('❌ Erreur critique :', error);
     }
     
-    // Quitter après 10 secondes
+    // Quitter après 20 secondes
     setTimeout(() => {
         console.log('\n👋 Fermeture du diagnostic...\n');
         process.exit(0);
-    }, 10000);
+    }, 20000);
 });
 
 // Gestion des erreurs
@@ -139,7 +162,7 @@ process.on('unhandledRejection', error => {
 });
 
 // Connexion
-console.log('🚀 Démarrage du diagnostic...');
+console.log('🚀 Démarrage du diagnostic des commandes Discord...');
 client.login(TOKEN).catch(error => {
     console.error('❌ Impossible de se connecter:', error.message);
     process.exit(1);
