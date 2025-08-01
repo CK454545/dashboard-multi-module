@@ -8,17 +8,13 @@ const QRCode = require('qrcode');
 
 // ==================== VÉRIFICATION DES PERMISSIONS DE LA BASE DE DONNÉES ====================
 function checkDatabasePermissions() {
+    // Toujours utiliser le chemin absolu depuis la racine du projet
     let dbPath = config.database.file;
     
-    // Si le chemin est relatif, le convertir en absolu
-    if (!path.isAbsolute(dbPath)) {
-        const botDir = __dirname;
-        dbPath = path.resolve(botDir, dbPath);
-        logInfo('Chemin relatif converti en absolu', { 
-            original: config.database.file, 
-            resolved: dbPath 
-        });
-    }
+    // Le chemin est déjà défini comme absolu dans la configuration
+    logInfo('Vérification du chemin de la base de données', { 
+        path: dbPath 
+    });
     
     try {
         // Vérifier si le fichier existe
@@ -68,11 +64,8 @@ function checkDatabasePermissions() {
 function testDatabaseAccess() {
     return new Promise((resolve, reject) => {
         try {
+            // Utiliser directement le chemin absolu défini dans la configuration
             let dbPath = config.database.file;
-            if (!path.isAbsolute(dbPath)) {
-                const botDir = __dirname;
-                dbPath = path.resolve(botDir, dbPath);
-            }
             
             logInfo('Test d\'accès à la base de données', { path: dbPath });
             
@@ -103,11 +96,8 @@ function testDatabaseAccess() {
             
             try {
                 const { execSync } = require('child_process');
+                // Utiliser directement le chemin absolu défini dans la configuration
                 let dbPath = config.database.file;
-                if (!path.isAbsolute(dbPath)) {
-                    const botDir = __dirname;
-                    dbPath = path.resolve(botDir, dbPath);
-                }
                 
                 execSync(`sudo chown ubuntu:ubuntu "${dbPath}"`, { stdio: 'pipe' });
                 execSync(`sudo chmod 664 "${dbPath}"`, { stdio: 'pipe' });
@@ -186,6 +176,10 @@ try {
 const TOKEN = config.discord.token;
 const WEBSITE_URL = config.website.url;
 
+// Correction du chemin de la base de données - toujours utiliser le chemin depuis la racine du projet
+const projectRoot = path.resolve(__dirname, '..');
+config.database.file = path.join(projectRoot, 'database', 'database.db');
+
 logInfo('Configuration active', {
     token_configured: TOKEN !== 'VOTRE_TOKEN_BOT_DISCORD',
     website_url: WEBSITE_URL,
@@ -224,12 +218,8 @@ function hasAuthorizedRole(member, commandName) {
 // ==================== INITIALISATION DE LA BASE DE DONNÉES ====================
 let db;
 try {
-    // Utiliser le même chemin résolu que dans checkDatabasePermissions
+    // Utiliser directement le chemin absolu défini dans la configuration
     let dbPath = config.database.file;
-    if (!path.isAbsolute(dbPath)) {
-        const botDir = __dirname;
-        dbPath = path.resolve(botDir, dbPath);
-    }
     
     logInfo('Connexion à la base de données...', { path: dbPath });
     db = new sqlite3.Database(dbPath, (err) => {
