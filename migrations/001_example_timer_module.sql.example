@@ -1,0 +1,48 @@
+-- ================================================================
+-- Migration: Ajout du module Timer
+-- Date: 2024-01-01
+-- Description: Ajoute les tables nécessaires pour le module Timer
+-- ================================================================
+
+-- Table pour les paramètres du timer
+CREATE TABLE IF NOT EXISTS timer_settings (
+    user_id TEXT PRIMARY KEY,
+    duration INTEGER DEFAULT 300,          -- Durée en secondes
+    title TEXT DEFAULT 'Timer',            -- Titre affiché
+    color TEXT DEFAULT '#FF0000',          -- Couleur du texte
+    background_color TEXT DEFAULT 'transparent',
+    font_size INTEGER DEFAULT 48,
+    font_family TEXT DEFAULT 'Arial',
+    show_seconds BOOLEAN DEFAULT 1,
+    sound_enabled BOOLEAN DEFAULT 1,
+    sound_url TEXT DEFAULT NULL,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Table pour l'historique des timers
+CREATE TABLE IF NOT EXISTS timer_history (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id TEXT NOT NULL,
+    duration INTEGER NOT NULL,
+    title TEXT,
+    started_at DATETIME NOT NULL,
+    ended_at DATETIME,
+    completed BOOLEAN DEFAULT 0,
+    FOREIGN KEY (user_id) REFERENCES users(id)
+);
+
+-- Index pour améliorer les performances
+CREATE INDEX IF NOT EXISTS idx_timer_history_user_id ON timer_history(user_id);
+CREATE INDEX IF NOT EXISTS idx_timer_history_started_at ON timer_history(started_at);
+
+-- Vue pour les statistiques
+CREATE VIEW IF NOT EXISTS timer_stats AS
+SELECT 
+    user_id,
+    COUNT(*) as total_timers,
+    SUM(CASE WHEN completed = 1 THEN 1 ELSE 0 END) as completed_timers,
+    AVG(duration) as avg_duration,
+    MAX(started_at) as last_timer
+FROM timer_history
+GROUP BY user_id; 

@@ -1,0 +1,459 @@
+/* ==================== COMMAND BAR - STYLES HARMONISÉS ==================== */
+/* Fichier CSS partagé pour les panneaux de commandes des modules Win, Timer et Team VS Team */
+
+/* ==================== PANNEAU DE COMMANDES PRINCIPAL ==================== */
+.command-bar {
+    position: fixed;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100%;
+    max-width: 700px;
+    background: rgba(15, 23, 42, 0.92);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(148, 163, 184, 0.1);
+    border-top: 1px solid #f59e0b;
+    border-radius: 12px 12px 0 0;
+    padding: 12px;
+    box-shadow: 0 -5px 20px rgba(0, 0, 0, 0.2);
+    z-index: 100;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Effet glass morphism amélioré */
+.command-bar::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, 
+        rgba(99, 102, 241, 0.05) 0%, 
+        rgba(245, 158, 11, 0.05) 100%);
+    border-radius: inherit;
+    pointer-events: none;
+}
+
+/* Animation d'entrée */
+@keyframes slideUpCommand {
+    from {
+        transform: translateX(-50%) translateY(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(-50%) translateY(0);
+        opacity: 1;
+    }
+}
+
+.command-bar {
+    animation: slideUpCommand 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ==================== SECTIONS ==================== */
+.command-section {
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid rgba(148, 163, 184, 0.06);
+    border-radius: 8px;
+    padding: 10px;
+    margin-bottom: 10px;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.2s ease;
+}
+
+.command-section:last-child {
+    margin-bottom: 0;
+}
+
+.command-section:hover {
+    background: rgba(255, 255, 255, 0.04);
+    border-color: rgba(148, 163, 184, 0.12);
+}
+
+/* Titre de section harmonisé */
+.command-section h3 {
+    font-size: 0.7rem;
+    font-weight: 600;
+    color: #f8fafc;
+    margin-bottom: 8px;
+    text-align: center;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    padding: 5px 12px;
+    border-radius: 6px;
+    background: linear-gradient(135deg, #6366f1, #5855eb);
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    width: 100%;
+    justify-content: center;
+    box-shadow: 0 1px 4px rgba(99, 102, 241, 0.2);
+}
+
+/* Variantes de couleurs pour les titres */
+.command-section.danger h3 {
+    background: linear-gradient(135deg, #ef4444, #dc2626);
+    box-shadow: 0 1px 4px rgba(239, 68, 68, 0.2);
+}
+
+.command-section.success h3 {
+    background: linear-gradient(135deg, #10b981, #059669);
+    box-shadow: 0 1px 4px rgba(16, 185, 129, 0.2);
+}
+
+.command-section.warning h3 {
+    background: linear-gradient(135deg, #f59e0b, #d97706);
+    box-shadow: 0 1px 4px rgba(245, 158, 11, 0.2);
+}
+
+/* ==================== GRILLE DE BOUTONS ==================== */
+.command-buttons {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(60px, 1fr));
+    gap: 6px;
+}
+
+/* Grilles spécifiques */
+.command-buttons.grid-7 {
+    grid-template-columns: repeat(7, 1fr);
+}
+
+.command-buttons.grid-5 {
+    grid-template-columns: repeat(5, 1fr);
+}
+
+.command-buttons.grid-4 {
+    grid-template-columns: repeat(4, 1fr);
+}
+
+.command-buttons.grid-2 {
+    grid-template-columns: repeat(2, 1fr);
+}
+
+/* ==================== BOUTONS HARMONISÉS ==================== */
+.command-btn {
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(148, 163, 184, 0.08);
+    color: #cbd5e1;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-weight: 600;
+    font-size: 0.68rem;
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+    min-height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    position: relative;
+    overflow: hidden;
+    text-decoration: none;
+    outline: none;
+}
+
+/* Effet de hover premium */
+.command-btn::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    background: radial-gradient(circle, rgba(99, 102, 241, 0.3) 0%, transparent 70%);
+    transform: translate(-50%, -50%);
+    transition: width 0.6s, height 0.6s;
+    border-radius: 50%;
+}
+
+.command-btn:hover::before {
+    width: 120px;
+    height: 120px;
+}
+
+.command-btn:hover {
+    background: #6366f1;
+    color: white;
+    border-color: #6366f1;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(99, 102, 241, 0.3);
+}
+
+/* Effet de clic */
+.command-btn:active {
+    transform: translateY(0);
+    box-shadow: 0 1px 2px rgba(99, 102, 241, 0.3);
+}
+
+/* ==================== VARIANTES DE BOUTONS ==================== */
+/* Bouton d'ajout */
+.command-btn.add {
+    background: rgba(34, 197, 94, 0.1);
+    border-color: rgba(34, 197, 94, 0.3);
+    color: #22c55e;
+}
+
+.command-btn.add:hover {
+    background: #22c55e;
+    border-color: #22c55e;
+    color: white;
+    box-shadow: 0 4px 12px rgba(34, 197, 94, 0.4);
+}
+
+/* Bouton de soustraction */
+.command-btn.subtract {
+    background: rgba(239, 68, 68, 0.1);
+    border-color: rgba(239, 68, 68, 0.3);
+    color: #ef4444;
+}
+
+.command-btn.subtract:hover {
+    background: #ef4444;
+    border-color: #ef4444;
+    color: white;
+    box-shadow: 0 4px 12px rgba(239, 68, 68, 0.4);
+}
+
+/* Bouton reset */
+.command-btn.reset {
+    background: rgba(239, 68, 68, 0.15);
+    border-color: rgba(239, 68, 68, 0.4);
+    color: #ef4444;
+}
+
+.command-btn.reset:hover {
+    background: #dc2626;
+    border-color: #dc2626;
+    color: white;
+    box-shadow: 0 4px 12px rgba(220, 38, 38, 0.4);
+}
+
+/* Bouton action principale */
+.command-btn.primary {
+    background: rgba(16, 185, 129, 0.15);
+    border-color: rgba(16, 185, 129, 0.4);
+    color: #10b981;
+}
+
+.command-btn.primary:hover {
+    background: #059669;
+    border-color: #059669;
+    color: white;
+    box-shadow: 0 4px 12px rgba(5, 150, 105, 0.4);
+}
+
+/* Bouton large */
+.command-btn.large {
+    padding: 8px 16px;
+    font-size: 0.75rem;
+    min-height: 36px;
+}
+
+/* ==================== ÉTAT DÉSACTIVÉ ==================== */
+.command-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none !important;
+    background: rgba(255, 255, 255, 0.02) !important;
+    color: #64748b !important;
+    border-color: rgba(148, 163, 184, 0.05) !important;
+    box-shadow: none !important;
+}
+
+.command-btn:disabled::before {
+    display: none;
+}
+
+.command-btn:disabled .fa-spinner {
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+/* ==================== BOUTON CONFIGURATION ==================== */
+.command-config-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: rgba(245, 158, 11, 0.08);
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(245, 158, 11, 0.2);
+    color: #f59e0b;
+    font-size: 0.75rem;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    z-index: 10;
+    box-shadow: 0 1px 4px rgba(245, 158, 11, 0.15);
+}
+
+.command-config-btn:hover {
+    background: #f59e0b;
+    color: white;
+    transform: scale(1.05) rotate(90deg);
+    box-shadow: 0 2px 8px rgba(245, 158, 11, 0.3);
+}
+
+/* ==================== CONTRÔLES SPÉCIAUX ==================== */
+/* Toggle de multiplicateur */
+.multiplier-toggle {
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(148, 163, 184, 0.08);
+    color: #cbd5e1;
+    padding: 5px 12px;
+    border-radius: 6px;
+    font-size: 0.68rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 8px;
+}
+
+.multiplier-toggle.active {
+    background: rgba(16, 185, 129, 0.15);
+    color: #10b981;
+    border-color: rgba(16, 185, 129, 0.3);
+}
+
+.multiplier-toggle.inactive {
+    background: rgba(239, 68, 68, 0.15);
+    color: #ef4444;
+    border-color: rgba(239, 68, 68, 0.3);
+}
+
+/* ==================== RESPONSIVE ==================== */
+@media (max-width: 1024px) {
+    .command-bar {
+        max-width: calc(100% - 40px);
+        margin: 0 20px;
+        left: 0;
+        right: 0;
+        transform: none;
+    }
+    
+    .command-buttons.grid-7 {
+        grid-template-columns: repeat(4, 1fr);
+    }
+}
+
+@media (max-width: 768px) {
+    .command-bar {
+        max-width: 100%;
+        margin: 0;
+        border-radius: 10px 10px 0 0;
+        padding: 10px;
+    }
+    
+    .command-section {
+        padding: 8px;
+        margin-bottom: 8px;
+    }
+    
+    .command-buttons {
+        gap: 5px;
+    }
+    
+    .command-buttons.grid-7,
+    .command-buttons.grid-5,
+    .command-buttons.grid-4 {
+        grid-template-columns: repeat(3, 1fr);
+    }
+    
+    .command-btn {
+        font-size: 0.65rem;
+        padding: 5px 10px;
+        min-height: 30px;
+    }
+    
+    .command-btn.large {
+        padding: 6px 14px;
+        min-height: 34px;
+    }
+    
+    .command-config-btn {
+        width: 26px;
+        height: 26px;
+        font-size: 0.7rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .command-bar {
+        padding: 8px;
+    }
+    
+    .command-buttons.grid-7,
+    .command-buttons.grid-5,
+    .command-buttons.grid-4 {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .command-btn {
+        font-size: 0.62rem;
+        padding: 5px 8px;
+        min-height: 28px;
+    }
+}
+
+/* ==================== ANIMATIONS SUPPLÉMENTAIRES ==================== */
+/* Pulse pour attirer l'attention */
+@keyframes commandPulse {
+    0% {
+        box-shadow: 0 0 0 0 rgba(245, 158, 11, 0.4);
+    }
+    70% {
+        box-shadow: 0 0 0 10px rgba(245, 158, 11, 0);
+    }
+    100% {
+        box-shadow: 0 0 0 0 rgba(245, 158, 11, 0);
+    }
+}
+
+.command-bar.attention {
+    animation: commandPulse 2s infinite;
+}
+
+/* Effet de vague sur les boutons */
+@keyframes ripple {
+    0% {
+        transform: scale(0);
+        opacity: 1;
+    }
+    100% {
+        transform: scale(4);
+        opacity: 0;
+    }
+}
+
+.command-btn::after {
+    content: '';
+    position: absolute;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.5);
+    width: 10px;
+    height: 10px;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(0);
+    opacity: 0;
+}
+
+.command-btn:active::after {
+    animation: ripple 0.6s ease-out;
+}

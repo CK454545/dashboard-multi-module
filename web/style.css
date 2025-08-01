@@ -1,0 +1,339 @@
+/* Reset et styles de base */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Impact', Arial, sans-serif;
+    background: #000;
+    color: #fff;
+    min-height: 100vh;
+    overflow: hidden;
+}
+
+/* Container principal pour les widgets */
+.widget-container {
+    width: 100%;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+}
+
+/* Affichage principal du widget */
+.display {
+    text-align: center;
+    padding: 20px;
+    width: 100%;
+}
+
+.display h1 {
+    font-size: 72px;
+    color: #FF0000;
+    text-transform: uppercase;
+    margin-bottom: 20px;
+    text-shadow: 3px 3px 6px rgba(0,0,0,0.7);
+    letter-spacing: 2px;
+}
+
+.display h1 span {
+    color: #FFF;
+}
+
+.display h2 {
+    font-size: 48px;
+    color: #FFD700;
+    text-transform: uppercase;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.7);
+    letter-spacing: 1px;
+}
+
+.display h2 span {
+    color: #FFF;
+}
+
+/* Contrôles (visible seulement avec ?control=true) */
+.controls {
+    background: #1a1a1a;
+    padding: 30px;
+    border-radius: 15px;
+    width: 90%;
+    max-width: 800px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+    margin-top: 30px;
+}
+
+.section {
+    margin-bottom: 30px;
+}
+
+.section h3 {
+    color: #FF0000;
+    font-size: 24px;
+    margin-bottom: 15px;
+    text-align: center;
+    text-transform: uppercase;
+}
+
+/* Boutons */
+.buttons {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.btn {
+    background: #333;
+    color: #fff;
+    padding: 15px 25px;
+    text-decoration: none;
+    border-radius: 8px;
+    font-size: 18px;
+    font-weight: bold;
+    transition: all 0.3s ease;
+    border: 2px solid #555;
+    cursor: pointer;
+    text-align: center;
+    min-width: 80px;
+}
+
+.btn:hover {
+    background: #FF0000;
+    border-color: #FF0000;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(255,0,0,0.3);
+}
+
+.btn:active {
+    transform: translateY(0);
+}
+
+/* Personnalisation */
+.customization {
+    background: #2a2a2a;
+    padding: 20px;
+    border-radius: 10px;
+    margin-top: 20px;
+}
+
+.customization h3 {
+    color: #FFD700;
+    font-size: 20px;
+    margin-bottom: 15px;
+    text-align: center;
+}
+
+.customization input,
+.customization select {
+    margin: 5px;
+    padding: 8px 12px;
+    border-radius: 5px;
+    border: 1px solid #555;
+    background: #333;
+    color: #fff;
+    font-size: 16px;
+}
+
+.customization input[type="color"] {
+    width: 50px;
+    height: 40px;
+    cursor: pointer;
+}
+
+.customization input[type="number"] {
+    width: 100px;
+}
+
+.customization select {
+    min-width: 150px;
+}
+
+.customization label {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 10px 5px;
+    cursor: pointer;
+}
+
+.customization input[type="checkbox"] {
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+}
+
+/* Dashboard styles */
+.dashboard {
+    background: #1a1a1a;
+    padding: 40px;
+    border-radius: 20px;
+    width: 90%;
+    max-width: 1200px;
+    margin: 50px auto;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+}
+
+.dashboard h1 {
+    color: #FF0000;
+    font-size: 48px;
+    text-align: center;
+    margin-bottom: 40px;
+    text-transform: uppercase;
+}
+
+.modules-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 30px;
+    margin-bottom: 40px;
+}
+
+.module-card {
+    background: #2a2a2a;
+    padding: 30px;
+    border-radius: 15px;
+    text-align: center;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    border: 2px solid #444;
+}
+
+.module-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 20px rgba(255,0,0,0.2);
+    border-color: #FF0000;
+}
+
+.module-card h2 {
+    color: #FFD700;
+    font-size: 32px;
+    margin-bottom: 15px;
+}
+
+.module-card p {
+    color: #ccc;
+    margin-bottom: 20px;
+    font-size: 16px;
+}
+
+.module-links {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.module-links a {
+    background: #FF0000;
+    color: #fff;
+    padding: 12px 20px;
+    text-decoration: none;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: bold;
+    transition: all 0.3s ease;
+}
+
+.module-links a:hover {
+    background: #CC0000;
+    transform: translateX(5px);
+}
+
+/* URLs section */
+.urls-section {
+    background: #2a2a2a;
+    padding: 30px;
+    border-radius: 15px;
+    margin-top: 30px;
+}
+
+.urls-section h2 {
+    color: #FFD700;
+    font-size: 28px;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.url-list {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.url-item {
+    background: #333;
+    padding: 15px;
+    border-radius: 8px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border: 1px solid #555;
+}
+
+.url-item code {
+    color: #FFD700;
+    background: #1a1a1a;
+    padding: 5px 10px;
+    border-radius: 4px;
+    font-family: 'Courier New', monospace;
+    font-size: 14px;
+}
+
+.copy-btn {
+    background: #FF0000;
+    color: #fff;
+    padding: 8px 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: all 0.3s ease;
+}
+
+.copy-btn:hover {
+    background: #CC0000;
+}
+
+/* Animations */
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+    100% { transform: scale(1); }
+}
+
+.display h1 {
+    animation: pulse 2s ease-in-out infinite;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .display h1 {
+        font-size: 48px;
+    }
+    
+    .display h2 {
+        font-size: 32px;
+    }
+    
+    .controls {
+        width: 95%;
+        padding: 20px;
+    }
+    
+    .btn {
+        padding: 12px 20px;
+        font-size: 16px;
+    }
+    
+    .dashboard {
+        padding: 20px;
+        margin: 20px auto;
+    }
+    
+    .dashboard h1 {
+        font-size: 32px;
+    }
+}

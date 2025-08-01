@@ -1,0 +1,27 @@
+{
+  "name": "streampro-studio-bot",
+  "version": "1.0.0",
+  "description": "Bot Discord pour StreamPro Studio avec gestion automatique des tokens utilisateurs",
+  "main": "bot.js",
+  "scripts": {
+    "start": "node bot.js",
+    "install-deps": "npm install discord.js sqlite3"
+  },
+  "dependencies": {
+    "canvas": "^3.1.2",
+    "discord.js": "^14.21.0",
+    "qrcode": "^1.5.4",
+    "sqlite3": "^5.1.7"
+  },
+  "keywords": [
+    "streampro",
+    "studio",
+    "tiktok",
+    "live",
+    "widgets",
+    "discord",
+    "bot"
+  ],
+  "author": "CK",
+  "license": "MIT"
+}
