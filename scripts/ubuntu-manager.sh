@@ -431,22 +431,40 @@ auto_fix_permissions() {
     sudo chmod 755 database/ 2>/dev/null
     sudo chmod 664 database/database.db 2>/dev/null
     
-    # 4. Ajouter l'utilisateur au groupe www-data
+    # 4. Permissions spéciales pour config.json
+    print_message "📄 Correction des permissions de config.json..." "$YELLOW"
+    if [ -f "config/config.json" ]; then
+        sudo chown www-data:www-data config/config.json 2>/dev/null
+        sudo chmod 664 config/config.json 2>/dev/null
+    fi
+    
+    # 5. Ajouter l'utilisateur au groupe www-data
     print_message "👤 Configuration des groupes..." "$YELLOW"
     sudo usermod -a -G www-data ubuntu 2>/dev/null
     sudo usermod -a -G www-data $USER 2>/dev/null
     
-    # 5. Corriger les permissions du dossier bot
+    # 6. Corriger les permissions du dossier bot
     print_message "🤖 Correction des permissions du bot..." "$YELLOW"
     sudo chown -R ubuntu:ubuntu bot/ 2>/dev/null
     sudo chmod -R 755 bot/ 2>/dev/null
     
-    # 6. Permissions plus larges si nécessaire
+    # 7. Permissions plus larges si nécessaire
     print_message "🔓 Application de permissions plus larges..." "$YELLOW"
     sudo chmod 666 database/database.db 2>/dev/null
     sudo chmod 777 database/ 2>/dev/null
     
-    # 7. Test d'écriture avec www-data
+    # 8. Installer sqlite3 pour Node.js si nécessaire
+    print_message "📦 Vérification de sqlite3 pour Node.js..." "$YELLOW"
+    if [ -d "bot/node_modules" ]; then
+        cd bot
+        if ! npm list sqlite3 >/dev/null 2>&1; then
+            print_message "📦 Installation de sqlite3..." "$YELLOW"
+            npm install sqlite3 --save 2>/dev/null
+        fi
+        cd ..
+    fi
+    
+    # 9. Test d'écriture avec www-data
     print_message "🧪 Test d'écriture avec www-data..." "$CYAN"
     if sudo -u www-data test -w database/database.db 2>/dev/null; then
         print_message "✅ www-data peut écrire dans la base" "$GREEN"
@@ -456,12 +474,21 @@ auto_fix_permissions() {
         sudo chmod 777 database/ 2>/dev/null
     fi
     
-    # 8. Test d'écriture réel
+    # 10. Test d'écriture réel
     print_message "🧪 Test d'écriture réel..." "$CYAN"
     if sudo -u www-data sqlite3 database/database.db "CREATE TABLE IF NOT EXISTS test_permissions (id INTEGER); DROP TABLE test_permissions;" 2>/dev/null; then
         print_message "✅ Test d'écriture réussi" "$GREEN"
     else
         print_message "❌ Test d'écriture échoué, permissions critiques appliquées" "$RED"
+    fi
+    
+    # 11. Test de config.json
+    print_message "🧪 Test de config.json..." "$CYAN"
+    if [ -f "config/config.json" ] && [ -r "config/config.json" ] && [ -w "config/config.json" ]; then
+        print_message "✅ config.json accessible" "$GREEN"
+    else
+        print_message "⚠️ Problème avec config.json, permissions élargies..." "$YELLOW"
+        sudo chmod 666 config/config.json 2>/dev/null
     fi
     
     print_message "✅ Correction automatique des permissions terminée" "$GREEN"
@@ -563,7 +590,14 @@ update_from_github() {
         if [ -f "scripts/migrate-db.js" ]; then
             print_message "🔄 Vérification des migrations..." "$YELLOW"
             if [ ! -f "migration.lock" ]; then
-                node scripts/migrate-db.js
+                # Vérifier si sqlite3 est installé
+                if npm list sqlite3 >/dev/null 2>&1; then
+                    node scripts/migrate-db.js
+                else
+                    print_message "⚠️ sqlite3 non installé, installation..." "$YELLOW"
+                    cd bot && npm install sqlite3 --save && cd ..
+                    node scripts/migrate-db.js
+                fi
             fi
         fi
         
