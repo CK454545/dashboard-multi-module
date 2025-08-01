@@ -520,10 +520,6 @@ $token = $_GET['token'] ?? '';
 
         <?php if ($control): ?>
         <div class="command-bar">
-            <!-- Bouton Configuration Intégré -->
-            <a href="/modules/timer-config.php?token=<?php echo htmlspecialchars($token); ?>" class="command-config-btn">
-                <i class="fas fa-cog"></i>
-            </a>
             
             <div class="command-section">
                 <h3><i class="fas fa-clock"></i> Ajuster le temps</h3>
@@ -567,6 +563,9 @@ $token = $_GET['token'] ?? '';
                     <button class="command-btn subtract" onclick="subtractManualTime()" style="padding: 8px 16px;">
                         <i class="fas fa-minus"></i>
                     </button>
+                    <a href="/modules/timer-config.php?token=<?php echo htmlspecialchars($token); ?>" class="command-config-btn" style="position: static; width: 32px; height: 32px; font-size: 0.8rem;">
+                        <i class="fas fa-cog"></i>
+                    </a>
                 </div>
             </div>
         </div>
