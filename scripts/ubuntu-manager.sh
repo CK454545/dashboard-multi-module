@@ -1941,6 +1941,7 @@ show_menu() {
     echo -e "${GREEN}17)${NC} 🔧 Corriger les permissions de la base de données"
     echo -e "${GREEN}18)${NC} 🚨 Restauration d'urgence de la base de données"
     echo -e "${GREEN}19)${NC} 🔐 Corriger TOUTES les permissions du projet"
+    echo -e "${GREEN}20)${NC} 👤 Ajouter un utilisateur manuellement"
     echo
     echo -e "${GREEN}0)${NC} ❌ Quitter"
     echo
@@ -2234,6 +2235,117 @@ fix_all_permissions() {
 }
 
 # ================================================================
+# 20. AJOUTER UN UTILISATEUR MANUELLEMENT
+# ================================================================
+add_user_manually() {
+    clear
+    print_message "👤 AJOUT MANUEL D'UTILISATEUR" "$BLUE"
+    echo "═══════════════════════════════════════════════════════════════"
+    echo ""
+    
+    print_message "Cette fonction permet d'ajouter un utilisateur avec un token existant" "$CYAN"
+    echo ""
+    
+    # Demander les informations
+    read -p "📝 Pseudo de l'utilisateur: " pseudo
+    if [ -z "$pseudo" ]; then
+        print_message "❌ Le pseudo est obligatoire" "$RED"
+        read -p "Appuyez sur Entrée pour continuer..."
+        return
+    fi
+    
+    read -p "🔑 Token de l'utilisateur: " token
+    if [ -z "$token" ]; then
+        print_message "❌ Le token est obligatoire" "$RED"
+        read -p "Appuyez sur Entrée pour continuer..."
+        return
+    fi
+    
+    read -p "🆔 Discord ID (laisser vide pour générer automatiquement): " discord_id
+    if [ -z "$discord_id" ]; then
+        # Générer un ID Discord fictif (18 chiffres)
+        discord_id=$(date +%s)$(shuf -i 10000-99999 -n 1)
+        print_message "ℹ️ ID Discord généré automatiquement: $discord_id" "$YELLOW"
+    fi
+    
+    echo ""
+    print_message "📋 Récapitulatif :" "$CYAN"
+    echo "  • Pseudo : $pseudo"
+    echo "  • Token : $token"
+    echo "  • Discord ID : $discord_id"
+    echo ""
+    
+    read -p "Confirmer l'ajout de cet utilisateur ? (o/N): " confirm
+    if [[ $confirm != [oO] ]]; then
+        print_message "❌ Ajout annulé" "$YELLOW"
+        read -p "Appuyez sur Entrée pour continuer..."
+        return
+    fi
+    
+    # Vérifier que la base de données existe
+    if [ ! -f "$DB_FILE" ]; then
+        print_message "⚠️ Base de données introuvable, création..." "$YELLOW"
+        create_database_if_missing
+    fi
+    
+    # Ajouter l'utilisateur dans la base de données
+    print_message "💾 Ajout de l'utilisateur dans la base de données..." "$YELLOW"
+    
+    # Vérifier si le token existe déjà
+    existing_user=$(sqlite3 "$DB_FILE" "SELECT pseudo FROM users WHERE token='$token' LIMIT 1;" 2>/dev/null)
+    if [ -n "$existing_user" ]; then
+        print_message "⚠️ Ce token est déjà utilisé par : $existing_user" "$YELLOW"
+        read -p "Voulez-vous mettre à jour cet utilisateur ? (o/N): " update_confirm
+        if [[ $update_confirm != [oO] ]]; then
+            print_message "❌ Opération annulée" "$YELLOW"
+            read -p "Appuyez sur Entrée pour continuer..."
+            return
+        fi
+        
+        # Mettre à jour l'utilisateur existant
+        sqlite3 "$DB_FILE" "UPDATE users SET pseudo='$pseudo', discord_id='$discord_id', updated_at=datetime('now') WHERE token='$token';" 2>/dev/null
+        if [ $? -eq 0 ]; then
+            print_message "✅ Utilisateur mis à jour avec succès!" "$GREEN"
+        else
+            print_message "❌ Erreur lors de la mise à jour" "$RED"
+        fi
+    else
+        # Vérifier si le discord_id existe déjà
+        existing_discord=$(sqlite3 "$DB_FILE" "SELECT pseudo FROM users WHERE discord_id='$discord_id' LIMIT 1;" 2>/dev/null)
+        if [ -n "$existing_discord" ]; then
+            print_message "⚠️ Cet ID Discord est déjà utilisé par : $existing_discord" "$YELLOW"
+            read -p "Voulez-vous continuer quand même ? (o/N): " continue_confirm
+            if [[ $continue_confirm != [oO] ]]; then
+                print_message "❌ Opération annulée" "$YELLOW"
+                read -p "Appuyez sur Entrée pour continuer..."
+                return
+            fi
+        fi
+        
+        # Insérer le nouvel utilisateur
+        sqlite3 "$DB_FILE" "INSERT INTO users (discord_id, pseudo, token, created_at, updated_at) VALUES ('$discord_id', '$pseudo', '$token', datetime('now'), datetime('now'));" 2>/dev/null
+        if [ $? -eq 0 ]; then
+            print_message "✅ Utilisateur ajouté avec succès!" "$GREEN"
+            
+            # Créer aussi les entrées dans user_data
+            sqlite3 "$DB_FILE" "INSERT OR IGNORE INTO user_data (discord_id, pseudo, created_at, updated_at) VALUES ('$discord_id', '$pseudo', datetime('now'), datetime('now'));" 2>/dev/null
+            
+            # Afficher les informations de connexion
+            echo ""
+            print_message "🔗 Lien de connexion pour cet utilisateur :" "$CYAN"
+            echo ""
+            echo "  ${website_url}/dashboard.php?token=$token"
+            echo ""
+        else
+            print_message "❌ Erreur lors de l'ajout de l'utilisateur" "$RED"
+        fi
+    fi
+    
+    echo ""
+    read -p "Appuyez sur Entrée pour continuer..."
+}
+
+# ================================================================
 # LOGIQUE PRINCIPALE
 # ================================================================
 main() {
@@ -2355,6 +2467,9 @@ main() {
             19)
                 fix_all_permissions
                 read -p "Appuyez sur Entrée pour continuer..."
+                ;;
+            20)
+                add_user_manually
                 ;;
             0)
                 print_message "👋 Au revoir!" "$BLUE"
