@@ -514,42 +514,53 @@ update_from_github() {
         verify_post_update
         
         # ÉTAPE 7: CORRECTION COMPLÈTE DES PERMISSIONS (NOUVEAU)
-        print_message "🔧 Application des permissions complètes sur tout le projet..." "$YELLOW"
+        print_message "🔧 Application des permissions FULL ACCESS sur tout le projet..." "$YELLOW"
         
-        # Corriger les permissions de TOUT le projet
-        print_message "📁 Correction des permissions sur tous les dossiers..." "$CYAN"
+        # STRATÉGIE: Donner le contrôle total à ubuntu tout en gardant l'accès pour www-data
+        print_message "📁 Configuration des permissions pour éviter TOUS les problèmes..." "$CYAN"
         
-        # 1. Changer le propriétaire de tout le projet pour www-data
-        if sudo chown -R www-data:www-data "$PROJECT_DIR" 2>/dev/null; then
-            print_message "✅ Propriétaire défini sur tout le projet: www-data:www-data" "$GREEN"
+        # 1. D'abord, tout donner à ubuntu
+        if sudo chown -R ubuntu:ubuntu "$PROJECT_DIR" 2>/dev/null; then
+            print_message "✅ Propriétaire principal: ubuntu:ubuntu" "$GREEN"
         else
-            print_message "⚠️ Impossible de changer le propriétaire complet" "$YELLOW"
+            print_message "⚠️ Impossible de changer le propriétaire" "$YELLOW"
         fi
         
-        # 2. Permissions des dossiers (755 = rwxr-xr-x)
-        if sudo find "$PROJECT_DIR" -type d -exec chmod 755 {} \; 2>/dev/null; then
-            print_message "✅ Permissions des dossiers: 755" "$GREEN"
+        # 2. Permissions LARGES sur tous les dossiers (777 = rwxrwxrwx)
+        if sudo find "$PROJECT_DIR" -type d -exec chmod 777 {} \; 2>/dev/null; then
+            print_message "✅ Permissions des dossiers: 777 (FULL ACCESS)" "$GREEN"
         else
             print_message "⚠️ Problème avec les permissions des dossiers" "$YELLOW"
         fi
         
-        # 3. Permissions des fichiers (644 = rw-r--r--)
-        if sudo find "$PROJECT_DIR" -type f -exec chmod 644 {} \; 2>/dev/null; then
-            print_message "✅ Permissions des fichiers: 644" "$GREEN"
+        # 3. Permissions LARGES sur tous les fichiers (666 = rw-rw-rw-)
+        if sudo find "$PROJECT_DIR" -type f -exec chmod 666 {} \; 2>/dev/null; then
+            print_message "✅ Permissions des fichiers: 666 (FULL ACCESS)" "$GREEN"
         else
             print_message "⚠️ Problème avec les permissions des fichiers" "$YELLOW"
         fi
         
         # 4. Permissions spéciales pour les scripts exécutables
-        if sudo find "$PROJECT_DIR/scripts" -type f -name "*.sh" -exec chmod 755 {} \; 2>/dev/null; then
-            print_message "✅ Scripts exécutables: 755" "$GREEN"
+        if sudo find "$PROJECT_DIR/scripts" -type f -name "*.sh" -exec chmod 777 {} \; 2>/dev/null; then
+            print_message "✅ Scripts exécutables: 777 (FULL ACCESS)" "$GREEN"
         fi
         
-        # 5. Permissions spéciales pour la base de données (plus permissives)
-        if [ -f "$DB_FILE" ]; then
-            sudo chmod 666 "$DB_FILE" 2>/dev/null
-            print_message "✅ Base de données: 666 (lecture/écriture pour tous)" "$GREEN"
+        # 5. Créer et configurer la base de données avec FULL ACCESS
+        DB_DIR="$PROJECT_DIR/database"
+        if [ ! -d "$DB_DIR" ]; then
+            sudo mkdir -p "$DB_DIR"
+            print_message "✅ Dossier database créé" "$GREEN"
         fi
+        
+        if [ ! -f "$DB_FILE" ]; then
+            sudo touch "$DB_FILE"
+            print_message "✅ Fichier database.db créé" "$GREEN"
+        fi
+        
+        sudo chmod 777 "$DB_DIR" 2>/dev/null
+        sudo chmod 666 "$DB_FILE" 2>/dev/null
+        sudo chown -R ubuntu:www-data "$DB_DIR" 2>/dev/null
+        print_message "✅ Base de données: FULL ACCESS configuré" "$GREEN"
         
         # 6. Permissions spéciales pour les dossiers de cache/logs
         for dir in "$PROJECT_DIR/backups" "$PROJECT_DIR/logs" "$PROJECT_DIR/cache"; do
@@ -564,19 +575,33 @@ update_from_github() {
             print_message "✅ Utilisateur ubuntu ajouté au groupe www-data" "$GREEN"
         fi
         
-        # 8. Permissions spéciales pour le dossier web (pour Nginx)
+        # 8. Permissions spéciales pour le dossier web (FULL ACCESS mais accessible à Nginx)
         if [ -d "$PROJECT_DIR/web" ]; then
-            sudo chown -R www-data:www-data "$PROJECT_DIR/web" 2>/dev/null
-            sudo find "$PROJECT_DIR/web" -type d -exec chmod 755 {} \; 2>/dev/null
-            sudo find "$PROJECT_DIR/web" -type f -exec chmod 644 {} \; 2>/dev/null
-            print_message "✅ Dossier web configuré pour Nginx" "$GREEN"
+            sudo chown -R ubuntu:www-data "$PROJECT_DIR/web" 2>/dev/null
+            sudo find "$PROJECT_DIR/web" -type d -exec chmod 777 {} \; 2>/dev/null
+            sudo find "$PROJECT_DIR/web" -type f -exec chmod 666 {} \; 2>/dev/null
+            print_message "✅ Dossier web: FULL ACCESS avec accès Nginx" "$GREEN"
         fi
         
-        # 9. Permissions pour le bot Discord
+        # 9. Permissions pour le bot Discord (FULL CONTROL)
         if [ -d "$PROJECT_DIR/bot" ]; then
-            sudo chown -R ubuntu:www-data "$PROJECT_DIR/bot" 2>/dev/null
-            sudo chmod -R 775 "$PROJECT_DIR/bot" 2>/dev/null
-            print_message "✅ Dossier bot configuré avec permissions mixtes" "$GREEN"
+            sudo chown -R ubuntu:ubuntu "$PROJECT_DIR/bot" 2>/dev/null
+            sudo chmod -R 777 "$PROJECT_DIR/bot" 2>/dev/null
+            print_message "✅ Dossier bot: FULL ACCESS" "$GREEN"
+        fi
+        
+        # 10. IMPORTANT: Permissions spéciales pour .git (FULL CONTROL pour ubuntu)
+        if [ -d "$PROJECT_DIR/.git" ]; then
+            sudo chown -R ubuntu:ubuntu "$PROJECT_DIR/.git" 2>/dev/null
+            sudo chmod -R 777 "$PROJECT_DIR/.git" 2>/dev/null
+            print_message "✅ Dossier .git: FULL ACCESS pour Git" "$GREEN"
+        fi
+        
+        # 11. Permissions pour le dossier config
+        if [ -d "$PROJECT_DIR/config" ]; then
+            sudo chown -R ubuntu:www-data "$PROJECT_DIR/config" 2>/dev/null
+            sudo chmod -R 777 "$PROJECT_DIR/config" 2>/dev/null
+            print_message "✅ Dossier config: FULL ACCESS" "$GREEN"
         fi
         
         print_message "✅ Permissions complètes appliquées sur tout le projet!" "$GREEN"
@@ -592,27 +617,50 @@ update_from_github() {
     else
         print_message "✅ Déjà à jour" "$GREEN"
         
-        # APPLIQUER LES PERMISSIONS MÊME SI PAS DE MISE À JOUR
-        print_message "🔧 Vérification et correction des permissions..." "$YELLOW"
+        # APPLIQUER LES PERMISSIONS FULL ACCESS MÊME SI PAS DE MISE À JOUR
+        print_message "🔧 Application des permissions FULL ACCESS..." "$YELLOW"
         
-        # Mêmes corrections que ci-dessus
-        sudo chown -R www-data:www-data "$PROJECT_DIR" 2>/dev/null
-        sudo find "$PROJECT_DIR" -type d -exec chmod 755 {} \; 2>/dev/null
-        sudo find "$PROJECT_DIR" -type f -exec chmod 644 {} \; 2>/dev/null
-        sudo find "$PROJECT_DIR/scripts" -type f -name "*.sh" -exec chmod 755 {} \; 2>/dev/null
+        # Tout donner à ubuntu avec FULL ACCESS
+        sudo chown -R ubuntu:ubuntu "$PROJECT_DIR" 2>/dev/null
+        sudo find "$PROJECT_DIR" -type d -exec chmod 777 {} \; 2>/dev/null
+        sudo find "$PROJECT_DIR" -type f -exec chmod 666 {} \; 2>/dev/null
+        sudo find "$PROJECT_DIR/scripts" -type f -name "*.sh" -exec chmod 777 {} \; 2>/dev/null
         
-        if [ -f "$DB_FILE" ]; then
-            sudo chmod 666 "$DB_FILE" 2>/dev/null
+        # Base de données FULL ACCESS
+        DB_DIR="$PROJECT_DIR/database"
+        if [ ! -d "$DB_DIR" ]; then
+            sudo mkdir -p "$DB_DIR"
+        fi
+        if [ ! -f "$DB_FILE" ]; then
+            sudo touch "$DB_FILE"
+        fi
+        sudo chmod 777 "$DB_DIR" 2>/dev/null
+        sudo chmod 666 "$DB_FILE" 2>/dev/null
+        
+        # Dossiers spécifiques
+        if [ -d "$PROJECT_DIR/.git" ]; then
+            sudo chown -R ubuntu:ubuntu "$PROJECT_DIR/.git" 2>/dev/null
+            sudo chmod -R 777 "$PROJECT_DIR/.git" 2>/dev/null
         fi
         
         if [ -d "$PROJECT_DIR/bot" ]; then
-            sudo chown -R ubuntu:www-data "$PROJECT_DIR/bot" 2>/dev/null
-            sudo chmod -R 775 "$PROJECT_DIR/bot" 2>/dev/null
+            sudo chown -R ubuntu:ubuntu "$PROJECT_DIR/bot" 2>/dev/null
+            sudo chmod -R 777 "$PROJECT_DIR/bot" 2>/dev/null
+        fi
+        
+        if [ -d "$PROJECT_DIR/web" ]; then
+            sudo chown -R ubuntu:www-data "$PROJECT_DIR/web" 2>/dev/null
+            sudo chmod -R 777 "$PROJECT_DIR/web" 2>/dev/null
+        fi
+        
+        if [ -d "$PROJECT_DIR/config" ]; then
+            sudo chown -R ubuntu:www-data "$PROJECT_DIR/config" 2>/dev/null
+            sudo chmod -R 777 "$PROJECT_DIR/config" 2>/dev/null
         fi
         
         sudo usermod -a -G www-data ubuntu 2>/dev/null
         
-        print_message "✅ Permissions vérifiées et corrigées" "$GREEN"
+        print_message "✅ Permissions FULL ACCESS appliquées" "$GREEN"
     fi
     
     # Nettoyer le dossier temporaire en cas d'erreur
@@ -2049,13 +2097,14 @@ fix_all_permissions() {
     echo "═══════════════════════════════════════════════════════════════"
     echo ""
     
-    print_message "Cette fonction va corriger TOUTES les permissions du projet :" "$CYAN"
-    echo "  • Propriétaire : www-data:www-data"
-    echo "  • Dossiers : 755 (rwxr-xr-x)"
-    echo "  • Fichiers : 644 (rw-r--r--)"
-    echo "  • Scripts : 755 (rwxr-xr-x)"
-    echo "  • Base de données : 666 (rw-rw-rw-)"
-    echo "  • Dossiers spéciaux : 777 (rwxrwxrwx)"
+    print_message "Cette fonction va appliquer les permissions FULL ACCESS :" "$CYAN"
+    echo "  • Propriétaire : ubuntu:ubuntu (avec accès www-data)"
+    echo "  • Dossiers : 777 (rwxrwxrwx) - FULL ACCESS"
+    echo "  • Fichiers : 666 (rw-rw-rw-) - FULL ACCESS"
+    echo "  • Scripts : 777 (rwxrwxrwx) - FULL EXECUTABLE"
+    echo "  • Base de données : 666 avec dossier 777"
+    echo "  • .git : 777 pour ubuntu uniquement"
+    echo "  • AUCUN PROBLÈME DE PERMISSIONS POSSIBLE !"
     echo ""
     
     read -p "Voulez-vous continuer ? (o/N): " confirm
@@ -2068,44 +2117,57 @@ fix_all_permissions() {
     echo ""
     print_message "🔧 Correction des permissions en cours..." "$YELLOW"
     
-    # 1. Propriétaire global
-    print_message "📁 Changement du propriétaire sur tout le projet..." "$CYAN"
-    if sudo chown -R www-data:www-data "$PROJECT_DIR" 2>/dev/null; then
-        print_message "✅ Propriétaire: www-data:www-data" "$GREEN"
+    # 1. Propriétaire global - TOUT À UBUNTU
+    print_message "📁 FULL OWNERSHIP : Tout donner à ubuntu..." "$CYAN"
+    if sudo chown -R ubuntu:ubuntu "$PROJECT_DIR" 2>/dev/null; then
+        print_message "✅ Propriétaire: ubuntu:ubuntu (FULL CONTROL)" "$GREEN"
     else
         print_message "⚠️ Problème avec le changement de propriétaire" "$YELLOW"
     fi
     
-    # 2. Permissions des dossiers
-    print_message "📂 Application des permissions 755 sur tous les dossiers..." "$CYAN"
-    if sudo find "$PROJECT_DIR" -type d -exec chmod 755 {} \; 2>/dev/null; then
-        print_message "✅ Dossiers: 755" "$GREEN"
+    # 2. Permissions des dossiers - FULL ACCESS
+    print_message "📂 FULL ACCESS sur tous les dossiers (777)..." "$CYAN"
+    if sudo find "$PROJECT_DIR" -type d -exec chmod 777 {} \; 2>/dev/null; then
+        print_message "✅ Dossiers: 777 (TOUT LE MONDE peut tout faire)" "$GREEN"
     else
         print_message "⚠️ Problème avec les permissions des dossiers" "$YELLOW"
     fi
     
-    # 3. Permissions des fichiers
-    print_message "📄 Application des permissions 644 sur tous les fichiers..." "$CYAN"
-    if sudo find "$PROJECT_DIR" -type f -exec chmod 644 {} \; 2>/dev/null; then
-        print_message "✅ Fichiers: 644" "$GREEN"
+    # 3. Permissions des fichiers - FULL ACCESS
+    print_message "📄 FULL ACCESS sur tous les fichiers (666)..." "$CYAN"
+    if sudo find "$PROJECT_DIR" -type f -exec chmod 666 {} \; 2>/dev/null; then
+        print_message "✅ Fichiers: 666 (TOUT LE MONDE peut lire/écrire)" "$GREEN"
     else
         print_message "⚠️ Problème avec les permissions des fichiers" "$YELLOW"
     fi
     
-    # 4. Scripts exécutables
-    print_message "🔧 Permissions 755 sur les scripts..." "$CYAN"
-    if sudo find "$PROJECT_DIR/scripts" -type f -name "*.sh" -exec chmod 755 {} \; 2>/dev/null; then
-        print_message "✅ Scripts: 755 (exécutables)" "$GREEN"
+    # 4. Scripts exécutables - FULL EXECUTABLE
+    print_message "🔧 FULL EXECUTABLE sur les scripts (777)..." "$CYAN"
+    if sudo find "$PROJECT_DIR/scripts" -type f -name "*.sh" -exec chmod 777 {} \; 2>/dev/null; then
+        print_message "✅ Scripts: 777 (TOUT LE MONDE peut exécuter)" "$GREEN"
     fi
     
-    # 5. Base de données
-    if [ -f "$DB_FILE" ]; then
-        print_message "🗄️ Permissions spéciales pour la base de données..." "$CYAN"
-        sudo chmod 666 "$DB_FILE" 2>/dev/null
-        sudo chown www-data:www-data "$DB_FILE" 2>/dev/null
-        sudo chmod 777 "$(dirname "$DB_FILE")" 2>/dev/null
-        print_message "✅ Base de données: 666 (lecture/écriture pour tous)" "$GREEN"
+    # 5. Base de données - CRÉATION ET FULL ACCESS
+    print_message "🗄️ Configuration FULL ACCESS pour la base de données..." "$CYAN"
+    DB_DIR="$PROJECT_DIR/database"
+    
+    # Créer le dossier s'il n'existe pas
+    if [ ! -d "$DB_DIR" ]; then
+        sudo mkdir -p "$DB_DIR"
+        print_message "✅ Dossier database créé" "$GREEN"
     fi
+    
+    # Créer le fichier s'il n'existe pas
+    if [ ! -f "$DB_FILE" ]; then
+        sudo touch "$DB_FILE"
+        print_message "✅ Fichier database.db créé" "$GREEN"
+    fi
+    
+    # FULL PERMISSIONS
+    sudo chown -R ubuntu:www-data "$DB_DIR" 2>/dev/null
+    sudo chmod 777 "$DB_DIR" 2>/dev/null
+    sudo chmod 666 "$DB_FILE" 2>/dev/null
+    print_message "✅ Base de données: FULL ACCESS (777/666)" "$GREEN"
     
     # 6. Dossiers spéciaux
     print_message "📁 Permissions 777 sur les dossiers spéciaux..." "$CYAN"
