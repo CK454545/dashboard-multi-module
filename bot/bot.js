@@ -551,6 +551,27 @@ client.once('ready', async () => {
         
         logSuccess('Toutes les commandes enregistrées et forcées à l\'affichage');
         
+        // FORCER l'enregistrement des commandes (même si elles existent déjà)
+        logInfo('FORÇAGE de l\'enregistrement des commandes...');
+        
+        for (const guild of client.guilds.cache.values()) {
+            try {
+                // Forcer l'enregistrement même si les commandes existent
+                await guild.commands.set(commands);
+                logSuccess(`Commandes FORCÉES dans le serveur ${guild.name}`);
+                
+                // Attendre un peu pour que Discord synchronise
+                await new Promise(resolve => setTimeout(resolve, 1000));
+                
+                // Vérifier que les commandes sont bien enregistrées
+                const verifiedCommands = await guild.commands.fetch();
+                logInfo(`Commandes vérifiées dans ${guild.name}: ${verifiedCommands.size}`);
+                
+            } catch (err) {
+                logWarning(`Impossible d'enregistrer les commandes dans ${guild.name}`, err);
+            }
+        }
+        
     } catch (error) {
         logError('Erreur lors de l\'enregistrement des commandes', error);
     }
