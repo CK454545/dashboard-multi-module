@@ -2380,14 +2380,13 @@ add_user_manually() {
             fi
         fi
         
-        # Insérer le nouvel utilisateur (structure SQLite réelle)
-        error_msg=$(sqlite3 "$DB_FILE" "INSERT INTO users (token, discord_id, pseudo, created_at) VALUES ('$token', '$discord_id', '$pseudo', datetime('now'));" 2>&1)
+        # Insérer le nouvel utilisateur (sans updated_at)
+        error_msg=$(sqlite3 "$DB_FILE" "INSERT INTO users (discord_id, pseudo, token, created_at) VALUES ('$discord_id', '$pseudo', '$token', datetime('now'));" 2>&1)
         if [ $? -eq 0 ]; then
             print_message "✅ Utilisateur ajouté avec succès!" "$GREEN"
             
             # Créer aussi les entrées dans user_data
-            sqlite3 "$DB_FILE" "INSERT OR IGNORE INTO user_data (token, module, key, value) VALUES ('$token', 'wins', 'count', '0');" 2>/dev/null
-            sqlite3 "$DB_FILE" "INSERT OR IGNORE INTO user_data (token, module, key, value) VALUES ('$token', 'wins', 'multiplier', '1.00');" 2>/dev/null
+            sqlite3 "$DB_FILE" "INSERT OR IGNORE INTO user_data (discord_id, pseudo, created_at, updated_at) VALUES ('$discord_id', '$pseudo', datetime('now'), datetime('now'));" 2>/dev/null
             
             # Afficher les informations de connexion
             echo ""
