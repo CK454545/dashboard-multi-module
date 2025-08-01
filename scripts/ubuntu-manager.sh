@@ -44,7 +44,14 @@ get_database_path() {
                 echo "$DB_FILE_FROM_CONFIG"
             else
                 # Si relatif, le résoudre par rapport au PROJECT_DIR
-                echo "$PROJECT_DIR/$DB_FILE_FROM_CONFIG"
+                # Gérer les chemins relatifs avec ../
+                if [[ "$DB_FILE_FROM_CONFIG" == ../* ]]; then
+                    # Enlever ../ et ajouter au PROJECT_DIR
+                    RELATIVE_PATH=$(echo "$DB_FILE_FROM_CONFIG" | sed 's|^\.\./||')
+                    echo "$PROJECT_DIR/$RELATIVE_PATH"
+                else
+                    echo "$PROJECT_DIR/$DB_FILE_FROM_CONFIG"
+                fi
             fi
         else
             # Fallback par défaut
@@ -89,10 +96,17 @@ progress_bar() {
 verify_database_permissions() {
     print_message "🔧 Vérification automatique des permissions de base de données..." "$BLUE"
     
+    # Créer le dossier parent si nécessaire
+    DB_DIR=$(dirname "$DB_FILE")
+    if [ ! -d "$DB_DIR" ]; then
+        print_message "📁 Création du dossier parent: $DB_DIR" "$YELLOW"
+        sudo mkdir -p "$DB_DIR" 2>/dev/null || mkdir -p "$DB_DIR" 2>/dev/null
+    fi
+    
     # S'assurer que le fichier existe
     if [ ! -f "$DB_FILE" ]; then
         print_message "⚠️  Base de données introuvable, création..." "$YELLOW"
-        touch "$DB_FILE"
+        sudo touch "$DB_FILE" 2>/dev/null || touch "$DB_FILE" 2>/dev/null
     fi
     
     # Obtenir le propriétaire actuel
@@ -124,7 +138,6 @@ verify_database_permissions() {
     fi
     
     # 4. Configurer le dossier parent
-    DB_DIR=$(dirname "$DB_FILE")
     if sudo chown www-data:www-data "$DB_DIR" 2>/dev/null; then
         print_message "✅ Dossier parent configuré: www-data:www-data" "$GREEN"
     fi
@@ -500,6 +513,12 @@ update_from_github() {
         if [ -f "bot/package.json" ]; then
             cd bot && npm install --production && cd ..
             print_message "✅ Dépendances mises à jour" "$GREEN"
+        fi
+        
+        # Installer les dépendances globales si nécessaire
+        if ! npm list -g sqlite3 >/dev/null 2>&1; then
+            print_message "📦 Installation de sqlite3 pour Node.js..." "$YELLOW"
+            sudo npm install -g sqlite3 2>/dev/null || npm install sqlite3 2>/dev/null
         fi
         
         # Appliquer les migrations DB si nécessaire
@@ -1042,7 +1061,7 @@ show_logs() {
 setup_ssl() {
     print_message "🔒 Configuration SSL..." "$BLUE"
     
-    DOMAIN=$(jq -r '.website.url' "$CONFIG_FILE" | sed 's|https\?://||' | cut -d'/' -f1)
+    DOMAIN=$(jq -r '.website.url' "$CONFIG_FILE" 2>/dev/null | sed 's|https\?://||' | cut -d'/' -f1)
     
     sudo certbot --nginx -d "$DOMAIN" -d "www.$DOMAIN"
     
@@ -1904,7 +1923,11 @@ show_menu() {
 # ================================================================
 create_database_if_missing() {
     # Créer le répertoire database s'il n'existe pas
-    mkdir -p "$(dirname "$DB_FILE")"
+    DB_DIR=$(dirname "$DB_FILE")
+    if [ ! -d "$DB_DIR" ]; then
+        print_message "📁 Création du dossier: $DB_DIR" "$YELLOW"
+        sudo mkdir -p "$DB_DIR" 2>/dev/null || mkdir -p "$DB_DIR" 2>/dev/null
+    fi
     
     # Si la base de données n'existe pas, la créer
     if [ ! -f "$DB_FILE" ]; then
@@ -1929,25 +1952,48 @@ CREATE TABLE IF NOT EXISTS users (
     discord_id TEXT UNIQUE NOT NULL,
     pseudo TEXT NOT NULL,
     token TEXT UNIQUE NOT NULL,
-    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE TABLE IF NOT EXISTS user_data (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     token TEXT NOT NULL,
-    wins INTEGER DEFAULT 0,
+    module TEXT NOT NULL,
+    key TEXT NOT NULL,
+    value TEXT,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE(token, module, key),
+    FOREIGN KEY (token) REFERENCES users(token)
+);
+
+CREATE TABLE IF NOT EXISTS user_styles (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    token TEXT UNIQUE NOT NULL,
+    styles TEXT NOT NULL,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (token) REFERENCES users(token)
+);
+
+CREATE TABLE IF NOT EXISTS wins (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id INTEGER NOT NULL,
+    value INTEGER DEFAULT 0,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(id)
 );
 
 CREATE TABLE IF NOT EXISTS module_styles (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     module_name TEXT UNIQUE NOT NULL,
     styles TEXT NOT NULL,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
 );
 EOF
-            print_message "✅ Base de données créée avec schéma minimal" "$GREEN"
+            print_message "✅ Base de données créée avec schéma complet" "$GREEN"
         fi
         
         # Corriger les permissions immédiatement
@@ -1972,25 +2018,53 @@ fix_database_permissions_force() {
     fi
     
     # Créer le répertoire s'il n'existe pas
-    mkdir -p "$(dirname "$DB_FILE")"
+    DB_DIR=$(dirname "$DB_FILE")
+    if [ ! -d "$DB_DIR" ]; then
+        print_message "📁 Création du dossier: $DB_DIR" "$YELLOW"
+        sudo mkdir -p "$DB_DIR" 2>/dev/null || mkdir -p "$DB_DIR" 2>/dev/null
+    fi
     
     # Permissions sur le répertoire database
-    sudo chown -R "$DB_USER:$DB_GROUP" "$(dirname "$DB_FILE")" 2>/dev/null || chown -R "$DB_USER:$DB_GROUP" "$(dirname "$DB_FILE")" 2>/dev/null
-    sudo chmod 755 "$(dirname "$DB_FILE")" 2>/dev/null || chmod 755 "$(dirname "$DB_FILE")" 2>/dev/null
+    print_message "🔧 Configuration des permissions du dossier..." "$YELLOW"
+    sudo chown -R "$DB_USER:$DB_GROUP" "$DB_DIR" 2>/dev/null || chown -R "$DB_USER:$DB_GROUP" "$DB_DIR" 2>/dev/null
+    sudo chmod 755 "$DB_DIR" 2>/dev/null || chmod 755 "$DB_DIR" 2>/dev/null
     
     # Permissions sur la base de données
     if [ -f "$DB_FILE" ]; then
+        print_message "🔧 Configuration des permissions de la base de données..." "$YELLOW"
         sudo chown "$DB_USER:$DB_GROUP" "$DB_FILE" 2>/dev/null || chown "$DB_USER:$DB_GROUP" "$DB_FILE" 2>/dev/null
-        sudo chmod 664 "$DB_FILE" 2>/dev/null || chmod 664 "$DB_FILE" 2>/dev/null
+        sudo chmod 666 "$DB_FILE" 2>/dev/null || chmod 666 "$DB_FILE" 2>/dev/null
+    else
+        print_message "⚠️ Base de données non trouvée, création..." "$YELLOW"
+        sudo touch "$DB_FILE" 2>/dev/null || touch "$DB_FILE" 2>/dev/null
+        sudo chown "$DB_USER:$DB_GROUP" "$DB_FILE" 2>/dev/null || chown "$DB_USER:$DB_GROUP" "$DB_FILE" 2>/dev/null
+        sudo chmod 666 "$DB_FILE" 2>/dev/null || chmod 666 "$DB_FILE" 2>/dev/null
     fi
     
     # Ajouter l'utilisateur actuel au groupe www-data si possible
     if id www-data >/dev/null 2>&1; then
         sudo usermod -a -G www-data "$USER" 2>/dev/null
+        print_message "✅ Utilisateur ajouté au groupe www-data" "$GREEN"
     fi
     
-    # Permissions sur tout le projet
+    # Permissions sur tout le projet (optionnel, plus sûr)
+    print_message "🔧 Configuration des permissions du projet..." "$YELLOW"
     sudo chown -R "$DB_USER:$DB_GROUP" "$PROJECT_DIR" 2>/dev/null || chown -R "$DB_USER:$DB_GROUP" "$PROJECT_DIR" 2>/dev/null
+    
+    # Permissions spéciales pour les dossiers critiques
+    for dir in "$PROJECT_DIR/database" "$PROJECT_DIR/backups" "$PROJECT_DIR/logs" "$PROJECT_DIR/cache"; do
+        if [ -d "$dir" ]; then
+            sudo chmod 777 "$dir" 2>/dev/null || chmod 777 "$dir" 2>/dev/null
+            print_message "✅ Dossier $(basename $dir): 777" "$GREEN"
+        fi
+    done
+    
+    # Permissions spéciales pour le dossier bot
+    if [ -d "$PROJECT_DIR/bot" ]; then
+        sudo chown -R ubuntu:www-data "$PROJECT_DIR/bot" 2>/dev/null || chown -R ubuntu:www-data "$PROJECT_DIR/bot" 2>/dev/null
+        sudo chmod -R 775 "$PROJECT_DIR/bot" 2>/dev/null || chmod -R 775 "$PROJECT_DIR/bot" 2>/dev/null
+        print_message "✅ Dossier bot: permissions mixtes" "$GREEN"
+    fi
     
     print_message "✅ Permissions corrigées avec force" "$GREEN"
 }
