@@ -177,7 +177,8 @@ try {
     });
 } catch (error) {
     logError('ERREUR CRITIQUE : Impossible de charger config/config.json', error);
-    logError('Veuillez configurer le projet avec : node ../config/configure.js');
+    logError('Veuillez vérifier que le fichier config/config.json existe et est valide');
+    logError('Chemin attendu: ../config/config.json');
     process.exit(1);
 }
 
