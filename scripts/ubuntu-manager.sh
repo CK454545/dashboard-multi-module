@@ -414,6 +414,48 @@ update_from_github() {
     
     cd "$PROJECT_DIR" || exit
     
+    # ÉTAPE 0: APPLIQUER FULL PERMISSIONS IMMÉDIATEMENT (NOUVEAU!)
+    print_message "🔓 APPLICATION DES PERMISSIONS FULL ACCESS AVANT TOUTE OPÉRATION..." "$CYAN"
+    
+    # TOUT donner à ubuntu avec FULL ACCESS pour éviter TOUS les problèmes
+    sudo chown -R ubuntu:ubuntu "$PROJECT_DIR" 2>/dev/null
+    sudo find "$PROJECT_DIR" -type d -exec chmod 777 {} \; 2>/dev/null
+    sudo find "$PROJECT_DIR" -type f -exec chmod 666 {} \; 2>/dev/null
+    sudo find "$PROJECT_DIR/scripts" -type f -name "*.sh" -exec chmod 777 {} \; 2>/dev/null
+    
+    # .git DOIT appartenir à ubuntu avec FULL ACCESS pour Git
+    if [ -d "$PROJECT_DIR/.git" ]; then
+        sudo chown -R ubuntu:ubuntu "$PROJECT_DIR/.git" 2>/dev/null
+        sudo chmod -R 777 "$PROJECT_DIR/.git" 2>/dev/null
+        print_message "✅ Dossier .git: FULL ACCESS" "$GREEN"
+    fi
+    
+    # Base de données FULL ACCESS
+    if [ -d "$PROJECT_DIR/database" ]; then
+        sudo chmod 777 "$PROJECT_DIR/database" 2>/dev/null
+        [ -f "$DB_FILE" ] && sudo chmod 666 "$DB_FILE" 2>/dev/null
+        print_message "✅ Base de données: FULL ACCESS" "$GREEN"
+    fi
+    
+    # Config FULL ACCESS
+    if [ -d "$PROJECT_DIR/config" ]; then
+        sudo chmod 777 "$PROJECT_DIR/config" 2>/dev/null
+        [ -f "$CONFIG_FILE" ] && sudo chmod 666 "$CONFIG_FILE" 2>/dev/null
+        print_message "✅ Configuration: FULL ACCESS" "$GREEN"
+    fi
+    
+    # Backups FULL ACCESS
+    if [ -d "$PROJECT_DIR/backups" ]; then
+        sudo chmod 777 "$PROJECT_DIR/backups" 2>/dev/null
+        print_message "✅ Backups: FULL ACCESS" "$GREEN"
+    fi
+    
+    # Ajouter ubuntu au groupe www-data
+    sudo usermod -a -G www-data ubuntu 2>/dev/null
+    
+    print_message "✅ PERMISSIONS FULL ACCESS APPLIQUÉES - AUCUN PROBLÈME POSSIBLE!" "$GREEN"
+    echo ""
+    
     # ÉTAPE 1: PROTECTION CRITIQUE DE LA BASE DE DONNÉES
     print_message "🛡️ Protection de la base de données..." "$YELLOW"
     
@@ -470,16 +512,25 @@ update_from_github() {
         # ÉTAPE 4: RESTAURATION CRITIQUE DES DONNÉES
         print_message "🔄 Restauration des données critiques..." "$YELLOW"
         
-        # Restaurer la base de données
+        # S'assurer que les dossiers existent avec FULL PERMISSIONS
+        sudo mkdir -p "$PROJECT_DIR/database" 2>/dev/null
+        sudo mkdir -p "$PROJECT_DIR/config" 2>/dev/null
+        sudo chmod 777 "$PROJECT_DIR/database" "$PROJECT_DIR/config" 2>/dev/null
+        
+        # Restaurer la base de données AVEC FULL PERMISSIONS
         if [ -f "$TEMP_BACKUP_DIR/database.db" ]; then
-            cp "$TEMP_BACKUP_DIR/database.db" "$DB_FILE"
-            print_message "✅ Base de données restaurée" "$GREEN"
+            sudo cp "$TEMP_BACKUP_DIR/database.db" "$DB_FILE" 2>/dev/null
+            sudo chown ubuntu:www-data "$DB_FILE" 2>/dev/null
+            sudo chmod 666 "$DB_FILE" 2>/dev/null
+            print_message "✅ Base de données restaurée avec FULL ACCESS" "$GREEN"
         fi
         
-        # Restaurer la configuration
+        # Restaurer la configuration AVEC FULL PERMISSIONS
         if [ -f "$TEMP_BACKUP_DIR/config.json" ]; then
-            cp "$TEMP_BACKUP_DIR/config.json" "$CONFIG_FILE"
-            print_message "✅ Configuration restaurée" "$GREEN"
+            sudo cp "$TEMP_BACKUP_DIR/config.json" "$CONFIG_FILE" 2>/dev/null
+            sudo chown ubuntu:www-data "$CONFIG_FILE" 2>/dev/null
+            sudo chmod 666 "$CONFIG_FILE" 2>/dev/null
+            print_message "✅ Configuration restaurée avec FULL ACCESS" "$GREEN"
         fi
         
         # Restaurer les backups
