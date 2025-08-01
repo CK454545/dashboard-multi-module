@@ -439,7 +439,7 @@ create_user_manually() {
     fi
     
     # Vérifier si l'utilisateur existe déjà
-    EXISTING_USER=$(sqlite3 "$DB_FILE" "SELECT username FROM users WHERE token = '$user_token' OR username = '$user_username';" 2>/dev/null)
+    EXISTING_USER=$(sqlite3 "$DB_FILE" "SELECT pseudo FROM users WHERE token = '$user_token' OR pseudo = '$user_username';" 2>/dev/null)
     
     if [ -n "$EXISTING_USER" ]; then
         print_message "⚠️ Utilisateur déjà existant: $EXISTING_USER" "$YELLOW"
@@ -466,29 +466,34 @@ create_user_manually() {
     # Insérer l'utilisateur dans la base de données
     print_message "💾 Ajout de l'utilisateur à la base de données..." "$YELLOW"
     
-    SQL_INSERT="INSERT INTO users (token, username, discord_id, email, created_at, last_login) VALUES ('$user_token', '$user_username', $user_id, $user_email, datetime('now'), datetime('now'));"
+    # Adapter les champs selon la structure réelle de la base
+    if [ -z "$user_id" ]; then
+        # Si pas d'ID Discord, utiliser le token comme ID temporaire
+        user_id="$user_token"
+    fi
+    
+    SQL_INSERT="INSERT INTO users (token, discord_id, pseudo) VALUES ('$user_token', '$user_id', '$user_username');"
     
     if sqlite3 "$DB_FILE" "$SQL_INSERT" 2>/dev/null; then
         print_message "✅ Utilisateur créé avec succès!" "$GREEN"
         
         # Afficher les détails de l'utilisateur créé
-        USER_DETAILS=$(sqlite3 "$DB_FILE" "SELECT id, username, discord_id, email, created_at FROM users WHERE token = '$user_token' ORDER BY id DESC LIMIT 1;" 2>/dev/null)
+        USER_DETAILS=$(sqlite3 "$DB_FILE" "SELECT token, pseudo, discord_id, created_at FROM users WHERE token = '$user_token';" 2>/dev/null)
         
         if [ -n "$USER_DETAILS" ]; then
             print_message "📋 Détails de l'utilisateur:" "$CYAN"
-            echo "$USER_DETAILS" | while IFS='|' read -r id username discord_id email created_at; do
-                echo "   ID: $id"
-                echo "   Pseudo: $username"
+            echo "$USER_DETAILS" | while IFS='|' read -r token pseudo discord_id created_at; do
+                echo "   Token: $token"
+                echo "   Pseudo: $pseudo"
                 echo "   Discord ID: ${discord_id:-Non défini}"
-                echo "   Email: ${email:-Non défini}"
                 echo "   Créé le: $created_at"
             done
         fi
         
         # Créer une entrée dans user_data
-        USER_ID=$(sqlite3 "$DB_FILE" "SELECT id FROM users WHERE token = '$user_token' ORDER BY id DESC LIMIT 1;" 2>/dev/null)
-        if [ -n "$USER_ID" ]; then
-            sqlite3 "$DB_FILE" "INSERT INTO user_data (user_id, data_type, data_value, created_at) VALUES ($USER_ID, 'initial_setup', 'manual_creation', datetime('now'));" 2>/dev/null
+        if [ -n "$user_token" ]; then
+            sqlite3 "$DB_FILE" "INSERT INTO user_data (token, module, key, value) VALUES ('$user_token', 'wins', 'count', '0');" 2>/dev/null
+            sqlite3 "$DB_FILE" "INSERT INTO user_data (token, module, key, value) VALUES ('$user_token', 'wins', 'multiplier', '1.00');" 2>/dev/null
             print_message "✅ Données utilisateur initialisées" "$GREEN"
         fi
         
