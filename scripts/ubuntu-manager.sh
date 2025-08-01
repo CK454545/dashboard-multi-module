@@ -407,7 +407,68 @@ verify_post_update() {
 }
 
 # ================================================================
-# 4. MISE À JOUR DEPUIS GITHUB
+# FONCTION DE CORRECTION AUTOMATIQUE DES PERMISSIONS (AMÉLIORÉE)
+# ================================================================
+auto_fix_permissions() {
+    print_message "🔧 Correction automatique des permissions après mise à jour..." "$BLUE"
+    
+    # 1. Corriger les permissions du projet entier
+    print_message "📁 Correction des permissions du projet..." "$YELLOW"
+    sudo chown -R ubuntu:ubuntu . 2>/dev/null
+    sudo chmod -R 755 . 2>/dev/null
+    
+    # 2. Permissions spécifiques pour les fichiers sensibles
+    print_message "📄 Correction des permissions des fichiers..." "$YELLOW"
+    sudo chmod 644 .gitignore LICENSE README.md SECURITY.md 2>/dev/null
+    sudo chmod 644 bot/*.json bot/*.js 2>/dev/null
+    sudo chmod 644 scripts/*.sh scripts/*.js 2>/dev/null
+    sudo chmod 644 web/*.php web/*.css 2>/dev/null
+    
+    # 3. Permissions spéciales pour la base de données
+    print_message "🗄️ Correction des permissions de la base de données..." "$YELLOW"
+    sudo chown www-data:www-data database/ 2>/dev/null
+    sudo chown www-data:www-data database/database.db 2>/dev/null
+    sudo chmod 755 database/ 2>/dev/null
+    sudo chmod 664 database/database.db 2>/dev/null
+    
+    # 4. Ajouter l'utilisateur au groupe www-data
+    print_message "👤 Configuration des groupes..." "$YELLOW"
+    sudo usermod -a -G www-data ubuntu 2>/dev/null
+    sudo usermod -a -G www-data $USER 2>/dev/null
+    
+    # 5. Corriger les permissions du dossier bot
+    print_message "🤖 Correction des permissions du bot..." "$YELLOW"
+    sudo chown -R ubuntu:ubuntu bot/ 2>/dev/null
+    sudo chmod -R 755 bot/ 2>/dev/null
+    
+    # 6. Permissions plus larges si nécessaire
+    print_message "🔓 Application de permissions plus larges..." "$YELLOW"
+    sudo chmod 666 database/database.db 2>/dev/null
+    sudo chmod 777 database/ 2>/dev/null
+    
+    # 7. Test d'écriture avec www-data
+    print_message "🧪 Test d'écriture avec www-data..." "$CYAN"
+    if sudo -u www-data test -w database/database.db 2>/dev/null; then
+        print_message "✅ www-data peut écrire dans la base" "$GREEN"
+    else
+        print_message "❌ www-data ne peut pas écrire, permissions critiques appliquées..." "$RED"
+        sudo chmod 777 database/database.db 2>/dev/null
+        sudo chmod 777 database/ 2>/dev/null
+    fi
+    
+    # 8. Test d'écriture réel
+    print_message "🧪 Test d'écriture réel..." "$CYAN"
+    if sudo -u www-data sqlite3 database/database.db "CREATE TABLE IF NOT EXISTS test_permissions (id INTEGER); DROP TABLE test_permissions;" 2>/dev/null; then
+        print_message "✅ Test d'écriture réussi" "$GREEN"
+    else
+        print_message "❌ Test d'écriture échoué, permissions critiques appliquées" "$RED"
+    fi
+    
+    print_message "✅ Correction automatique des permissions terminée" "$GREEN"
+}
+
+# ================================================================
+# 4. MISE À JOUR DEPUIS GITHUB (AMÉLIORÉE)
 # ================================================================
 update_from_github() {
     print_message "🔄 Vérification des mises à jour GitHub..." "$BLUE"
@@ -489,12 +550,8 @@ update_from_github() {
             print_message "✅ Backups restaurés" "$GREEN"
         fi
         
-        # ÉTAPE 5: CORRECTIONS POST-MISE À JOUR
-        verify_post_update
-        
-        # CORRECTION AUTOMATIQUE DES PERMISSIONS APRÈS MISE À JOUR
-        print_message "🔧 Correction automatique des permissions après mise à jour..." "$YELLOW"
-        verify_database_permissions
+        # ÉTAPE 5: CORRECTION AUTOMATIQUE DES PERMISSIONS (NOUVELLE)
+        auto_fix_permissions
         
         # Installer les nouvelles dépendances
         if [ -f "bot/package.json" ]; then
@@ -516,7 +573,7 @@ update_from_github() {
         # Nettoyer le dossier temporaire
         rm -rf "$TEMP_BACKUP_DIR"
         
-        print_message "✅ Mise à jour terminée avec PROTECTION des données!" "$GREEN"
+        print_message "✅ Mise à jour terminée avec PROTECTION des données et CORRECTION automatique des permissions!" "$GREEN"
         
         # Redémarrer les services
         pm2 restart all 2>/dev/null || true
@@ -539,39 +596,7 @@ start_services() {
     
     # CORRECTION AUTOMATIQUE DES PERMISSIONS AVANT DÉMARRAGE
     print_message "🔧 Vérification et correction des permissions avant démarrage..." "$YELLOW"
-    
-    # 1. Corriger les permissions du dossier parent
-    if sudo chown www-data:www-data "$(dirname "$DB_FILE")" 2>/dev/null; then
-        print_message "✅ Dossier parent configuré: www-data:www-data" "$GREEN"
-    fi
-    
-    if sudo chmod 755 "$(dirname "$DB_FILE")" 2>/dev/null; then
-        print_message "✅ Permissions du dossier parent: 755" "$GREEN"
-    fi
-    
-    # 2. Corriger les permissions de la base de données
-    if sudo chown www-data:www-data "$DB_FILE" 2>/dev/null; then
-        print_message "✅ Propriétaire corrigé: www-data:www-data" "$GREEN"
-    fi
-    
-    if sudo chmod 664 "$DB_FILE" 2>/dev/null; then
-        print_message "✅ Permissions corrigées: 664" "$GREEN"
-    fi
-    
-    # 3. Ajouter ubuntu au groupe www-data
-    if sudo usermod -a -G www-data ubuntu 2>/dev/null; then
-        print_message "✅ Utilisateur ubuntu ajouté au groupe www-data" "$GREEN"
-    fi
-    
-    # 4. Vérifier que les permissions sont correctes
-    if [ -r "$DB_FILE" ] && [ -w "$DB_FILE" ]; then
-        print_message "✅ Permissions de la base de données OK" "$GREEN"
-    else
-        print_message "⚠️ Problème de permissions, tentative avec permissions plus larges..." "$YELLOW"
-        sudo chmod 666 "$DB_FILE" 2>/dev/null
-        sudo chmod 777 "$(dirname "$DB_FILE")" 2>/dev/null
-        print_message "✅ Permissions élargies appliquées" "$GREEN"
-    fi
+    auto_fix_permissions
     
     # 1. Services système - PHP-FPM
     print_message "🔧 Démarrage de PHP-FPM..." "$YELLOW"
