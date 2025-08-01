@@ -485,10 +485,6 @@ $token = $_GET['token'] ?? '';
         <!-- Si paramètre control=true, afficher les contrôles -->
         <?php if($control): ?>
         <div class="command-bar" style="max-width: 1000px;">
-            <!-- Bouton Configuration Intégré -->
-            <a href="/modules/teams-config.php?token=<?=$token?>" class="command-config-btn">
-                <i class="fas fa-cog"></i>
-            </a>
             
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
                 <!-- Contrôles Équipe Verte -->
@@ -534,6 +530,9 @@ $token = $_GET['token'] ?? '';
                 <button class="command-btn primary large" data-action="swap-scores">
                     <i class="fas fa-exchange-alt"></i> Échanger Scores
                 </button>
+                <a href="/modules/teams-config.php?token=<?=$token?>" class="command-config-btn" style="position: static; width: 32px; height: 32px; font-size: 0.8rem;">
+                    <i class="fas fa-cog"></i>
+                </a>
             </div>
         </div>
         <?php endif; ?>
