@@ -359,9 +359,6 @@ verify_post_update() {
             # Chercher le backup le plus récent
             LATEST_BACKUP=$(ls -t "$BACKUP_DIR"/database_*.db 2>/dev/null | head -1)
             if [ -n "$LATEST_BACKUP" ]; then
-                # Corriger les permissions avant la restauration
-                sudo chown ubuntu:ubuntu database/database.db 2>/dev/null
-                sudo chmod 666 database/database.db 2>/dev/null
                 cp "$LATEST_BACKUP" "$DB_FILE"
                 print_message "✅ Base restaurée depuis: $(basename "$LATEST_BACKUP")" "$GREEN"
             fi
@@ -410,248 +407,7 @@ verify_post_update() {
 }
 
 # ================================================================
-# FONCTION DE CRÉATION D'UTILISATEURS MANUELLE
-# ================================================================
-create_user_manually() {
-    print_message "👤 CRÉATION MANUELLE D'UTILISATEUR" "$BLUE"
-    echo "═══════════════════════════════════════════════════════════════"
-    echo ""
-    
-    # Vérifier que la base de données est accessible
-    if [ ! -f "$DB_FILE" ]; then
-        print_message "❌ Base de données introuvable!" "$RED"
-        return 1
-    fi
-    
-    # Demander les informations de l'utilisateur
-    print_message "📝 Saisie des informations de l'utilisateur..." "$YELLOW"
-    echo ""
-    
-    read -p "🔑 Token Discord de l'utilisateur: " user_token
-    read -p "👤 Pseudo Discord: " user_username
-    read -p "🆔 ID Discord (optionnel): " user_id
-    read -p "📧 Email (optionnel): " user_email
-    
-    # Validation des champs obligatoires
-    if [ -z "$user_token" ] || [ -z "$user_username" ]; then
-        print_message "❌ Token et pseudo sont obligatoires!" "$RED"
-        return 1
-    fi
-    
-    # Vérifier si l'utilisateur existe déjà
-    EXISTING_USER=$(sqlite3 "$DB_FILE" "SELECT pseudo FROM users WHERE token = '$user_token' OR pseudo = '$user_username';" 2>/dev/null)
-    
-    if [ -n "$EXISTING_USER" ]; then
-        print_message "⚠️ Utilisateur déjà existant: $EXISTING_USER" "$YELLOW"
-        read -p "Voulez-vous continuer quand même? (y/N): " force_add
-        if [ "$force_add" != "y" ] && [ "$force_add" != "Y" ]; then
-            print_message "❌ Création annulée" "$RED"
-            return 1
-        fi
-    fi
-    
-    # Préparer les valeurs pour SQLite
-    if [ -z "$user_id" ]; then
-        user_id="NULL"
-    else
-        user_id="'$user_id'"
-    fi
-    
-    if [ -z "$user_email" ]; then
-        user_email="NULL"
-    else
-        user_email="'$user_email'"
-    fi
-    
-    # Insérer l'utilisateur dans la base de données
-    print_message "💾 Ajout de l'utilisateur à la base de données..." "$YELLOW"
-    
-    # Adapter les champs selon la structure réelle de la base
-    if [ -z "$user_id" ]; then
-        # Si pas d'ID Discord, utiliser le token comme ID temporaire
-        user_id="$user_token"
-    fi
-    
-    SQL_INSERT="INSERT INTO users (token, discord_id, pseudo) VALUES ('$user_token', '$user_id', '$user_username');"
-    
-    if sqlite3 "$DB_FILE" "$SQL_INSERT" 2>/dev/null; then
-        print_message "✅ Utilisateur créé avec succès!" "$GREEN"
-        
-        # Afficher les détails de l'utilisateur créé
-        USER_DETAILS=$(sqlite3 "$DB_FILE" "SELECT token, pseudo, discord_id, created_at FROM users WHERE token = '$user_token';" 2>/dev/null)
-        
-        if [ -n "$USER_DETAILS" ]; then
-            print_message "📋 Détails de l'utilisateur:" "$CYAN"
-            echo "$USER_DETAILS" | while IFS='|' read -r token pseudo discord_id created_at; do
-                echo "   Token: $token"
-                echo "   Pseudo: $pseudo"
-                echo "   Discord ID: ${discord_id:-Non défini}"
-                echo "   Créé le: $created_at"
-            done
-        fi
-        
-        # Créer une entrée dans user_data
-        if [ -n "$user_token" ]; then
-            sqlite3 "$DB_FILE" "INSERT INTO user_data (token, module, key, value) VALUES ('$user_token', 'wins', 'count', '0');" 2>/dev/null
-            sqlite3 "$DB_FILE" "INSERT INTO user_data (token, module, key, value) VALUES ('$user_token', 'wins', 'multiplier', '1.00');" 2>/dev/null
-            print_message "✅ Données utilisateur initialisées" "$GREEN"
-        fi
-        
-    else
-        print_message "❌ Erreur lors de la création de l'utilisateur" "$RED"
-        return 1
-    fi
-    
-    # Afficher le nombre total d'utilisateurs
-    TOTAL_USERS=$(sqlite3 "$DB_FILE" "SELECT COUNT(*) FROM users;" 2>/dev/null || echo "0")
-    print_message "📊 Total d'utilisateurs dans la base: $TOTAL_USERS" "$BLUE"
-    
-    echo ""
-    print_message "🎯 Création terminée!" "$GREEN"
-}
-
-# ================================================================
-# FONCTION DE CORRECTION AUTOMATIQUE DES PERMISSIONS (AMÉLIORÉE)
-# ================================================================
-auto_fix_permissions() {
-    print_message "🔧 Correction automatique des permissions après mise à jour..." "$BLUE"
-    
-    # 1. Corriger les permissions du projet entier
-    print_message "📁 Correction des permissions du projet..." "$YELLOW"
-    sudo chown -R ubuntu:ubuntu . 2>/dev/null
-    sudo chmod -R 755 . 2>/dev/null
-    
-    # 2. Permissions spécifiques pour les fichiers sensibles
-    print_message "📄 Correction des permissions des fichiers..." "$YELLOW"
-    sudo chmod 644 .gitignore LICENSE README.md SECURITY.md 2>/dev/null
-    sudo chmod 644 bot/*.json bot/*.js 2>/dev/null
-    sudo chmod 644 scripts/*.sh scripts/*.js 2>/dev/null
-    sudo chmod 644 web/*.php web/*.css 2>/dev/null
-    
-    # 3. Permissions spéciales pour la base de données
-    print_message "🗄️ Correction des permissions de la base de données..." "$YELLOW"
-    sudo chown www-data:www-data database/ 2>/dev/null
-    sudo chown www-data:www-data database/database.db 2>/dev/null
-    sudo chmod 755 database/ 2>/dev/null
-    sudo chmod 664 database/database.db 2>/dev/null
-    
-    # 4. Permissions spéciales pour config.json
-    print_message "📄 Correction des permissions de config.json..." "$YELLOW"
-    if [ -f "config/config.json" ]; then
-        sudo chown www-data:www-data config/config.json 2>/dev/null
-        sudo chmod 664 config/config.json 2>/dev/null
-    fi
-    
-    # 5. Ajouter l'utilisateur au groupe www-data
-    print_message "👤 Configuration des groupes..." "$YELLOW"
-    sudo usermod -a -G www-data ubuntu 2>/dev/null
-    sudo usermod -a -G www-data $USER 2>/dev/null
-    
-    # 6. Corriger les permissions du dossier bot
-    print_message "🤖 Correction des permissions du bot..." "$YELLOW"
-    sudo chown -R ubuntu:ubuntu bot/ 2>/dev/null
-    sudo chmod -R 755 bot/ 2>/dev/null
-    
-    # 7. Permissions plus larges si nécessaire
-    print_message "🔓 Application de permissions plus larges..." "$YELLOW"
-    sudo chmod 666 database/database.db 2>/dev/null
-    sudo chmod 777 database/ 2>/dev/null
-    
-    # 8. Installer sqlite3 pour Node.js si nécessaire
-    print_message "📦 Vérification de sqlite3 pour Node.js..." "$YELLOW"
-    if [ -d "bot/node_modules" ]; then
-        cd bot
-        if ! npm list sqlite3 >/dev/null 2>&1; then
-            print_message "📦 Installation de sqlite3..." "$YELLOW"
-            npm install sqlite3 --save 2>/dev/null
-        fi
-        cd ..
-    fi
-    
-    # 9. Test d'écriture avec www-data
-    print_message "🧪 Test d'écriture avec www-data..." "$CYAN"
-    if sudo -u www-data test -w database/database.db 2>/dev/null; then
-        print_message "✅ www-data peut écrire dans la base" "$GREEN"
-    else
-        print_message "❌ www-data ne peut pas écrire, permissions critiques appliquées..." "$RED"
-        sudo chmod 777 database/database.db 2>/dev/null
-        sudo chmod 777 database/ 2>/dev/null
-    fi
-    
-    # 10. Test d'écriture réel
-    print_message "🧪 Test d'écriture réel..." "$CYAN"
-    if sudo -u www-data sqlite3 database/database.db "CREATE TABLE IF NOT EXISTS test_permissions (id INTEGER); DROP TABLE test_permissions;" 2>/dev/null; then
-        print_message "✅ Test d'écriture réussi" "$GREEN"
-    else
-        print_message "❌ Test d'écriture échoué, permissions critiques appliquées" "$RED"
-    fi
-    
-    # 11. Test de config.json
-    print_message "🧪 Test de config.json..." "$CYAN"
-    if [ -f "config/config.json" ]; then
-        if [ -r "config/config.json" ] && [ -w "config/config.json" ]; then
-            print_message "✅ config.json accessible" "$GREEN"
-        else
-            print_message "⚠️ Problème avec config.json, correction agressive..." "$YELLOW"
-            sudo chown www-data:www-data config/config.json 2>/dev/null
-            sudo chmod 666 config/config.json 2>/dev/null
-            sudo chmod 777 config/config.json 2>/dev/null
-            sudo chown www-data:www-data config/ 2>/dev/null
-            sudo chmod 755 config/ 2>/dev/null
-            print_message "✅ Permissions critiques appliquées à config.json" "$GREEN"
-        fi
-    else
-        print_message "⚠️ config.json introuvable, création..." "$YELLOW"
-        mkdir -p config
-        cat > config/config.json << 'EOF'
-{
-    "bot_token": "VOTRE_TOKEN_BOT_DISCORD",
-    "client_id": "VOTRE_CLIENT_ID",
-    "guild_id": "VOTRE_GUILD_ID",
-    "webhook_url": "VOTRE_WEBHOOK_URL",
-    "database_path": "./database/database.db",
-    "port": 3000,
-    "host": "localhost"
-}
-EOF
-        sudo chown www-data:www-data config/config.json 2>/dev/null
-        sudo chmod 666 config/config.json 2>/dev/null
-        print_message "✅ config.json créé avec permissions correctes" "$GREEN"
-    fi
-    
-    # 12. Correction des scripts
-    print_message "🔧 Correction des permissions des scripts..." "$YELLOW"
-    sudo chmod +x scripts/*.sh 2>/dev/null
-    chmod +x scripts/*.sh 2>/dev/null
-    
-    # 13. Vérification finale des permissions critiques
-    print_message "🔍 Vérification finale des permissions critiques..." "$CYAN"
-    
-    # Vérifier que les fichiers critiques sont accessibles
-    CRITICAL_FILES=(
-        "database/database.db"
-        "config/config.json"
-        "scripts/ubuntu-manager.sh"
-        "bot/bot.js"
-    )
-    
-    for file in "${CRITICAL_FILES[@]}"; do
-        if [ -f "$file" ]; then
-            if [ -r "$file" ] && [ -w "$file" ]; then
-                print_message "✅ $file: accessible" "$GREEN"
-            else
-                print_message "❌ $file: problème de permissions" "$RED"
-                # Forcer les permissions
-                sudo chmod 666 "$file" 2>/dev/null
-            fi
-        fi
-    done
-    
-    print_message "✅ Correction automatique des permissions terminée" "$GREEN"
-}
-
-# ================================================================
-# 4. MISE À JOUR DEPUIS GITHUB (AMÉLIORÉE)
+# 4. MISE À JOUR DEPUIS GITHUB
 # ================================================================
 update_from_github() {
     print_message "🔄 Vérification des mises à jour GitHub..." "$BLUE"
@@ -733,9 +489,12 @@ update_from_github() {
             print_message "✅ Backups restaurés" "$GREEN"
         fi
         
-        # ÉTAPE 5: CORRECTION AUTOMATIQUE DES PERMISSIONS (AMÉLIORÉE)
-        print_message "🔧 CORRECTION AUTOMATIQUE DES PERMISSIONS APRÈS MISE À JOUR..." "$BLUE"
-        auto_fix_permissions
+        # ÉTAPE 5: CORRECTIONS POST-MISE À JOUR
+        verify_post_update
+        
+        # CORRECTION AUTOMATIQUE DES PERMISSIONS APRÈS MISE À JOUR
+        print_message "🔧 Correction automatique des permissions après mise à jour..." "$YELLOW"
+        verify_database_permissions
         
         # Installer les nouvelles dépendances
         if [ -f "bot/package.json" ]; then
@@ -747,76 +506,113 @@ update_from_github() {
         if [ -f "scripts/migrate-db.js" ]; then
             print_message "🔄 Vérification des migrations..." "$YELLOW"
             if [ ! -f "migration.lock" ]; then
-                # S'assurer que sqlite3 est installé dans le bon répertoire
-                if [ -d "bot" ]; then
-                    cd bot
-                    if ! npm list sqlite3 >/dev/null 2>&1; then
-                        print_message "📦 Installation de sqlite3..." "$YELLOW"
-                        npm install sqlite3 --save 2>/dev/null
-                    fi
-                    cd ..
-                    
-                    # Exécuter les migrations depuis le répertoire racine
-                    if [ -d "bot/node_modules/sqlite3" ]; then
-                        print_message "✅ sqlite3 disponible, exécution des migrations..." "$GREEN"
-                        node scripts/migrate-db.js 2>/dev/null || print_message "⚠️ Migration échouée mais continuons..." "$YELLOW"
-                    else
-                        print_message "⚠️ sqlite3 non disponible, migration ignorée" "$YELLOW"
-                    fi
-                else
-                    print_message "⚠️ Dossier bot introuvable, migration ignorée" "$YELLOW"
-                fi
+                node scripts/migrate-db.js
             fi
         fi
         
-        # ÉTAPE 6: VÉRIFICATION FINALE ET CORRECTION SUPPLÉMENTAIRE
-        print_message "🔍 VÉRIFICATION FINALE DES PERMISSIONS..." "$CYAN"
-        
-        # Vérifier et corriger config.json spécifiquement
-        if [ -f "config/config.json" ]; then
-            print_message "🔧 Correction des permissions de config.json..." "$YELLOW"
-            sudo chown www-data:www-data config/config.json 2>/dev/null
-            sudo chmod 664 config/config.json 2>/dev/null
-            sudo chmod 666 config/config.json 2>/dev/null
-        fi
-        
-        # Vérifier et corriger les scripts
-        print_message "🔧 Correction des permissions des scripts..." "$YELLOW"
-        sudo chmod +x scripts/*.sh 2>/dev/null
-        chmod +x scripts/*.sh 2>/dev/null
-        
-        # Vérifier et corriger la base de données
-        print_message "🔧 Correction finale de la base de données..." "$YELLOW"
-        sudo chown www-data:www-data database/database.db 2>/dev/null
-        sudo chmod 666 database/database.db 2>/dev/null
-        sudo chmod 777 database/ 2>/dev/null
-        
-        # Permissions critiques pour éviter les erreurs
-        sudo chmod 777 database/database.db 2>/dev/null
-        sudo chown ubuntu:ubuntu database/database.db 2>/dev/null
-        sudo chmod 666 database/database.db 2>/dev/null
-        
-        # Installer sqlite3 pour Node.js si nécessaire
-        print_message "📦 Installation de sqlite3 pour Node.js..." "$YELLOW"
-        if [ -d "bot" ]; then
-            cd bot
-            npm install sqlite3 --save 2>/dev/null
-            cd ..
-        fi
-        
-        # Vérification finale
+        # ÉTAPE 6: NETTOYAGE ET VÉRIFICATION
         verify_post_update
+        
+        # ÉTAPE 7: CORRECTION COMPLÈTE DES PERMISSIONS (NOUVEAU)
+        print_message "🔧 Application des permissions complètes sur tout le projet..." "$YELLOW"
+        
+        # Corriger les permissions de TOUT le projet
+        print_message "📁 Correction des permissions sur tous les dossiers..." "$CYAN"
+        
+        # 1. Changer le propriétaire de tout le projet pour www-data
+        if sudo chown -R www-data:www-data "$PROJECT_DIR" 2>/dev/null; then
+            print_message "✅ Propriétaire défini sur tout le projet: www-data:www-data" "$GREEN"
+        else
+            print_message "⚠️ Impossible de changer le propriétaire complet" "$YELLOW"
+        fi
+        
+        # 2. Permissions des dossiers (755 = rwxr-xr-x)
+        if sudo find "$PROJECT_DIR" -type d -exec chmod 755 {} \; 2>/dev/null; then
+            print_message "✅ Permissions des dossiers: 755" "$GREEN"
+        else
+            print_message "⚠️ Problème avec les permissions des dossiers" "$YELLOW"
+        fi
+        
+        # 3. Permissions des fichiers (644 = rw-r--r--)
+        if sudo find "$PROJECT_DIR" -type f -exec chmod 644 {} \; 2>/dev/null; then
+            print_message "✅ Permissions des fichiers: 644" "$GREEN"
+        else
+            print_message "⚠️ Problème avec les permissions des fichiers" "$YELLOW"
+        fi
+        
+        # 4. Permissions spéciales pour les scripts exécutables
+        if sudo find "$PROJECT_DIR/scripts" -type f -name "*.sh" -exec chmod 755 {} \; 2>/dev/null; then
+            print_message "✅ Scripts exécutables: 755" "$GREEN"
+        fi
+        
+        # 5. Permissions spéciales pour la base de données (plus permissives)
+        if [ -f "$DB_FILE" ]; then
+            sudo chmod 666 "$DB_FILE" 2>/dev/null
+            print_message "✅ Base de données: 666 (lecture/écriture pour tous)" "$GREEN"
+        fi
+        
+        # 6. Permissions spéciales pour les dossiers de cache/logs
+        for dir in "$PROJECT_DIR/backups" "$PROJECT_DIR/logs" "$PROJECT_DIR/cache"; do
+            if [ -d "$dir" ]; then
+                sudo chmod 777 "$dir" 2>/dev/null
+                print_message "✅ Dossier $(basename $dir): 777" "$GREEN"
+            fi
+        done
+        
+        # 7. Ajouter ubuntu au groupe www-data
+        if sudo usermod -a -G www-data ubuntu 2>/dev/null; then
+            print_message "✅ Utilisateur ubuntu ajouté au groupe www-data" "$GREEN"
+        fi
+        
+        # 8. Permissions spéciales pour le dossier web (pour Nginx)
+        if [ -d "$PROJECT_DIR/web" ]; then
+            sudo chown -R www-data:www-data "$PROJECT_DIR/web" 2>/dev/null
+            sudo find "$PROJECT_DIR/web" -type d -exec chmod 755 {} \; 2>/dev/null
+            sudo find "$PROJECT_DIR/web" -type f -exec chmod 644 {} \; 2>/dev/null
+            print_message "✅ Dossier web configuré pour Nginx" "$GREEN"
+        fi
+        
+        # 9. Permissions pour le bot Discord
+        if [ -d "$PROJECT_DIR/bot" ]; then
+            sudo chown -R ubuntu:www-data "$PROJECT_DIR/bot" 2>/dev/null
+            sudo chmod -R 775 "$PROJECT_DIR/bot" 2>/dev/null
+            print_message "✅ Dossier bot configuré avec permissions mixtes" "$GREEN"
+        fi
+        
+        print_message "✅ Permissions complètes appliquées sur tout le projet!" "$GREEN"
         
         # Nettoyer le dossier temporaire
         rm -rf "$TEMP_BACKUP_DIR"
         
-        print_message "✅ Mise à jour terminée avec PROTECTION des données et CORRECTION AUTOMATIQUE COMPLÈTE des permissions!" "$GREEN"
+        print_message "✅ Mise à jour terminée avec PROTECTION des données et PERMISSIONS corrigées!" "$GREEN"
         
         # Redémarrer les services
         pm2 restart all 2>/dev/null || true
         
     else
         print_message "✅ Déjà à jour" "$GREEN"
+        
+        # APPLIQUER LES PERMISSIONS MÊME SI PAS DE MISE À JOUR
+        print_message "🔧 Vérification et correction des permissions..." "$YELLOW"
+        
+        # Mêmes corrections que ci-dessus
+        sudo chown -R www-data:www-data "$PROJECT_DIR" 2>/dev/null
+        sudo find "$PROJECT_DIR" -type d -exec chmod 755 {} \; 2>/dev/null
+        sudo find "$PROJECT_DIR" -type f -exec chmod 644 {} \; 2>/dev/null
+        sudo find "$PROJECT_DIR/scripts" -type f -name "*.sh" -exec chmod 755 {} \; 2>/dev/null
+        
+        if [ -f "$DB_FILE" ]; then
+            sudo chmod 666 "$DB_FILE" 2>/dev/null
+        fi
+        
+        if [ -d "$PROJECT_DIR/bot" ]; then
+            sudo chown -R ubuntu:www-data "$PROJECT_DIR/bot" 2>/dev/null
+            sudo chmod -R 775 "$PROJECT_DIR/bot" 2>/dev/null
+        fi
+        
+        sudo usermod -a -G www-data ubuntu 2>/dev/null
+        
+        print_message "✅ Permissions vérifiées et corrigées" "$GREEN"
     fi
     
     # Nettoyer le dossier temporaire en cas d'erreur
@@ -833,7 +629,39 @@ start_services() {
     
     # CORRECTION AUTOMATIQUE DES PERMISSIONS AVANT DÉMARRAGE
     print_message "🔧 Vérification et correction des permissions avant démarrage..." "$YELLOW"
-    auto_fix_permissions
+    
+    # 1. Corriger les permissions du dossier parent
+    if sudo chown www-data:www-data "$(dirname "$DB_FILE")" 2>/dev/null; then
+        print_message "✅ Dossier parent configuré: www-data:www-data" "$GREEN"
+    fi
+    
+    if sudo chmod 755 "$(dirname "$DB_FILE")" 2>/dev/null; then
+        print_message "✅ Permissions du dossier parent: 755" "$GREEN"
+    fi
+    
+    # 2. Corriger les permissions de la base de données
+    if sudo chown www-data:www-data "$DB_FILE" 2>/dev/null; then
+        print_message "✅ Propriétaire corrigé: www-data:www-data" "$GREEN"
+    fi
+    
+    if sudo chmod 664 "$DB_FILE" 2>/dev/null; then
+        print_message "✅ Permissions corrigées: 664" "$GREEN"
+    fi
+    
+    # 3. Ajouter ubuntu au groupe www-data
+    if sudo usermod -a -G www-data ubuntu 2>/dev/null; then
+        print_message "✅ Utilisateur ubuntu ajouté au groupe www-data" "$GREEN"
+    fi
+    
+    # 4. Vérifier que les permissions sont correctes
+    if [ -r "$DB_FILE" ] && [ -w "$DB_FILE" ]; then
+        print_message "✅ Permissions de la base de données OK" "$GREEN"
+    else
+        print_message "⚠️ Problème de permissions, tentative avec permissions plus larges..." "$YELLOW"
+        sudo chmod 666 "$DB_FILE" 2>/dev/null
+        sudo chmod 777 "$(dirname "$DB_FILE")" 2>/dev/null
+        print_message "✅ Permissions élargies appliquées" "$GREEN"
+    fi
     
     # 1. Services système - PHP-FPM
     print_message "🔧 Démarrage de PHP-FPM..." "$YELLOW"
@@ -2063,8 +1891,8 @@ show_menu() {
     echo -e "${GREEN}15)${NC} 🔧 Réparation système avancée"
     echo -e "${GREEN}16)${NC} 📋 Logs centralisés"
     echo -e "${GREEN}17)${NC} 🔧 Corriger les permissions de la base de données"
-    echo -e "${GREEN}18)${NC} 👤 Créer un utilisateur manuellement"
-    echo -e "${GREEN}19)${NC} 🚨 Restauration d'urgence de la base de données"
+    echo -e "${GREEN}18)${NC} 🚨 Restauration d'urgence de la base de données"
+    echo -e "${GREEN}19)${NC} 🔐 Corriger TOUTES les permissions du projet"
     echo
     echo -e "${GREEN}0)${NC} ❌ Quitter"
     echo
@@ -2213,6 +2041,137 @@ install_critical_dependencies() {
 }
 
 # ================================================================
+# 19. CORRECTION COMPLÈTE DES PERMISSIONS (NOUVEAU)
+# ================================================================
+fix_all_permissions() {
+    clear
+    print_message "🔐 CORRECTION COMPLÈTE DES PERMISSIONS" "$BLUE"
+    echo "═══════════════════════════════════════════════════════════════"
+    echo ""
+    
+    print_message "Cette fonction va corriger TOUTES les permissions du projet :" "$CYAN"
+    echo "  • Propriétaire : www-data:www-data"
+    echo "  • Dossiers : 755 (rwxr-xr-x)"
+    echo "  • Fichiers : 644 (rw-r--r--)"
+    echo "  • Scripts : 755 (rwxr-xr-x)"
+    echo "  • Base de données : 666 (rw-rw-rw-)"
+    echo "  • Dossiers spéciaux : 777 (rwxrwxrwx)"
+    echo ""
+    
+    read -p "Voulez-vous continuer ? (o/N): " confirm
+    
+    if [[ ! $confirm =~ ^[Oo]$ ]]; then
+        print_message "❌ Correction annulée" "$RED"
+        return
+    fi
+    
+    echo ""
+    print_message "🔧 Correction des permissions en cours..." "$YELLOW"
+    
+    # 1. Propriétaire global
+    print_message "📁 Changement du propriétaire sur tout le projet..." "$CYAN"
+    if sudo chown -R www-data:www-data "$PROJECT_DIR" 2>/dev/null; then
+        print_message "✅ Propriétaire: www-data:www-data" "$GREEN"
+    else
+        print_message "⚠️ Problème avec le changement de propriétaire" "$YELLOW"
+    fi
+    
+    # 2. Permissions des dossiers
+    print_message "📂 Application des permissions 755 sur tous les dossiers..." "$CYAN"
+    if sudo find "$PROJECT_DIR" -type d -exec chmod 755 {} \; 2>/dev/null; then
+        print_message "✅ Dossiers: 755" "$GREEN"
+    else
+        print_message "⚠️ Problème avec les permissions des dossiers" "$YELLOW"
+    fi
+    
+    # 3. Permissions des fichiers
+    print_message "📄 Application des permissions 644 sur tous les fichiers..." "$CYAN"
+    if sudo find "$PROJECT_DIR" -type f -exec chmod 644 {} \; 2>/dev/null; then
+        print_message "✅ Fichiers: 644" "$GREEN"
+    else
+        print_message "⚠️ Problème avec les permissions des fichiers" "$YELLOW"
+    fi
+    
+    # 4. Scripts exécutables
+    print_message "🔧 Permissions 755 sur les scripts..." "$CYAN"
+    if sudo find "$PROJECT_DIR/scripts" -type f -name "*.sh" -exec chmod 755 {} \; 2>/dev/null; then
+        print_message "✅ Scripts: 755 (exécutables)" "$GREEN"
+    fi
+    
+    # 5. Base de données
+    if [ -f "$DB_FILE" ]; then
+        print_message "🗄️ Permissions spéciales pour la base de données..." "$CYAN"
+        sudo chmod 666 "$DB_FILE" 2>/dev/null
+        sudo chown www-data:www-data "$DB_FILE" 2>/dev/null
+        sudo chmod 777 "$(dirname "$DB_FILE")" 2>/dev/null
+        print_message "✅ Base de données: 666 (lecture/écriture pour tous)" "$GREEN"
+    fi
+    
+    # 6. Dossiers spéciaux
+    print_message "📁 Permissions 777 sur les dossiers spéciaux..." "$CYAN"
+    for dir in "$PROJECT_DIR/backups" "$PROJECT_DIR/logs" "$PROJECT_DIR/cache" "$PROJECT_DIR/temp"; do
+        if [ -d "$dir" ]; then
+            sudo chmod 777 "$dir" 2>/dev/null
+            print_message "✅ $(basename $dir): 777" "$GREEN"
+        fi
+    done
+    
+    # 7. Dossier web (Nginx)
+    if [ -d "$PROJECT_DIR/web" ]; then
+        print_message "🌐 Configuration spéciale pour le dossier web..." "$CYAN"
+        sudo chown -R www-data:www-data "$PROJECT_DIR/web" 2>/dev/null
+        sudo find "$PROJECT_DIR/web" -type d -exec chmod 755 {} \; 2>/dev/null
+        sudo find "$PROJECT_DIR/web" -type f -exec chmod 644 {} \; 2>/dev/null
+        # PHP files need to be readable
+        sudo find "$PROJECT_DIR/web" -name "*.php" -exec chmod 644 {} \; 2>/dev/null
+        print_message "✅ Dossier web configuré pour Nginx" "$GREEN"
+    fi
+    
+    # 8. Bot Discord
+    if [ -d "$PROJECT_DIR/bot" ]; then
+        print_message "🤖 Configuration spéciale pour le bot Discord..." "$CYAN"
+        sudo chown -R ubuntu:www-data "$PROJECT_DIR/bot" 2>/dev/null
+        sudo chmod -R 775 "$PROJECT_DIR/bot" 2>/dev/null
+        # node_modules peut nécessiter des permissions différentes
+        if [ -d "$PROJECT_DIR/bot/node_modules" ]; then
+            sudo chmod -R 755 "$PROJECT_DIR/bot/node_modules" 2>/dev/null
+        fi
+        print_message "✅ Bot Discord configuré avec permissions mixtes" "$GREEN"
+    fi
+    
+    # 9. Ajouter ubuntu au groupe www-data
+    print_message "👤 Ajout de l'utilisateur au groupe www-data..." "$CYAN"
+    if sudo usermod -a -G www-data ubuntu 2>/dev/null; then
+        print_message "✅ Utilisateur ubuntu ajouté au groupe www-data" "$GREEN"
+    else
+        print_message "⚠️ Utilisateur déjà dans le groupe ou erreur" "$YELLOW"
+    fi
+    
+    # 10. Permissions Git (si nécessaire)
+    if [ -d "$PROJECT_DIR/.git" ]; then
+        print_message "🔧 Correction des permissions Git..." "$CYAN"
+        sudo chown -R ubuntu:ubuntu "$PROJECT_DIR/.git" 2>/dev/null
+        print_message "✅ Dossier .git appartient à ubuntu" "$GREEN"
+    fi
+    
+    echo ""
+    print_message "═══════════════════════════════════════════════════════════════" "$BLUE"
+    print_message "✅ TOUTES LES PERMISSIONS ONT ÉTÉ CORRIGÉES !" "$GREEN"
+    echo ""
+    print_message "📋 Résumé des corrections appliquées :" "$CYAN"
+    echo "  ✅ Propriétaire global : www-data:www-data"
+    echo "  ✅ Permissions standards : 755/644"
+    echo "  ✅ Scripts exécutables : 755"
+    echo "  ✅ Base de données : 666 avec dossier 777"
+    echo "  ✅ Dossiers spéciaux : 777"
+    echo "  ✅ Configuration Nginx : OK"
+    echo "  ✅ Bot Discord : permissions mixtes"
+    echo ""
+    print_message "💡 Note : Vous devrez peut-être vous reconnecter pour que les changements de groupe prennent effet." "$YELLOW"
+    echo ""
+}
+
+# ================================================================
 # LOGIQUE PRINCIPALE
 # ================================================================
 main() {
@@ -2311,10 +2270,6 @@ main() {
                 read -p "Appuyez sur Entrée pour continuer..."
                 ;;
             18)
-                create_user_manually
-                read -p "Appuyez sur Entrée pour continuer..."
-                ;;
-            19)
                 print_message "🚨 Restauration d'urgence de la base de données..." "$YELLOW"
                 
                 echo "Backups disponibles:"
@@ -2333,6 +2288,10 @@ main() {
                         print_message "❌ Backup invalide" "$RED"
                     fi
                 fi
+                read -p "Appuyez sur Entrée pour continuer..."
+                ;;
+            19)
+                fix_all_permissions
                 read -p "Appuyez sur Entrée pour continuer..."
                 ;;
             0)
