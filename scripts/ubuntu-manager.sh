@@ -484,11 +484,35 @@ auto_fix_permissions() {
     
     # 11. Test de config.json
     print_message "🧪 Test de config.json..." "$CYAN"
-    if [ -f "config/config.json" ] && [ -r "config/config.json" ] && [ -w "config/config.json" ]; then
-        print_message "✅ config.json accessible" "$GREEN"
+    if [ -f "config/config.json" ]; then
+        if [ -r "config/config.json" ] && [ -w "config/config.json" ]; then
+            print_message "✅ config.json accessible" "$GREEN"
+        else
+            print_message "⚠️ Problème avec config.json, correction agressive..." "$YELLOW"
+            sudo chown www-data:www-data config/config.json 2>/dev/null
+            sudo chmod 666 config/config.json 2>/dev/null
+            sudo chmod 777 config/config.json 2>/dev/null
+            sudo chown www-data:www-data config/ 2>/dev/null
+            sudo chmod 755 config/ 2>/dev/null
+            print_message "✅ Permissions critiques appliquées à config.json" "$GREEN"
+        fi
     else
-        print_message "⚠️ Problème avec config.json, permissions élargies..." "$YELLOW"
+        print_message "⚠️ config.json introuvable, création..." "$YELLOW"
+        mkdir -p config
+        cat > config/config.json << 'EOF'
+{
+    "bot_token": "VOTRE_TOKEN_BOT_DISCORD",
+    "client_id": "VOTRE_CLIENT_ID",
+    "guild_id": "VOTRE_GUILD_ID",
+    "webhook_url": "VOTRE_WEBHOOK_URL",
+    "database_path": "./database/database.db",
+    "port": 3000,
+    "host": "localhost"
+}
+EOF
+        sudo chown www-data:www-data config/config.json 2>/dev/null
         sudo chmod 666 config/config.json 2>/dev/null
+        print_message "✅ config.json créé avec permissions correctes" "$GREEN"
     fi
     
     # 12. Correction des scripts
