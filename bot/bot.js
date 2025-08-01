@@ -461,25 +461,25 @@ client.once('ready', async () => {
     });
     
     try {
-        // Supprimer toutes les anciennes commandes GLOBALEMENT et dans chaque serveur
-        logInfo('Suppression des anciennes commandes...');
+        // Vérifier les commandes existantes au lieu de les supprimer
+        logInfo('Vérification des commandes existantes...');
         
-        // Supprimer les commandes globales
-        await client.application.commands.set([]);
-        logSuccess('Anciennes commandes globales supprimées');
+        // Vérifier les commandes globales existantes
+        const globalCommands = await client.application.commands.fetch();
+        logInfo(`Commandes globales existantes: ${globalCommands.size}`);
         
-        // Supprimer les commandes de chaque serveur
+        // Vérifier les commandes de chaque serveur
         for (const guild of client.guilds.cache.values()) {
             try {
-                await guild.commands.set([]);
-                logInfo(`Commandes supprimées pour le serveur ${guild.name}`);
+                const guildCommands = await guild.commands.fetch();
+                logInfo(`Commandes existantes sur ${guild.name}: ${guildCommands.size}`);
             } catch (err) {
-                logWarning(`Impossible de supprimer les commandes du serveur ${guild.name}`, err);
+                logWarning(`Impossible de vérifier les commandes du serveur ${guild.name}`, err);
             }
         }
         
         // Attendre un peu pour que Discord synchronise
-        await new Promise(resolve => setTimeout(resolve, 2000));
+        await new Promise(resolve => setTimeout(resolve, 1000));
         
         // Enregistrer les nouvelles commandes slash
         const commands = [
@@ -526,13 +526,18 @@ client.once('ready', async () => {
         
         logInfo('Enregistrement des nouvelles commandes...', { count: commands.length });
         
-        // Enregistrer les commandes UNIQUEMENT dans chaque serveur (pas globalement)
-        logInfo('Enregistrement des commandes dans les serveurs...');
+        // Enregistrer les commandes seulement si elles n'existent pas déjà
+        logInfo('Vérification et enregistrement des commandes si nécessaire...');
         
         for (const guild of client.guilds.cache.values()) {
             try {
-                await guild.commands.set(commands);
-                logSuccess(`Commandes enregistrées dans le serveur ${guild.name}`);
+                const existingCommands = await guild.commands.fetch();
+                if (existingCommands.size === 0) {
+                    await guild.commands.set(commands);
+                    logSuccess(`Commandes enregistrées dans le serveur ${guild.name}`);
+                } else {
+                    logInfo(`Commandes déjà présentes dans ${guild.name} (${existingCommands.size})`);
+                }
             } catch (err) {
                 logWarning(`Impossible d'enregistrer les commandes dans ${guild.name}`, err);
             }
