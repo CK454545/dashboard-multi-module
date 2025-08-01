@@ -359,6 +359,9 @@ verify_post_update() {
             # Chercher le backup le plus récent
             LATEST_BACKUP=$(ls -t "$BACKUP_DIR"/database_*.db 2>/dev/null | head -1)
             if [ -n "$LATEST_BACKUP" ]; then
+                # Corriger les permissions avant la restauration
+                sudo chown ubuntu:ubuntu database/database.db 2>/dev/null
+                sudo chmod 666 database/database.db 2>/dev/null
                 cp "$LATEST_BACKUP" "$DB_FILE"
                 print_message "✅ Base restaurée depuis: $(basename "$LATEST_BACKUP")" "$GREEN"
             fi
@@ -643,19 +646,24 @@ update_from_github() {
         if [ -f "scripts/migrate-db.js" ]; then
             print_message "🔄 Vérification des migrations..." "$YELLOW"
             if [ ! -f "migration.lock" ]; then
-                # S'assurer que sqlite3 est installé
-                cd bot
-                if ! npm list sqlite3 >/dev/null 2>&1; then
-                    print_message "📦 Installation de sqlite3..." "$YELLOW"
-                    npm install sqlite3 --save 2>/dev/null
-                fi
-                cd ..
-                
-                # Exécuter les migrations
-                if npm list sqlite3 >/dev/null 2>&1; then
-                    node scripts/migrate-db.js 2>/dev/null || print_message "⚠️ Migration échouée mais continuons..." "$YELLOW"
+                # S'assurer que sqlite3 est installé dans le bon répertoire
+                if [ -d "bot" ]; then
+                    cd bot
+                    if ! npm list sqlite3 >/dev/null 2>&1; then
+                        print_message "📦 Installation de sqlite3..." "$YELLOW"
+                        npm install sqlite3 --save 2>/dev/null
+                    fi
+                    cd ..
+                    
+                    # Exécuter les migrations depuis le répertoire racine
+                    if [ -d "bot/node_modules/sqlite3" ]; then
+                        print_message "✅ sqlite3 disponible, exécution des migrations..." "$GREEN"
+                        node scripts/migrate-db.js 2>/dev/null || print_message "⚠️ Migration échouée mais continuons..." "$YELLOW"
+                    else
+                        print_message "⚠️ sqlite3 non disponible, migration ignorée" "$YELLOW"
+                    fi
                 else
-                    print_message "⚠️ sqlite3 non disponible, migration ignorée" "$YELLOW"
+                    print_message "⚠️ Dossier bot introuvable, migration ignorée" "$YELLOW"
                 fi
             fi
         fi
@@ -682,11 +690,18 @@ update_from_github() {
         sudo chmod 666 database/database.db 2>/dev/null
         sudo chmod 777 database/ 2>/dev/null
         
+        # Permissions critiques pour éviter les erreurs
+        sudo chmod 777 database/database.db 2>/dev/null
+        sudo chown ubuntu:ubuntu database/database.db 2>/dev/null
+        sudo chmod 666 database/database.db 2>/dev/null
+        
         # Installer sqlite3 pour Node.js si nécessaire
         print_message "📦 Installation de sqlite3 pour Node.js..." "$YELLOW"
-        cd bot
-        npm install sqlite3 --save 2>/dev/null
-        cd ..
+        if [ -d "bot" ]; then
+            cd bot
+            npm install sqlite3 --save 2>/dev/null
+            cd ..
+        fi
         
         # Vérification finale
         verify_post_update
