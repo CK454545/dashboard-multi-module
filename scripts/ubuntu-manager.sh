@@ -1993,6 +1993,7 @@ show_menu() {
     echo -e "${GREEN}18)${NC} 🚨 Restauration d'urgence de la base de données"
     echo -e "${GREEN}19)${NC} 🔐 Corriger TOUTES les permissions du projet"
     echo -e "${GREEN}20)${NC} 👤 Ajouter un utilisateur manuellement"
+    echo -e "${GREEN}21)${NC} 🧹 Nettoyer le projet (fichiers temporaires)"
     echo
     echo -e "${GREEN}0)${NC} ❌ Quitter"
     echo
@@ -2305,12 +2306,18 @@ add_user_manually() {
         return
     fi
     
+    # Nettoyer le pseudo des caractères problématiques pour SQL
+    pseudo=$(echo "$pseudo" | sed "s/'/''/g")
+    
     read -p "🔑 Token de l'utilisateur: " token
     if [ -z "$token" ]; then
         print_message "❌ Le token est obligatoire" "$RED"
         read -p "Appuyez sur Entrée pour continuer..."
         return
     fi
+    
+    # Nettoyer le token
+    token=$(echo "$token" | sed "s/'/''/g")
     
     read -p "🆔 Discord ID (laisser vide pour générer automatiquement): " discord_id
     if [ -z "$discord_id" ]; then
@@ -2374,7 +2381,7 @@ add_user_manually() {
         fi
         
         # Insérer le nouvel utilisateur
-        sqlite3 "$DB_FILE" "INSERT INTO users (discord_id, pseudo, token, created_at, updated_at) VALUES ('$discord_id', '$pseudo', '$token', datetime('now'), datetime('now'));" 2>/dev/null
+        error_msg=$(sqlite3 "$DB_FILE" "INSERT INTO users (discord_id, pseudo, token, created_at, updated_at) VALUES ('$discord_id', '$pseudo', '$token', datetime('now'), datetime('now'));" 2>&1)
         if [ $? -eq 0 ]; then
             print_message "✅ Utilisateur ajouté avec succès!" "$GREEN"
             
@@ -2389,6 +2396,15 @@ add_user_manually() {
             echo ""
         else
             print_message "❌ Erreur lors de l'ajout de l'utilisateur" "$RED"
+            if [ -n "$error_msg" ]; then
+                print_message "💡 Détails de l'erreur : $error_msg" "$YELLOW"
+            fi
+            
+            # Vérifier les permissions de la base de données
+            if [ ! -w "$DB_FILE" ]; then
+                print_message "⚠️ La base de données n'est pas accessible en écriture" "$YELLOW"
+                print_message "💡 Essayez l'option 19 pour corriger les permissions" "$CYAN"
+            fi
         fi
     fi
     
@@ -2521,6 +2537,15 @@ main() {
                 ;;
             20)
                 add_user_manually
+                ;;
+            21)
+                if [ -f "$PROJECT_DIR/scripts/cleanup-project.sh" ]; then
+                    "$PROJECT_DIR/scripts/cleanup-project.sh"
+                else
+                    print_message "❌ Script de nettoyage introuvable" "$RED"
+                    print_message "💡 Essayez l'option 3 pour mettre à jour" "$YELLOW"
+                fi
+                read -p "Appuyez sur Entrée pour continuer..."
                 ;;
             0)
                 print_message "👋 Au revoir!" "$BLUE"
