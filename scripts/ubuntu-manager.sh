@@ -2361,7 +2361,7 @@ add_user_manually() {
         fi
         
         # Mettre à jour l'utilisateur existant
-        sqlite3 "$DB_FILE" "UPDATE users SET pseudo='$pseudo', discord_id='$discord_id', updated_at=datetime('now') WHERE token='$token';" 2>/dev/null
+        sqlite3 "$DB_FILE" "UPDATE users SET pseudo='$pseudo', discord_id='$discord_id' WHERE token='$token';" 2>/dev/null
         if [ $? -eq 0 ]; then
             print_message "✅ Utilisateur mis à jour avec succès!" "$GREEN"
         else
@@ -2380,8 +2380,8 @@ add_user_manually() {
             fi
         fi
         
-        # Insérer le nouvel utilisateur
-        error_msg=$(sqlite3 "$DB_FILE" "INSERT INTO users (discord_id, pseudo, token, created_at, updated_at) VALUES ('$discord_id', '$pseudo', '$token', datetime('now'), datetime('now'));" 2>&1)
+        # Insérer le nouvel utilisateur (sans updated_at)
+        error_msg=$(sqlite3 "$DB_FILE" "INSERT INTO users (discord_id, pseudo, token, created_at) VALUES ('$discord_id', '$pseudo', '$token', datetime('now'));" 2>&1)
         if [ $? -eq 0 ]; then
             print_message "✅ Utilisateur ajouté avec succès!" "$GREEN"
             
