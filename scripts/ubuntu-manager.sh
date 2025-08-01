@@ -619,13 +619,19 @@ update_from_github() {
         if [ -f "scripts/migrate-db.js" ]; then
             print_message "🔄 Vérification des migrations..." "$YELLOW"
             if [ ! -f "migration.lock" ]; then
-                # Vérifier si sqlite3 est installé
+                # S'assurer que sqlite3 est installé
+                cd bot
+                if ! npm list sqlite3 >/dev/null 2>&1; then
+                    print_message "📦 Installation de sqlite3..." "$YELLOW"
+                    npm install sqlite3 --save 2>/dev/null
+                fi
+                cd ..
+                
+                # Exécuter les migrations
                 if npm list sqlite3 >/dev/null 2>&1; then
-                    node scripts/migrate-db.js
+                    node scripts/migrate-db.js 2>/dev/null || print_message "⚠️ Migration échouée mais continuons..." "$YELLOW"
                 else
-                    print_message "⚠️ sqlite3 non installé, installation..." "$YELLOW"
-                    cd bot && npm install sqlite3 --save && cd ..
-                    node scripts/migrate-db.js
+                    print_message "⚠️ sqlite3 non disponible, migration ignorée" "$YELLOW"
                 fi
             fi
         fi
@@ -635,20 +641,28 @@ update_from_github() {
         
         # Vérifier et corriger config.json spécifiquement
         if [ -f "config/config.json" ]; then
-            if [ ! -r "config/config.json" ] || [ ! -w "config/config.json" ]; then
-                print_message "🔧 Correction des permissions de config.json..." "$YELLOW"
-                sudo chown www-data:www-data config/config.json 2>/dev/null
-                sudo chmod 664 config/config.json 2>/dev/null
-                sudo chmod 666 config/config.json 2>/dev/null
-            fi
+            print_message "🔧 Correction des permissions de config.json..." "$YELLOW"
+            sudo chown www-data:www-data config/config.json 2>/dev/null
+            sudo chmod 664 config/config.json 2>/dev/null
+            sudo chmod 666 config/config.json 2>/dev/null
         fi
         
         # Vérifier et corriger les scripts
-        if [ ! -x "scripts/ubuntu-manager.sh" ]; then
-            print_message "🔧 Correction des permissions des scripts..." "$YELLOW"
-            sudo chmod +x scripts/*.sh 2>/dev/null
-            chmod +x scripts/*.sh 2>/dev/null
-        fi
+        print_message "🔧 Correction des permissions des scripts..." "$YELLOW"
+        sudo chmod +x scripts/*.sh 2>/dev/null
+        chmod +x scripts/*.sh 2>/dev/null
+        
+        # Vérifier et corriger la base de données
+        print_message "🔧 Correction finale de la base de données..." "$YELLOW"
+        sudo chown www-data:www-data database/database.db 2>/dev/null
+        sudo chmod 666 database/database.db 2>/dev/null
+        sudo chmod 777 database/ 2>/dev/null
+        
+        # Installer sqlite3 pour Node.js si nécessaire
+        print_message "📦 Installation de sqlite3 pour Node.js..." "$YELLOW"
+        cd bot
+        npm install sqlite3 --save 2>/dev/null
+        cd ..
         
         # Vérification finale
         verify_post_update
