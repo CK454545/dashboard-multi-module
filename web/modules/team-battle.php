@@ -819,7 +819,7 @@ $token = $_GET['token'] ?? '';
                 return;
             }
             
-            console.log('🎨 Application des styles groupés:', styles);
+            // console.log('🎨 Application des styles groupés:', styles);
             
             let css = '';
             
@@ -984,7 +984,7 @@ $token = $_GET['token'] ?? '';
             // Appliquer les noms d'équipes séparément pour éviter les conflits
             applyTeamNames(styles);
             
-            console.log('✅ Styles appliqués avec succès (structure groupée)');
+            // console.log('✅ Styles appliqués avec succès (structure groupée)');
         }
         
         // Génération du CSS de positionnement
@@ -1054,10 +1054,10 @@ $token = $_GET['token'] ?? '';
                     }
                 }
             } finally {
-                // Libérer le flag après un court délai
+                // Libérer le flag après un délai plus long pour éviter les conflits
                 setTimeout(() => {
                     window.isUpdatingTeamNames = false;
-                }, 50);
+                }, 200);
             }
         }
         
@@ -1100,9 +1100,9 @@ $token = $_GET['token'] ?? '';
         
         // Auto-refresh simplifié (sans restrictions)
         setInterval(() => {
-            // Auto-refresh toutes les 500ms pour éviter les conflits
+            // Auto-refresh toutes les 1000ms pour éviter les conflits
             apiCall('get');
-        }, 500); // Augmenté à 500ms pour réduire les conflits
+        }, 1000); // Augmenté à 1000ms pour réduire les conflits
         
         // Charger les données initiales
         apiCall('get');
@@ -1177,10 +1177,10 @@ $token = $_GET['token'] ?? '';
             // Appliquer les noms d'équipes avec la fonction dédiée
             applyTeamNames(styles);
             
-            // Réactiver le flag après un délai très court pour une meilleure réactivité
+            // Réactiver le flag après un délai plus long pour éviter les conflits
             setTimeout(() => {
                 isApplyingRealtimeStyles = false;
-            }, 25); // Encore plus rapide pour une meilleure réactivité
+            }, 100); // Augmenté à 100ms pour éviter les conflits
         }
         
         // Écouter postMessage
@@ -1248,7 +1248,7 @@ $token = $_GET['token'] ?? '';
                     window.lastTeamsStylesTimestamp = parseInt(stylesTimestamp);
                 }
             }
-        }, 100); // Réduit à 100ms pour éviter les conflits
+        }, 250); // Augmenté à 250ms pour éviter les conflits
         
         <?php if($control): ?>
         // Gestion des boutons
