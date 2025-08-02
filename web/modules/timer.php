@@ -357,25 +357,28 @@ $token = $_GET['token'] ?? '';
 
         .timer-action-buttons {
             display: grid;
-            grid-template-columns: repeat(7, 1fr);
+            grid-template-columns: repeat(9, 1fr);
             gap: var(--spacing-xs);
         }
 
         .timer-action-buttons.controls {
-            grid-template-columns: repeat(3, 1fr);
+            grid-template-columns: repeat(2, 1fr);
+            justify-items: center;
+            max-width: 300px;
+            margin: 0 auto;
         }
 
         .timer-action-btn {
             padding: var(--spacing-xs) var(--spacing-xs);
             border: none;
             border-radius: var(--radius-md);
-            font-size: 0.7rem;
+            font-size: 0.65rem;
             font-weight: 600;
             cursor: pointer;
             transition: all var(--transition-fast);
             text-transform: uppercase;
-            letter-spacing: 0.3px;
-            min-height: 36px;
+            letter-spacing: 0.2px;
+            min-height: 32px;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -461,9 +464,9 @@ $token = $_GET['token'] ?? '';
         }
 
         .timer-action-btn.large {
-            padding: var(--spacing-md) var(--spacing-sm);
-            font-size: 0.875rem;
-            min-height: 52px;
+            padding: var(--spacing-sm) var(--spacing-md);
+            font-size: 0.8rem;
+            min-height: 44px;
         }
 
         .timer-action-btn:disabled {
@@ -717,11 +720,14 @@ $token = $_GET['token'] ?? '';
             }
 
             .timer-action-buttons {
-                grid-template-columns: repeat(4, 1fr);
+                grid-template-columns: repeat(5, 1fr);
             }
 
             .timer-action-buttons.controls {
                 grid-template-columns: repeat(2, 1fr);
+                justify-items: center;
+                max-width: 250px;
+                margin: 0 auto;
             }
 
             .timer-manual-inputs {
@@ -776,7 +782,7 @@ $token = $_GET['token'] ?? '';
             }
 
             .timer-action-buttons {
-                grid-template-columns: repeat(3, 1fr);
+                grid-template-columns: repeat(4, 1fr);
             }
 
             .timer-manual-inputs {
@@ -804,7 +810,10 @@ $token = $_GET['token'] ?? '';
             }
 
             .timer-action-buttons.controls {
-                grid-template-columns: 1fr;
+                grid-template-columns: repeat(2, 1fr);
+                justify-items: center;
+                max-width: 200px;
+                margin: 0 auto;
             }
 
             .timer-action-btn {
