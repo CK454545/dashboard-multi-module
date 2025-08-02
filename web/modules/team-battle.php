@@ -270,7 +270,7 @@ $token = $_GET['token'] ?? '';
             flex: 1;
             text-align: center;
             padding: var(--spacing-xl);
-            background: var(--bg-card);
+            background: transparent;
             border-radius: var(--radius-xl);
             transition: all var(--transition-normal);
         }
@@ -1024,20 +1024,16 @@ $token = $_GET['token'] ?? '';
 
         // Fonction pour appliquer les noms d'équipes sans flickering
         function applyTeamNames(styles) {
+            // Ne pas appliquer si on est en mode temps réel pour éviter les conflits
+            if (isApplyingRealtimeStyles) {
+                return;
+            }
+            
             if (styles.green && styles.green.name) {
                 const greenNameElement = document.getElementById('green-name');
                 if (greenNameElement && greenNameElement.textContent !== styles.green.name) {
                     console.log('🔄 Mise à jour nom équipe verte:', styles.green.name);
                     greenNameElement.textContent = styles.green.name;
-                } else if (!greenNameElement) {
-                    // Retry après 50ms si l'élément n'est pas trouvé
-                    setTimeout(() => {
-                        const retryElement = document.getElementById('green-name');
-                        if (retryElement && retryElement.textContent !== styles.green.name) {
-                            console.log('🔄 Retry mise à jour nom équipe verte:', styles.green.name);
-                            retryElement.textContent = styles.green.name;
-                        }
-                    }, 50);
                 }
             }
             
@@ -1046,15 +1042,6 @@ $token = $_GET['token'] ?? '';
                 if (redNameElement && redNameElement.textContent !== styles.red.name) {
                     console.log('🔄 Mise à jour nom équipe rouge:', styles.red.name);
                     redNameElement.textContent = styles.red.name;
-                } else if (!redNameElement) {
-                    // Retry après 50ms si l'élément n'est pas trouvé
-                    setTimeout(() => {
-                        const retryElement = document.getElementById('red-name');
-                        if (retryElement && retryElement.textContent !== styles.red.name) {
-                            console.log('🔄 Retry mise à jour nom équipe rouge:', styles.red.name);
-                            retryElement.textContent = styles.red.name;
-                        }
-                    }, 50);
                 }
             }
         }
@@ -1172,10 +1159,20 @@ $token = $_GET['token'] ?? '';
             // Appliquer immédiatement les styles avec la nouvelle fonction
             applyStyles(styles);
             
-            // Forcer la mise à jour des noms d'équipes après l'application des styles temps réel
-            setTimeout(() => {
-                applyTeamNames(styles);
-            }, 25);
+            // Appliquer les noms d'équipes directement sans délai
+            if (styles.green && styles.green.name) {
+                const greenNameElement = document.getElementById('green-name');
+                if (greenNameElement && greenNameElement.textContent !== styles.green.name) {
+                    greenNameElement.textContent = styles.green.name;
+                }
+            }
+            
+            if (styles.red && styles.red.name) {
+                const redNameElement = document.getElementById('red-name');
+                if (redNameElement && redNameElement.textContent !== styles.red.name) {
+                    redNameElement.textContent = styles.red.name;
+                }
+            }
             
             // Réactiver le flag après un délai très court pour une meilleure réactivité
             setTimeout(() => {
@@ -1279,7 +1276,7 @@ $token = $_GET['token'] ?? '';
                     // Gestion des actions spéciales
                     if (action === 'reset-score') {
                         // Action de reset spécifique pour une équipe
-                        await apiCall(action, JSON.stringify({ team }));
+                        await apiCall(action, team);
                     } else if (action === 'reset-all' || action === 'swap-scores') {
                         await apiCall(action);
                     } else {
