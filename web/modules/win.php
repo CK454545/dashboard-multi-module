@@ -757,7 +757,7 @@ $token = $_GET['token'] ?? '';
                 
                 // Positionnement du texte
                 if (general['text-position']) {
-                    const margin = general['text-margin'] || '20';
+                    const margin = general['text-margin'] || '0';
                     css += generatePositionCSS(general['text-position'], margin);
                 }
             }
@@ -770,10 +770,10 @@ $token = $_GET['token'] ?? '';
                 
                 // Masquer les contrôles si demandé
                 if (options['hide-controls'] === true || options['hide-controls'] === 'true' || options['hide-controls'] === 1) {
-                    css += '.controls { display: none !important; } ';
-                    css += '.config-button-fixed { display: none !important; } ';
+                    css += '.command-bar { display: none !important; } ';
+                    css += '.command-config-btn { display: none !important; } ';
                 } else {
-                    css += '.controls { display: flex !important; } ';
+                    css += '.command-bar { display: flex !important; } ';
                 }
                 
                 // Masquer le multiplicateur si demandé
@@ -909,7 +909,7 @@ $token = $_GET['token'] ?? '';
                     'font-family': oldStyles['font-family'] || 'Arial, Helvetica, sans-serif',
                     background: oldStyles['background'] || '#1e293b',
                     'text-position': oldStyles['text-position'] || 'center',
-                    'text-margin': oldStyles['text-margin'] || '20',
+                    'text-margin': oldStyles['text-margin'] || '0',
                     transparent: oldStyles['transparent'] || false,
                     'max-wins': oldStyles['max-wins'] || '20'
                 },

@@ -292,11 +292,28 @@ $token = $_GET['token'] ?? '';
             letter-spacing: 2px;
         }
 
+        .score-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0;
+        }
+        
+        .score-label {
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-muted);
+            margin-bottom: -5px;
+        }
+        
         .team-score {
             font-size: 5rem;
             font-weight: 800;
-            margin: var(--spacing-lg) 0;
+            margin: 0;
             text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+            line-height: 1;
         }
 
         .vs-separator {
@@ -349,48 +366,8 @@ $token = $_GET['token'] ?? '';
             font-size: 0.875rem;
         }
 
-        /* ==================== TEXT EFFECTS ANIMATIONS ==================== */
-        @keyframes zoomInOut {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.1); }
-        }
-
-        @keyframes pulse {
-            0% { transform: scale(1); opacity: 1; }
-            50% { transform: scale(1.05); opacity: 0.8; }
-            100% { transform: scale(1); opacity: 1; }
-        }
-
-        @keyframes bounce {
-            0%, 20%, 53%, 80%, 100% { transform: translateY(0); }
-            40%, 43% { transform: translateY(-10px); }
-            70% { transform: translateY(-5px); }
-            90% { transform: translateY(-2px); }
-        }
-
-        @keyframes shake {
-            0%, 100% { transform: translateX(0); }
-            25% { transform: translateX(-5px); }
-            75% { transform: translateX(5px); }
-        }
-
-        @keyframes glow {
-            0%, 100% { text-shadow: 0 0 5px currentColor; }
-            50% { text-shadow: 0 0 20px currentColor, 0 0 30px currentColor; }
-        }
-
-        @keyframes flip {
-            0% { transform: rotateY(0); }
-            50% { transform: rotateY(180deg); }
-            100% { transform: rotateY(360deg); }
-        }
-
-        @keyframes neon {
-            0%, 100% { 
-                text-shadow: 0 0 5px currentColor, 0 0 10px currentColor, 0 0 15px currentColor;
-            }
-            50% { 
-                text-shadow: 0 0 10px currentColor, 0 0 20px currentColor, 0 0 30px currentColor, 0 0 40px currentColor;
+        /* ==================== TEXT EFFECTS ANIMATIONS - DÉSACTIVÉES ==================== */
+        /* Animations désactivées pour éviter les distractions */
             }
         }
 
@@ -470,14 +447,20 @@ $token = $_GET['token'] ?? '';
             <div class="teams-container">
                 <div class="team green" id="team-green">
                     <h2 class="team-name" id="green-name">ÉQUIPE VERTE</h2>
-                    <div class="team-score" id="green-score">0</div>
+                    <div class="score-container">
+                        <span class="score-label">SCORE</span>
+                        <div class="team-score" id="green-score">0</div>
+                    </div>
                 </div>
                 
                 <div class="vs-separator">VS</div>
                 
                 <div class="team red" id="team-red">
                     <h2 class="team-name" id="red-name">ÉQUIPE ROUGE</h2>
-                    <div class="team-score" id="red-score">0</div>
+                    <div class="score-container">
+                        <span class="score-label">SCORE</span>
+                        <div class="team-score" id="red-score">0</div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -490,34 +473,28 @@ $token = $_GET['token'] ?? '';
                 <!-- Contrôles Équipe Verte -->
                 <div class="command-section success">
                     <h3><i class="fas fa-users"></i> Équipe Verte</h3>
-                    <div class="command-buttons grid-5">
+                    <div class="command-buttons grid-7">
                         <button class="command-btn subtract" data-action="add-score" data-team="green" data-value="-10">-10</button>
                         <button class="command-btn subtract" data-action="add-score" data-team="green" data-value="-5">-5</button>
                         <button class="command-btn subtract" data-action="add-score" data-team="green" data-value="-1">-1</button>
+                        <button class="command-btn reset" data-action="reset-score" data-team="green">Reset</button>
                         <button class="command-btn add" data-action="add-score" data-team="green" data-value="1">+1</button>
                         <button class="command-btn add" data-action="add-score" data-team="green" data-value="5">+5</button>
                         <button class="command-btn add" data-action="add-score" data-team="green" data-value="10">+10</button>
-                        <button class="command-btn reset" data-action="reset-score" data-team="green">Reset</button>
-                        <button class="command-btn" data-action="set-score" data-team="green">Set</button>
-                        <button class="command-btn" data-action="double-score" data-team="green">x2</button>
-                        <button class="command-btn" data-action="half-score" data-team="green">÷2</button>
                     </div>
                 </div>
                 
                 <!-- Contrôles Équipe Rouge -->
                 <div class="command-section danger">
                     <h3><i class="fas fa-users"></i> Équipe Rouge</h3>
-                    <div class="command-buttons grid-5">
+                    <div class="command-buttons grid-7">
                         <button class="command-btn subtract" data-action="add-score" data-team="red" data-value="-10">-10</button>
                         <button class="command-btn subtract" data-action="add-score" data-team="red" data-value="-5">-5</button>
                         <button class="command-btn subtract" data-action="add-score" data-team="red" data-value="-1">-1</button>
+                        <button class="command-btn reset" data-action="reset-score" data-team="red">Reset</button>
                         <button class="command-btn add" data-action="add-score" data-team="red" data-value="1">+1</button>
                         <button class="command-btn add" data-action="add-score" data-team="red" data-value="5">+5</button>
                         <button class="command-btn add" data-action="add-score" data-team="red" data-value="10">+10</button>
-                        <button class="command-btn reset" data-action="reset-score" data-team="red">Reset</button>
-                        <button class="command-btn" data-action="set-score" data-team="red">Set</button>
-                        <button class="command-btn" data-action="double-score" data-team="red">x2</button>
-                        <button class="command-btn" data-action="half-score" data-team="red">÷2</button>
                     </div>
                 </div>
             </div>
@@ -658,8 +635,18 @@ $token = $_GET['token'] ?? '';
                 
                 // Positionnement du texte
                 if (general['text-position']) {
-                    const margin = general['text-margin'] || '20';
+                    const margin = general['text-margin'] || '0';
                     css += generatePositionCSS(general['text-position'], margin);
+                }
+                
+                // Fond des équipes
+                if (general['team-background'] === true || general['team-background'] === 'true' || general['team-background'] === 1) {
+                    css += `.team { 
+                        background: rgba(0, 0, 0, 0.5) !important; 
+                        padding: 20px !important;
+                        border-radius: 10px !important;
+                        backdrop-filter: blur(10px) !important;
+                    } `;
                 }
             }
             
@@ -669,10 +656,11 @@ $token = $_GET['token'] ?? '';
                 
                 // Masquer les contrôles si demandé
                 if (options['hide-controls'] === true || options['hide-controls'] === 'true' || options['hide-controls'] === 1) {
-                    css += '.controls { display: none !important; } ';
-                    css += '.config-button-fixed { display: none !important; } ';
+                    css += '.command-bar { display: none !important; } ';
+                    css += '.command-config-btn { display: none !important; } ';
+                    css += '.config-btn-small { display: none !important; } ';
                 } else {
-                    css += '.controls { display: flex !important; } ';
+                    css += '.command-bar { display: flex !important; } ';
                 }
             }
             
@@ -694,8 +682,15 @@ $token = $_GET['token'] ?? '';
                 
                 // Couleur
                 if (green.color) {
-                    css += `#green-score { color: ${green.color} !important; } `;
                     css += `#green-name { color: ${green.color} !important; } `;
+                }
+                
+                // Couleur du score (peut être différente)
+                if (green['score-color']) {
+                    css += `#green-score { color: ${green['score-color']} !important; } `;
+                } else if (green.color) {
+                    // Fallback sur la couleur de l'équipe
+                    css += `#green-score { color: ${green.color} !important; } `;
                 }
                 
                 // Taille
@@ -739,8 +734,15 @@ $token = $_GET['token'] ?? '';
                 
                 // Couleur
                 if (red.color) {
-                    css += `#red-score { color: ${red.color} !important; } `;
                     css += `#red-name { color: ${red.color} !important; } `;
+                }
+                
+                // Couleur du score (peut être différente)
+                if (red['score-color']) {
+                    css += `#red-score { color: ${red['score-color']} !important; } `;
+                } else if (red.color) {
+                    // Fallback sur la couleur de l'équipe
+                    css += `#red-score { color: ${red.color} !important; } `;
                 }
                 
                 // Taille
