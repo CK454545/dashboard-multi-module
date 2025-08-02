@@ -241,7 +241,14 @@ function handleWinsSQLite($db, $token, $action, $value) {
             $current = intval(getValue($db, $token, 'wins', 'count') ?? '0');
             $multiplier = intval(getValue($db, $token, 'wins', 'multiplier') ?? '1');
             $multiplierActive = getValue($db, $token, 'wins', 'multiplier_active') ?? 'true';
-            $new = $current + intval($value);
+            
+            // Appliquer le multiplicateur si actif
+            if ($multiplierActive === 'true') {
+                $new = $current + (intval($value) * $multiplier);
+            } else {
+                $new = $current + intval($value);
+            }
+            
             setValue($db, $token, 'wins', 'count', strval($new));
             echo json_encode([
                 'success' => true, 
