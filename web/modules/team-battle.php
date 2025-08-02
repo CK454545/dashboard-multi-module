@@ -473,7 +473,7 @@ $token = $_GET['token'] ?? '';
                 <!-- Contrôles Équipe Verte -->
                 <div class="command-section success">
                     <h3><i class="fas fa-users"></i> Équipe Verte</h3>
-                    <div class="command-buttons grid-7">
+                    <div class="command-buttons">
                         <button class="command-btn subtract" data-action="add-score" data-team="green" data-value="-10">-10</button>
                         <button class="command-btn subtract" data-action="add-score" data-team="green" data-value="-5">-5</button>
                         <button class="command-btn subtract" data-action="add-score" data-team="green" data-value="-1">-1</button>
@@ -487,7 +487,7 @@ $token = $_GET['token'] ?? '';
                 <!-- Contrôles Équipe Rouge -->
                 <div class="command-section danger">
                     <h3><i class="fas fa-users"></i> Équipe Rouge</h3>
-                    <div class="command-buttons grid-7">
+                    <div class="command-buttons">
                         <button class="command-btn subtract" data-action="add-score" data-team="red" data-value="-10">-10</button>
                         <button class="command-btn subtract" data-action="add-score" data-team="red" data-value="-5">-5</button>
                         <button class="command-btn subtract" data-action="add-score" data-team="red" data-value="-1">-1</button>
