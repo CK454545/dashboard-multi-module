@@ -567,6 +567,28 @@ $token = $_GET['token'] ?? '';
                     </a>
                 </div>
             </div>
+            
+            <div class="command-section">
+                <h3><i class="fas fa-link"></i> URLs de commandes</h3>
+                <div style="display: flex; flex-direction: column; gap: 8px; font-size: 0.65rem;">
+                    <div style="display: flex; gap: 8px; align-items: center;">
+                        <span style="color: #94a3b8;">Démarrer/Pause:</span>
+                        <code style="background: rgba(0,0,0,0.3); padding: 4px 8px; border-radius: 4px; color: #f59e0b; flex: 1; overflow-x: auto;">/api.php?token=<?=$token?>&module=timer&action=toggle</code>
+                    </div>
+                    <div style="display: flex; gap: 8px; align-items: center;">
+                        <span style="color: #94a3b8;">Reset:</span>
+                        <code style="background: rgba(0,0,0,0.3); padding: 4px 8px; border-radius: 4px; color: #f59e0b; flex: 1; overflow-x: auto;">/api.php?token=<?=$token?>&module=timer&action=reset</code>
+                    </div>
+                    <div style="display: flex; gap: 8px; align-items: center;">
+                        <span style="color: #94a3b8;">Ajouter temps:</span>
+                        <code style="background: rgba(0,0,0,0.3); padding: 4px 8px; border-radius: 4px; color: #f59e0b; flex: 1; overflow-x: auto;">/api.php?token=<?=$token?>&module=timer&action=add&value=60</code>
+                    </div>
+                    <div style="display: flex; gap: 8px; align-items: center;">
+                        <span style="color: #94a3b8;">Soustraire temps:</span>
+                        <code style="background: rgba(0,0,0,0.3); padding: 4px 8px; border-radius: 4px; color: #f59e0b; flex: 1; overflow-x: auto;">/api.php?token=<?=$token?>&module=timer&action=subtract&value=60</code>
+                    </div>
+                </div>
+            </div>
         </div>
         <?php endif; ?>
     </div>
@@ -657,7 +679,7 @@ $token = $_GET['token'] ?? '';
                 
                 // Positionnement du texte
                 if (general['text-position']) {
-                    const margin = general['text-margin'] || '20';
+                    const margin = general['text-margin'] || '0';
                     css += generatePositionCSS(general['text-position'], margin);
                 }
                 
@@ -677,7 +699,12 @@ $token = $_GET['token'] ?? '';
                 // Masquer les contrôles si demandé
                 if (options['hide-controls'] === true || options['hide-controls'] === 'true' || options['hide-controls'] === 1) {
                     css += '.command-bar { display: none !important; } ';
+<<<<<<< HEAD
                     css += '.config-button-fixed { display: none !important; } ';
+=======
+                    css += '.command-config-btn { display: none !important; } ';
+                    css += '.config-btn-small { display: none !important; } ';
+>>>>>>> 5b1251e14b228fd39bb0cbe55b28e46be0cd2da9
                 }
             }
             
@@ -718,15 +745,54 @@ $token = $_GET['token'] ?? '';
         // Génération du CSS de positionnement
         function generatePositionCSS(position, margin) {
             const positions = {
-                'top-left': `.display { justify-content: flex-start !important; align-items: flex-start !important; padding: ${margin}px !important; }`,
-                'top-center': `.display { justify-content: center !important; align-items: flex-start !important; padding-top: ${margin}px !important; }`,
-                'top-right': `.display { justify-content: flex-end !important; align-items: flex-start !important; padding: ${margin}px !important; }`,
-                'center-left': `.display { justify-content: flex-start !important; align-items: center !important; padding-left: ${margin}px !important; }`,
-                'center-right': `.display { justify-content: flex-end !important; align-items: center !important; padding-right: ${margin}px !important; }`,
-                'bottom-left': `.display { justify-content: flex-start !important; align-items: flex-end !important; padding: ${margin}px !important; }`,
-                'bottom-center': `.display { justify-content: center !important; align-items: flex-end !important; padding-bottom: ${margin}px !important; }`,
-                'bottom-right': `.display { justify-content: flex-end !important; align-items: flex-end !important; padding: ${margin}px !important; }`,
-                'center': `.display { justify-content: center !important; align-items: center !important; }`
+                'top-left': `.display { 
+                    justify-content: flex-start !important; 
+                    align-items: flex-start !important; 
+                    padding-top: ${margin}px !important;
+                    padding-left: ${margin}px !important;
+                }`,
+                'top-center': `.display { 
+                    justify-content: center !important; 
+                    align-items: flex-start !important; 
+                    padding-top: ${margin}px !important; 
+                }`,
+                'top-right': `.display { 
+                    justify-content: flex-end !important; 
+                    align-items: flex-start !important; 
+                    padding-top: ${margin}px !important;
+                    padding-right: ${margin}px !important;
+                }`,
+                'center-left': `.display { 
+                    justify-content: flex-start !important; 
+                    align-items: center !important; 
+                    padding-left: ${margin}px !important; 
+                }`,
+                'center-right': `.display { 
+                    justify-content: flex-end !important; 
+                    align-items: center !important; 
+                    padding-right: ${margin}px !important; 
+                }`,
+                'bottom-left': `.display { 
+                    justify-content: flex-start !important; 
+                    align-items: flex-end !important; 
+                    padding-bottom: ${margin}px !important;
+                    padding-left: ${margin}px !important;
+                }`,
+                'bottom-center': `.display { 
+                    justify-content: center !important; 
+                    align-items: flex-end !important; 
+                    padding-bottom: ${margin}px !important; 
+                }`,
+                'bottom-right': `.display { 
+                    justify-content: flex-end !important; 
+                    align-items: flex-end !important; 
+                    padding-bottom: ${margin}px !important;
+                    padding-right: ${margin}px !important;
+                }`,
+                'center': `.display { 
+                    justify-content: center !important; 
+                    align-items: center !important; 
+                }`
             };
             
             return positions[position] || positions['center'];
@@ -747,6 +813,7 @@ $token = $_GET['token'] ?? '';
             }
         }
         
+<<<<<<< HEAD
         // Génération du CSS de positionnement (basé sur Win)
         function generatePositionCSS(position, margin) {
             const positions = {
@@ -778,6 +845,9 @@ $token = $_GET['token'] ?? '';
                 document.head.appendChild(styleElement);
             }
         }
+=======
+
+>>>>>>> 5b1251e14b228fd39bb0cbe55b28e46be0cd2da9
 
         // Formater le temps en HH:MM:SS
         function formatTime(totalSeconds) {

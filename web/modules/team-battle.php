@@ -292,11 +292,28 @@ $token = $_GET['token'] ?? '';
             letter-spacing: 2px;
         }
 
+        .score-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0;
+        }
+        
+        .score-label {
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-muted);
+            margin-bottom: -5px;
+        }
+        
         .team-score {
             font-size: 5rem;
             font-weight: 800;
             margin: 0;
             text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+            line-height: 1;
         }
 
         .vs-separator {
@@ -349,8 +366,8 @@ $token = $_GET['token'] ?? '';
             font-size: 0.875rem;
         }
 
-        /* ==================== TEXT EFFECTS ANIMATIONS ==================== */
-        /* Animations supprimées pour simplifier l'interface */
+        /* ==================== TEXT EFFECTS ANIMATIONS - DÉSACTIVÉES ==================== */
+        /* Animations désactivées pour éviter les distractions */
 
         /* ==================== RESPONSIVE DESIGN ==================== */
         @media (max-width: 1024px) {
@@ -428,14 +445,20 @@ $token = $_GET['token'] ?? '';
             <div class="teams-container">
                 <div class="team green" id="team-green">
                     <h2 class="team-name" id="green-name">ÉQUIPE VERTE</h2>
-                    <div class="team-score" id="green-score">0</div>
+                    <div class="score-container">
+                        <span class="score-label">SCORE</span>
+                        <div class="team-score" id="green-score">0</div>
+                    </div>
                 </div>
                 
                 <div class="vs-separator">VS</div>
                 
                 <div class="team red" id="team-red">
                     <h2 class="team-name" id="red-name">ÉQUIPE ROUGE</h2>
-                    <div class="team-score" id="red-score">0</div>
+                    <div class="score-container">
+                        <span class="score-label">SCORE</span>
+                        <div class="team-score" id="red-score">0</div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -448,28 +471,40 @@ $token = $_GET['token'] ?? '';
                 <!-- Contrôles Équipe Verte -->
                 <div class="command-section success">
                     <h3><i class="fas fa-users"></i> Équipe Verte</h3>
-                    <div class="command-buttons grid-4">
+                    <div class="command-buttons">
                         <button class="command-btn subtract" data-action="add-score" data-team="green" data-value="-10">-10</button>
                         <button class="command-btn subtract" data-action="add-score" data-team="green" data-value="-5">-5</button>
                         <button class="command-btn subtract" data-action="add-score" data-team="green" data-value="-1">-1</button>
+                        <button class="command-btn reset" data-action="reset-score" data-team="green">Reset</button>
                         <button class="command-btn add" data-action="add-score" data-team="green" data-value="1">+1</button>
                         <button class="command-btn add" data-action="add-score" data-team="green" data-value="5">+5</button>
                         <button class="command-btn add" data-action="add-score" data-team="green" data-value="10">+10</button>
+<<<<<<< HEAD
                         <button class="command-btn reset" data-action="reset-score" data-team="green">Reset</button>
+=======
+>>>>>>> 5b1251e14b228fd39bb0cbe55b28e46be0cd2da9
                     </div>
                 </div>
                 
                 <!-- Contrôles Équipe Rouge -->
                 <div class="command-section danger">
                     <h3><i class="fas fa-users"></i> Équipe Rouge</h3>
+<<<<<<< HEAD
                     <div class="command-buttons grid-4">
+=======
+                    <div class="command-buttons">
+>>>>>>> 5b1251e14b228fd39bb0cbe55b28e46be0cd2da9
                         <button class="command-btn subtract" data-action="add-score" data-team="red" data-value="-10">-10</button>
                         <button class="command-btn subtract" data-action="add-score" data-team="red" data-value="-5">-5</button>
                         <button class="command-btn subtract" data-action="add-score" data-team="red" data-value="-1">-1</button>
+                        <button class="command-btn reset" data-action="reset-score" data-team="red">Reset</button>
                         <button class="command-btn add" data-action="add-score" data-team="red" data-value="1">+1</button>
                         <button class="command-btn add" data-action="add-score" data-team="red" data-value="5">+5</button>
                         <button class="command-btn add" data-action="add-score" data-team="red" data-value="10">+10</button>
+<<<<<<< HEAD
                         <button class="command-btn reset" data-action="reset-score" data-team="red">Reset</button>
+=======
+>>>>>>> 5b1251e14b228fd39bb0cbe55b28e46be0cd2da9
                     </div>
                 </div>
             </div>
@@ -614,8 +649,18 @@ $token = $_GET['token'] ?? '';
                 
                 // Positionnement du texte
                 if (general['text-position']) {
-                    const margin = general['text-margin'] || '20';
+                    const margin = general['text-margin'] || '0';
                     css += generatePositionCSS(general['text-position'], margin);
+                }
+                
+                // Fond des équipes
+                if (general['team-background'] === true || general['team-background'] === 'true' || general['team-background'] === 1) {
+                    css += `.team { 
+                        background: rgba(0, 0, 0, 0.5) !important; 
+                        padding: 20px !important;
+                        border-radius: 10px !important;
+                        backdrop-filter: blur(10px) !important;
+                    } `;
                 }
             }
             
@@ -626,9 +671,16 @@ $token = $_GET['token'] ?? '';
                 // Masquer les contrôles si demandé
                 if (options['hide-controls'] === true || options['hide-controls'] === 'true' || options['hide-controls'] === 1) {
                     css += '.command-bar { display: none !important; } ';
+<<<<<<< HEAD
                     css += '.config-button-fixed { display: none !important; } ';
                 } else {
                     css += '.command-bar { display: block !important; } ';
+=======
+                    css += '.command-config-btn { display: none !important; } ';
+                    css += '.config-btn-small { display: none !important; } ';
+                } else {
+                    css += '.command-bar { display: flex !important; } ';
+>>>>>>> 5b1251e14b228fd39bb0cbe55b28e46be0cd2da9
                 }
             }
             
@@ -648,6 +700,7 @@ $token = $_GET['token'] ?? '';
                 //     }
                 // }
                 
+<<<<<<< HEAD
                 // Couleur du score (séparée du nom)
                 if (green.scoreColor) {
                     css += `#green-score { color: ${green.scoreColor} !important; } `;
@@ -659,7 +712,19 @@ $token = $_GET['token'] ?? '';
                 if (green.nameColor) {
                     css += `#green-name { color: ${green.nameColor} !important; } `;
                 } else if (green.color) {
+=======
+                // Couleur
+                if (green.color) {
+>>>>>>> 5b1251e14b228fd39bb0cbe55b28e46be0cd2da9
                     css += `#green-name { color: ${green.color} !important; } `;
+                }
+                
+                // Couleur du score (peut être différente)
+                if (green['score-color']) {
+                    css += `#green-score { color: ${green['score-color']} !important; } `;
+                } else if (green.color) {
+                    // Fallback sur la couleur de l'équipe
+                    css += `#green-score { color: ${green.color} !important; } `;
                 }
                 
                 // Taille
@@ -706,6 +771,7 @@ $token = $_GET['token'] ?? '';
                 //     }
                 // }
                 
+<<<<<<< HEAD
                 // Couleur du score (séparée du nom)
                 if (red.scoreColor) {
                     css += `#red-score { color: ${red.scoreColor} !important; } `;
@@ -717,7 +783,19 @@ $token = $_GET['token'] ?? '';
                 if (red.nameColor) {
                     css += `#red-name { color: ${red.nameColor} !important; } `;
                 } else if (red.color) {
+=======
+                // Couleur
+                if (red.color) {
+>>>>>>> 5b1251e14b228fd39bb0cbe55b28e46be0cd2da9
                     css += `#red-name { color: ${red.color} !important; } `;
+                }
+                
+                // Couleur du score (peut être différente)
+                if (red['score-color']) {
+                    css += `#red-score { color: ${red['score-color']} !important; } `;
+                } else if (red.color) {
+                    // Fallback sur la couleur de l'équipe
+                    css += `#red-score { color: ${red.color} !important; } `;
                 }
                 
                 // Taille
