@@ -970,6 +970,18 @@ $token = $_GET['token'] ?? '';
                     </div>
                     
                     <div class="url-card">
+                        <div class="url-icon" style="background: linear-gradient(135deg, #dc2626, #b91c1c);">
+                            <i class="fas fa-minus"></i>
+                        </div>
+                        <h3>Retirer -10 (Vert)</h3>
+                        <p>Diminue le score de 10</p>
+                        <button class="url-btn" onclick="copyApiUrl('/api.php?token=<?php echo $token; ?>&module=teams&action=add-score&value={\"team\":\"green\",\"value\":\"-10\"}')">
+                            <i class="fas fa-copy"></i>
+                            -10 Vert
+                        </button>
+                    </div>
+                    
+                    <div class="url-card">
                         <div class="url-icon" style="background: linear-gradient(135deg, #0ea5e9, #0284c7);">
                             <i class="fas fa-sync"></i>
                         </div>
@@ -1047,6 +1059,18 @@ $token = $_GET['token'] ?? '';
                         <button class="url-btn" onclick="copyApiUrl('/api.php?token=<?php echo $token; ?>&module=teams&action=add-score&value={\"team\":\"red\",\"value\":\"-5\"}')">
                             <i class="fas fa-copy"></i>
                             -5 Rouge
+                        </button>
+                    </div>
+                    
+                    <div class="url-card">
+                        <div class="url-icon" style="background: linear-gradient(135deg, #991b1b, #7f1d1d);">
+                            <i class="fas fa-minus"></i>
+                        </div>
+                        <h3>Retirer -10 (Rouge)</h3>
+                        <p>Diminue le score de 10</p>
+                        <button class="url-btn" onclick="copyApiUrl('/api.php?token=<?php echo $token; ?>&module=teams&action=add-score&value={\"team\":\"red\",\"value\":\"-10\"}')">
+                            <i class="fas fa-copy"></i>
+                            -10 Rouge
                         </button>
                     </div>
                     

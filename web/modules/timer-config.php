@@ -920,17 +920,7 @@ $token = $_GET['token'] ?? '';
                         </button>
                     </div>
 
-                    <div class="url-card">
-                        <div class="url-icon" style="background: linear-gradient(135deg, #8b5cf6, #7c3aed);">
-                            <i class="fas fa-sync"></i>
-                        </div>
-                        <h3>Basculer play/pause</h3>
-                        <p>Change l'état</p>
-                        <button class="url-btn" onclick="copyApiUrl('/api.php?token=<?php echo $token; ?>&module=timer&action=toggle')">
-                            <i class="fas fa-copy"></i>
-                            Toggle
-                        </button>
-                    </div>
+
                 </div>
             </div>
         </div>
