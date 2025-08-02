@@ -21,6 +21,11 @@
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
+/* Règle pour masquer les contrôles quand hide-controls est activé */
+.command-bar.hide-controls {
+    display: none !important;
+}
+
 /* Effet glass morphism amélioré */
 .command-bar::before {
     content: '';

@@ -269,7 +269,6 @@ $token = $_GET['token'] ?? '';
             font-size: 6rem;
             font-weight: 800;
             color: white;
-            margin-bottom: -0.25rem;
             text-transform: uppercase;
             letter-spacing: 2px;
             margin: 0;
@@ -563,7 +562,7 @@ $token = $_GET['token'] ?? '';
                     <button class="command-btn subtract" onclick="subtractManualTime()" style="padding: 8px 16px;">
                         <i class="fas fa-minus"></i>
                     </button>
-                    <a href="/modules/timer-config.php?token=<?php echo htmlspecialchars($token); ?>" class="command-config-btn" style="position: static; width: 32px; height: 32px; font-size: 0.8rem;">
+                    <a href="/modules/timer-config.php?token=<?php echo htmlspecialchars($token); ?>" class="command-config-btn">
                         <i class="fas fa-cog"></i>
                     </a>
                 </div>
@@ -644,6 +643,7 @@ $token = $_GET['token'] ?? '';
                 if (general.transparent === true || general.transparent === 'true' || general.transparent === 1) {
                     css += 'body { background: transparent !important; } ';
                     css += 'html { background: transparent !important; } ';
+                    css += '.widget-container { background: transparent !important; } ';
                     css += '.display { background: transparent !important; } ';
                 } else if (general.background) {
                     css += `body { background: ${general.background} !important; } `;
@@ -676,7 +676,7 @@ $token = $_GET['token'] ?? '';
                 
                 // Masquer les contrôles si demandé
                 if (options['hide-controls'] === true || options['hide-controls'] === 'true' || options['hide-controls'] === 1) {
-                    css += '.controls { display: none !important; } ';
+                    css += '.command-bar { display: none !important; } ';
                     css += '.config-button-fixed { display: none !important; } ';
                 }
             }
@@ -751,12 +751,12 @@ $token = $_GET['token'] ?? '';
         function generatePositionCSS(position, margin) {
             const positions = {
                 'top-left': `.display { justify-content: flex-start !important; align-items: flex-start !important; padding: ${margin}px !important; }`,
-                'top-center': `.display { justify-content: center !important; align-items: flex-start !important; padding-top: ${margin}px !important; }`,
-                'top-right': `.display { justify-content: flex-end !important; align-items: flex-start !important; padding: ${margin}px !important; }`,
-                'center-left': `.display { justify-content: flex-start !important; align-items: center !important; padding-left: ${margin}px !important; }`,
-                'center-right': `.display { justify-content: flex-end !important; align-items: center !important; padding-right: ${margin}px !important; }`,
-                'bottom-left': `.display { justify-content: flex-start !important; align-items: flex-end !important; padding: ${margin}px !important; }`,
-                'bottom-center': `.display { justify-content: center !important; align-items: flex-end !important; padding-bottom: ${margin}px !important; }`,
+                'top-center': `.display { justify-content: flex-start !important; align-items: center !important; padding-top: ${margin}px !important; }`,
+                'top-right': `.display { justify-content: flex-start !important; align-items: flex-end !important; padding: ${margin}px !important; }`,
+                'center-left': `.display { justify-content: center !important; align-items: flex-start !important; padding-left: ${margin}px !important; }`,
+                'center-right': `.display { justify-content: center !important; align-items: flex-end !important; padding-right: ${margin}px !important; }`,
+                'bottom-left': `.display { justify-content: flex-end !important; align-items: flex-start !important; padding: ${margin}px !important; }`,
+                'bottom-center': `.display { justify-content: flex-end !important; align-items: center !important; padding-bottom: ${margin}px !important; }`,
                 'bottom-right': `.display { justify-content: flex-end !important; align-items: flex-end !important; padding: ${margin}px !important; }`,
                 'center': `.display { justify-content: center !important; align-items: center !important; }`
             };

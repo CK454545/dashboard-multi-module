@@ -295,7 +295,7 @@ $token = $_GET['token'] ?? '';
         .team-score {
             font-size: 5rem;
             font-weight: 800;
-            margin: var(--spacing-lg) 0;
+            margin: 0;
             text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
         }
 
@@ -350,49 +350,7 @@ $token = $_GET['token'] ?? '';
         }
 
         /* ==================== TEXT EFFECTS ANIMATIONS ==================== */
-        @keyframes zoomInOut {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.1); }
-        }
-
-        @keyframes pulse {
-            0% { transform: scale(1); opacity: 1; }
-            50% { transform: scale(1.05); opacity: 0.8; }
-            100% { transform: scale(1); opacity: 1; }
-        }
-
-        @keyframes bounce {
-            0%, 20%, 53%, 80%, 100% { transform: translateY(0); }
-            40%, 43% { transform: translateY(-10px); }
-            70% { transform: translateY(-5px); }
-            90% { transform: translateY(-2px); }
-        }
-
-        @keyframes shake {
-            0%, 100% { transform: translateX(0); }
-            25% { transform: translateX(-5px); }
-            75% { transform: translateX(5px); }
-        }
-
-        @keyframes glow {
-            0%, 100% { text-shadow: 0 0 5px currentColor; }
-            50% { text-shadow: 0 0 20px currentColor, 0 0 30px currentColor; }
-        }
-
-        @keyframes flip {
-            0% { transform: rotateY(0); }
-            50% { transform: rotateY(180deg); }
-            100% { transform: rotateY(360deg); }
-        }
-
-        @keyframes neon {
-            0%, 100% { 
-                text-shadow: 0 0 5px currentColor, 0 0 10px currentColor, 0 0 15px currentColor;
-            }
-            50% { 
-                text-shadow: 0 0 10px currentColor, 0 0 20px currentColor, 0 0 30px currentColor, 0 0 40px currentColor;
-            }
-        }
+        /* Animations supprimées pour simplifier l'interface */
 
         /* ==================== RESPONSIVE DESIGN ==================== */
         @media (max-width: 1024px) {
@@ -490,7 +448,7 @@ $token = $_GET['token'] ?? '';
                 <!-- Contrôles Équipe Verte -->
                 <div class="command-section success">
                     <h3><i class="fas fa-users"></i> Équipe Verte</h3>
-                    <div class="command-buttons grid-5">
+                    <div class="command-buttons grid-4">
                         <button class="command-btn subtract" data-action="add-score" data-team="green" data-value="-10">-10</button>
                         <button class="command-btn subtract" data-action="add-score" data-team="green" data-value="-5">-5</button>
                         <button class="command-btn subtract" data-action="add-score" data-team="green" data-value="-1">-1</button>
@@ -498,16 +456,13 @@ $token = $_GET['token'] ?? '';
                         <button class="command-btn add" data-action="add-score" data-team="green" data-value="5">+5</button>
                         <button class="command-btn add" data-action="add-score" data-team="green" data-value="10">+10</button>
                         <button class="command-btn reset" data-action="reset-score" data-team="green">Reset</button>
-                        <button class="command-btn" data-action="set-score" data-team="green">Set</button>
-                        <button class="command-btn" data-action="double-score" data-team="green">x2</button>
-                        <button class="command-btn" data-action="half-score" data-team="green">÷2</button>
                     </div>
                 </div>
                 
                 <!-- Contrôles Équipe Rouge -->
                 <div class="command-section danger">
                     <h3><i class="fas fa-users"></i> Équipe Rouge</h3>
-                    <div class="command-buttons grid-5">
+                    <div class="command-buttons grid-4">
                         <button class="command-btn subtract" data-action="add-score" data-team="red" data-value="-10">-10</button>
                         <button class="command-btn subtract" data-action="add-score" data-team="red" data-value="-5">-5</button>
                         <button class="command-btn subtract" data-action="add-score" data-team="red" data-value="-1">-1</button>
@@ -515,9 +470,6 @@ $token = $_GET['token'] ?? '';
                         <button class="command-btn add" data-action="add-score" data-team="red" data-value="5">+5</button>
                         <button class="command-btn add" data-action="add-score" data-team="red" data-value="10">+10</button>
                         <button class="command-btn reset" data-action="reset-score" data-team="red">Reset</button>
-                        <button class="command-btn" data-action="set-score" data-team="red">Set</button>
-                        <button class="command-btn" data-action="double-score" data-team="red">x2</button>
-                        <button class="command-btn" data-action="half-score" data-team="red">÷2</button>
                     </div>
                 </div>
             </div>
@@ -647,8 +599,12 @@ $token = $_GET['token'] ?? '';
                 // Background avec gestion de la transparence
                 if (general.transparent === true || general.transparent === 'true' || general.transparent === 1) {
                     css += 'body { background: transparent !important; } ';
+                    css += 'html { background: transparent !important; } ';
+                    css += '.widget-container { background: transparent !important; } ';
+                    css += '.display { background: transparent !important; } ';
                 } else if (general.background) {
                     css += `body { background: ${general.background} !important; } `;
+                    css += `html { background: ${general.background} !important; } `;
                 }
                 
                 // Police générale
@@ -669,10 +625,10 @@ $token = $_GET['token'] ?? '';
                 
                 // Masquer les contrôles si demandé
                 if (options['hide-controls'] === true || options['hide-controls'] === 'true' || options['hide-controls'] === 1) {
-                    css += '.controls { display: none !important; } ';
+                    css += '.command-bar { display: none !important; } ';
                     css += '.config-button-fixed { display: none !important; } ';
                 } else {
-                    css += '.controls { display: flex !important; } ';
+                    css += '.command-bar { display: block !important; } ';
                 }
             }
             
@@ -692,9 +648,17 @@ $token = $_GET['token'] ?? '';
                 //     }
                 // }
                 
-                // Couleur
-                if (green.color) {
+                // Couleur du score (séparée du nom)
+                if (green.scoreColor) {
+                    css += `#green-score { color: ${green.scoreColor} !important; } `;
+                } else if (green.color) {
                     css += `#green-score { color: ${green.color} !important; } `;
+                }
+                
+                // Couleur du nom
+                if (green.nameColor) {
+                    css += `#green-name { color: ${green.nameColor} !important; } `;
+                } else if (green.color) {
                     css += `#green-name { color: ${green.color} !important; } `;
                 }
                 
@@ -713,6 +677,11 @@ $token = $_GET['token'] ?? '';
                     css += '#green-score { text-shadow: 3px 3px 6px rgba(0,0,0,0.8) !important; } ';
                 } else {
                     css += '#green-score { text-shadow: none !important; } ';
+                }
+                
+                // Fond des équipes
+                if (green.background) {
+                    css += `#team-green { background: ${green.background} !important; } `;
                 }
                 
                 // Effets d'animation
@@ -737,9 +706,17 @@ $token = $_GET['token'] ?? '';
                 //     }
                 // }
                 
-                // Couleur
-                if (red.color) {
+                // Couleur du score (séparée du nom)
+                if (red.scoreColor) {
+                    css += `#red-score { color: ${red.scoreColor} !important; } `;
+                } else if (red.color) {
                     css += `#red-score { color: ${red.color} !important; } `;
+                }
+                
+                // Couleur du nom
+                if (red.nameColor) {
+                    css += `#red-name { color: ${red.nameColor} !important; } `;
+                } else if (red.color) {
                     css += `#red-name { color: ${red.color} !important; } `;
                 }
                 
@@ -758,6 +735,11 @@ $token = $_GET['token'] ?? '';
                     css += '#red-score { text-shadow: 3px 3px 6px rgba(0,0,0,0.8) !important; } ';
                 } else {
                     css += '#red-score { text-shadow: none !important; } ';
+                }
+                
+                // Fond des équipes
+                if (red.background) {
+                    css += `#team-red { background: ${red.background} !important; } `;
                 }
                 
                 // Effets d'animation
@@ -792,21 +774,10 @@ $token = $_GET['token'] ?? '';
             return positions[position] || positions['center'];
         }
         
-        // Génération du CSS d'effets d'animation
+        // Génération du CSS d'effets d'animation (désactivée)
         function generateEffectCSS(team, effect, speed, pauseOnHover) {
-            const targetElement = team === 'green' ? '#green-score' : '#red-score';
-            const pauseCSS = pauseOnHover ? `${targetElement}:hover { animation-play-state: paused !important; }` : '';
-            
-            const effects = {
-                'zoom': `${targetElement} { animation: zoomInOut ${2/speed}s ease-in-out infinite; } ${pauseCSS}`,
-                'pulse': `${targetElement} { animation: pulse ${1.5/speed}s ease-in-out infinite; } ${pauseCSS}`,
-                'bounce': `${targetElement} { animation: bounce ${1/speed}s ease-in-out infinite; } ${pauseCSS}`,
-                'glow': `${targetElement} { animation: glow ${2/speed}s ease-in-out infinite; } ${pauseCSS}`,
-                'shake': `${targetElement} { animation: shake ${0.5/speed}s ease-in-out infinite; } ${pauseCSS}`,
-                'rotate': `${targetElement} { animation: rotate ${3/speed}s linear infinite; } ${pauseCSS}`
-            };
-            
-            return effects[effect] || '';
+            // Effets d'animation désactivés pour simplifier l'interface
+            return '';
         }
         
         // Application optimisée du CSS
@@ -830,12 +801,19 @@ $token = $_GET['token'] ?? '';
                 const greenNameElement = document.getElementById('green-name');
                 if (greenNameElement) {
                     greenNameElement.textContent = styles.green.name;
+                    // Forcer la mise à jour du DOM
+                    greenNameElement.style.display = 'none';
+                    greenNameElement.offsetHeight; // Force reflow
+                    greenNameElement.style.display = '';
                 } else {
                     // Retry après 50ms si l'élément n'est pas trouvé
                     setTimeout(() => {
                         const retryElement = document.getElementById('green-name');
                         if (retryElement) {
                             retryElement.textContent = styles.green.name;
+                            retryElement.style.display = 'none';
+                            retryElement.offsetHeight; // Force reflow
+                            retryElement.style.display = '';
                         }
                     }, 50);
                 }
@@ -845,12 +823,19 @@ $token = $_GET['token'] ?? '';
                 const redNameElement = document.getElementById('red-name');
                 if (redNameElement) {
                     redNameElement.textContent = styles.red.name;
+                    // Forcer la mise à jour du DOM
+                    redNameElement.style.display = 'none';
+                    redNameElement.offsetHeight; // Force reflow
+                    redNameElement.style.display = '';
                 } else {
                     // Retry après 50ms si l'élément n'est pas trouvé
                     setTimeout(() => {
                         const retryElement = document.getElementById('red-name');
                         if (retryElement) {
                             retryElement.textContent = styles.red.name;
+                            retryElement.style.display = 'none';
+                            retryElement.offsetHeight; // Force reflow
+                            retryElement.style.display = '';
                         }
                     }, 50);
                 }
@@ -1070,16 +1055,9 @@ $token = $_GET['token'] ?? '';
                     const value = button.dataset.value || '';
                     
                     // Gestion des actions spéciales
-                    if (action === 'set-score') {
-                        const newScore = prompt(`Nouveau score pour l'équipe ${team === 'green' ? 'verte' : 'rouge'} :`, '0');
-                        if (newScore !== null && !isNaN(newScore)) {
-                            await apiCall(action, JSON.stringify({ team, value: parseInt(newScore) }));
-                        }
-                    } else if (action === 'reset-score') {
+                    if (action === 'reset-score') {
                         // Action de reset spécifique pour une équipe
                         await apiCall(action, JSON.stringify({ team }));
-                    } else if (action === 'double-score' || action === 'half-score') {
-                        await apiCall(action, team);
                     } else if (action === 'reset-all' || action === 'swap-scores') {
                         await apiCall(action);
                     } else {

@@ -268,7 +268,6 @@ $token = $_GET['token'] ?? '';
             font-size: 4rem;
             font-weight: 800;
             color: white;
-            margin-bottom: -0.25rem;
             text-transform: uppercase;
             letter-spacing: 2px;
             margin: 0;
@@ -281,7 +280,6 @@ $token = $_GET['token'] ?? '';
             text-transform: uppercase;
             letter-spacing: 1px;
             margin: 0;
-            margin-top: 0.5rem;
         }
 
         /* ==================== CONTROLS SECTION - Styles supprimés, utilisation de command-bar.css ==================== */
@@ -746,8 +744,12 @@ $token = $_GET['token'] ?? '';
                 // Background avec gestion de la transparence
                 if (general.transparent === true || general.transparent === 'true' || general.transparent === 1) {
                     css += 'body { background: transparent !important; } ';
+                    css += 'html { background: transparent !important; } ';
+                    css += '.widget-container { background: transparent !important; } ';
+                    css += '.display { background: transparent !important; } ';
                 } else if (general.background) {
                     css += `body { background: ${general.background} !important; } `;
+                    css += `html { background: ${general.background} !important; } `;
                 }
                 
                 // Police générale
@@ -770,10 +772,10 @@ $token = $_GET['token'] ?? '';
                 
                 // Masquer les contrôles si demandé
                 if (options['hide-controls'] === true || options['hide-controls'] === 'true' || options['hide-controls'] === 1) {
-                    css += '.controls { display: none !important; } ';
+                    css += '.command-bar { display: none !important; } ';
                     css += '.config-button-fixed { display: none !important; } ';
                 } else {
-                    css += '.controls { display: flex !important; } ';
+                    css += '.command-bar { display: block !important; } ';
                 }
                 
                 // Masquer le multiplicateur si demandé
