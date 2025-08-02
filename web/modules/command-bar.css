@@ -1,5 +1,20 @@
 /* ==================== COMMAND BAR - STYLES HARMONISÉS ==================== */
 /* Fichier CSS partagé pour les panneaux de commandes des modules Win, Timer et Team VS Team */
+/* Version 2.0 - Design Premium avec Glass Morphism et animations fluides */
+
+/* ==================== VARIABLES CSS DÉDIÉES ==================== */
+:root {
+    /* Couleurs du panneau de commandes */
+    --cmd-bg: rgba(15, 23, 42, 0.95);
+    --cmd-border: rgba(148, 163, 184, 0.12);
+    --cmd-border-top: #f59e0b;
+    --cmd-glass: rgba(255, 255, 255, 0.03);
+    --cmd-shadow: 0 -10px 40px rgba(0, 0, 0, 0.3);
+    
+    /* Hauteur du panneau pour calculs */
+    --cmd-bar-height: auto;
+    --cmd-bar-max-height: 40vh;
+}
 
 /* ==================== PANNEAU DE COMMANDES PRINCIPAL ==================== */
 .command-bar {
@@ -7,21 +22,44 @@
     bottom: 0;
     left: 50%;
     transform: translateX(-50%);
-    width: 100%;
-    max-width: 700px;
-    background: rgba(15, 23, 42, 0.92);
-    backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px);
-    border: 1px solid rgba(148, 163, 184, 0.1);
-    border-top: 1px solid #f59e0b;
-    border-radius: 12px 12px 0 0;
-    padding: 12px;
-    box-shadow: 0 -5px 20px rgba(0, 0, 0, 0.2);
-    z-index: 100;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    width: calc(100% - 40px);
+    max-width: 800px;
+    background: var(--cmd-bg);
+    backdrop-filter: blur(20px) saturate(180%);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
+    border: 1px solid var(--cmd-border);
+    border-top: 2px solid var(--cmd-border-top);
+    border-radius: 20px 20px 0 0;
+    padding: 16px;
+    box-shadow: var(--cmd-shadow);
+    z-index: 1000;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    max-height: var(--cmd-bar-max-height);
+    overflow-y: auto;
+    overflow-x: hidden;
 }
 
-/* Effet glass morphism amélioré */
+/* Scrollbar personnalisée */
+.command-bar::-webkit-scrollbar {
+    width: 6px;
+}
+
+.command-bar::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.02);
+    border-radius: 3px;
+}
+
+.command-bar::-webkit-scrollbar-thumb {
+    background: rgba(245, 158, 11, 0.3);
+    border-radius: 3px;
+    transition: background 0.2s;
+}
+
+.command-bar::-webkit-scrollbar-thumb:hover {
+    background: rgba(245, 158, 11, 0.5);
+}
+
+/* Effet glass morphism premium */
 .command-bar::before {
     content: '';
     position: absolute;
@@ -30,16 +68,33 @@
     right: 0;
     bottom: 0;
     background: linear-gradient(135deg, 
-        rgba(99, 102, 241, 0.05) 0%, 
-        rgba(245, 158, 11, 0.05) 100%);
+        rgba(99, 102, 241, 0.08) 0%, 
+        rgba(245, 158, 11, 0.08) 100%);
     border-radius: inherit;
     pointer-events: none;
+    opacity: 0.6;
 }
 
-/* Animation d'entrée */
+/* Ligne de gradient en haut */
+.command-bar::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 20px;
+    right: 20px;
+    height: 2px;
+    background: linear-gradient(90deg, 
+        transparent 0%, 
+        var(--cmd-border-top) 20%, 
+        var(--cmd-border-top) 80%, 
+        transparent 100%);
+    border-radius: 2px;
+}
+
+/* Animation d'entrée fluide */
 @keyframes slideUpCommand {
     from {
-        transform: translateX(-50%) translateY(100%);
+        transform: translateX(-50%) translateY(120%);
         opacity: 0;
     }
     to {
@@ -49,19 +104,19 @@
 }
 
 .command-bar {
-    animation: slideUpCommand 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    animation: slideUpCommand 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
 /* ==================== SECTIONS ==================== */
 .command-section {
-    background: rgba(255, 255, 255, 0.02);
-    border: 1px solid rgba(148, 163, 184, 0.06);
-    border-radius: 8px;
-    padding: 10px;
-    margin-bottom: 10px;
+    background: var(--cmd-glass);
+    border: 1px solid rgba(148, 163, 184, 0.08);
+    border-radius: 12px;
+    padding: 12px;
+    margin-bottom: 12px;
     position: relative;
     overflow: hidden;
-    transition: all 0.2s ease;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .command-section:last-child {
@@ -69,54 +124,98 @@
 }
 
 .command-section:hover {
-    background: rgba(255, 255, 255, 0.04);
-    border-color: rgba(148, 163, 184, 0.12);
+    background: rgba(255, 255, 255, 0.05);
+    border-color: rgba(148, 163, 184, 0.15);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
-/* Titre de section harmonisé */
+/* Effet de brillance au hover */
+.command-section::after {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: linear-gradient(45deg, 
+        transparent 30%, 
+        rgba(255, 255, 255, 0.05) 50%, 
+        transparent 70%);
+    transform: rotate(45deg) translateX(-100%);
+    transition: transform 0.6s;
+    pointer-events: none;
+}
+
+.command-section:hover::after {
+    transform: rotate(45deg) translateX(100%);
+}
+
+/* Titre de section premium */
 .command-section h3 {
-    font-size: 0.7rem;
+    font-size: 0.75rem;
     font-weight: 600;
     color: #f8fafc;
-    margin-bottom: 8px;
+    margin-bottom: 10px;
     text-align: center;
     text-transform: uppercase;
-    letter-spacing: 1px;
-    padding: 5px 12px;
-    border-radius: 6px;
+    letter-spacing: 1.2px;
+    padding: 6px 16px;
+    border-radius: 8px;
     background: linear-gradient(135deg, #6366f1, #5855eb);
     display: inline-flex;
     align-items: center;
-    gap: 6px;
+    gap: 8px;
     width: 100%;
     justify-content: center;
-    box-shadow: 0 1px 4px rgba(99, 102, 241, 0.2);
+    box-shadow: 0 2px 8px rgba(99, 102, 241, 0.25);
+    position: relative;
+    overflow: hidden;
 }
 
-/* Variantes de couleurs pour les titres */
+/* Effet de brillance sur les titres */
+.command-section h3::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, 
+        transparent 0%, 
+        rgba(255, 255, 255, 0.2) 50%, 
+        transparent 100%);
+    transition: left 0.5s;
+}
+
+.command-section:hover h3::before {
+    left: 100%;
+}
+
+/* Variantes de couleurs améliorées */
 .command-section.danger h3 {
     background: linear-gradient(135deg, #ef4444, #dc2626);
-    box-shadow: 0 1px 4px rgba(239, 68, 68, 0.2);
+    box-shadow: 0 2px 8px rgba(239, 68, 68, 0.25);
 }
 
 .command-section.success h3 {
     background: linear-gradient(135deg, #10b981, #059669);
-    box-shadow: 0 1px 4px rgba(16, 185, 129, 0.2);
+    box-shadow: 0 2px 8px rgba(16, 185, 129, 0.25);
 }
 
 .command-section.warning h3 {
     background: linear-gradient(135deg, #f59e0b, #d97706);
-    box-shadow: 0 1px 4px rgba(245, 158, 11, 0.2);
+    box-shadow: 0 2px 8px rgba(245, 158, 11, 0.25);
 }
 
 /* ==================== GRILLE DE BOUTONS ==================== */
 .command-buttons {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(60px, 1fr));
-    gap: 6px;
+    grid-template-columns: repeat(auto-fit, minmax(70px, 1fr));
+    gap: 8px;
 }
 
-/* Grilles spécifiques */
+/* Grilles spécifiques optimisées */
 .command-buttons.grid-7 {
     grid-template-columns: repeat(7, 1fr);
 }
@@ -133,31 +232,33 @@
     grid-template-columns: repeat(2, 1fr);
 }
 
-/* ==================== BOUTONS HARMONISÉS ==================== */
+/* ==================== BOUTONS HARMONISÉS PREMIUM ==================== */
 .command-btn {
-    background: rgba(255, 255, 255, 0.04);
-    border: 1px solid rgba(148, 163, 184, 0.08);
-    color: #cbd5e1;
-    padding: 6px 12px;
-    border-radius: 20px;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.02));
+    border: 1px solid rgba(148, 163, 184, 0.12);
+    color: #e2e8f0;
+    padding: 8px 14px;
+    border-radius: 10px;
     font-weight: 600;
-    font-size: 0.68rem;
+    font-size: 0.72rem;
     cursor: pointer;
-    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     text-transform: uppercase;
-    letter-spacing: 0.3px;
-    min-height: 32px;
+    letter-spacing: 0.5px;
+    min-height: 36px;
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 4px;
+    gap: 6px;
     position: relative;
     overflow: hidden;
     text-decoration: none;
     outline: none;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-/* Effet de hover premium */
+/* Effet de hover amélioré */
 .command-btn::before {
     content: '';
     position: absolute;
@@ -165,98 +266,99 @@
     left: 50%;
     width: 0;
     height: 0;
-    background: radial-gradient(circle, rgba(99, 102, 241, 0.3) 0%, transparent 70%);
+    background: radial-gradient(circle, rgba(99, 102, 241, 0.4) 0%, transparent 70%);
     transform: translate(-50%, -50%);
-    transition: width 0.6s, height 0.6s;
+    transition: width 0.5s, height 0.5s;
     border-radius: 50%;
 }
 
 .command-btn:hover::before {
-    width: 120px;
-    height: 120px;
+    width: 150px;
+    height: 150px;
 }
 
 .command-btn:hover {
-    background: #6366f1;
+    background: linear-gradient(135deg, #6366f1, #5855eb);
     color: white;
-    border-color: #6366f1;
-    transform: translateY(-1px);
-    box-shadow: 0 2px 8px rgba(99, 102, 241, 0.3);
+    border-color: rgba(99, 102, 241, 0.3);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(99, 102, 241, 0.35);
 }
 
-/* Effet de clic */
+/* Effet de clic amélioré */
 .command-btn:active {
     transform: translateY(0);
-    box-shadow: 0 1px 2px rgba(99, 102, 241, 0.3);
+    box-shadow: 0 2px 8px rgba(99, 102, 241, 0.25);
 }
 
-/* ==================== VARIANTES DE BOUTONS ==================== */
+/* ==================== VARIANTES DE BOUTONS PREMIUM ==================== */
 /* Bouton d'ajout */
 .command-btn.add {
-    background: rgba(34, 197, 94, 0.1);
+    background: linear-gradient(135deg, rgba(34, 197, 94, 0.15), rgba(34, 197, 94, 0.08));
     border-color: rgba(34, 197, 94, 0.3);
-    color: #22c55e;
+    color: #4ade80;
 }
 
 .command-btn.add:hover {
-    background: #22c55e;
-    border-color: #22c55e;
+    background: linear-gradient(135deg, #22c55e, #16a34a);
+    border-color: transparent;
     color: white;
-    box-shadow: 0 4px 12px rgba(34, 197, 94, 0.4);
+    box-shadow: 0 6px 20px rgba(34, 197, 94, 0.4);
 }
 
 /* Bouton de soustraction */
 .command-btn.subtract {
-    background: rgba(239, 68, 68, 0.1);
+    background: linear-gradient(135deg, rgba(239, 68, 68, 0.15), rgba(239, 68, 68, 0.08));
     border-color: rgba(239, 68, 68, 0.3);
-    color: #ef4444;
+    color: #f87171;
 }
 
 .command-btn.subtract:hover {
-    background: #ef4444;
-    border-color: #ef4444;
+    background: linear-gradient(135deg, #ef4444, #dc2626);
+    border-color: transparent;
     color: white;
-    box-shadow: 0 4px 12px rgba(239, 68, 68, 0.4);
+    box-shadow: 0 6px 20px rgba(239, 68, 68, 0.4);
 }
 
 /* Bouton reset */
 .command-btn.reset {
-    background: rgba(239, 68, 68, 0.15);
+    background: linear-gradient(135deg, rgba(239, 68, 68, 0.2), rgba(239, 68, 68, 0.1));
     border-color: rgba(239, 68, 68, 0.4);
-    color: #ef4444;
+    color: #f87171;
 }
 
 .command-btn.reset:hover {
-    background: #dc2626;
-    border-color: #dc2626;
+    background: linear-gradient(135deg, #dc2626, #b91c1c);
+    border-color: transparent;
     color: white;
-    box-shadow: 0 4px 12px rgba(220, 38, 38, 0.4);
+    box-shadow: 0 6px 20px rgba(220, 38, 38, 0.4);
 }
 
 /* Bouton action principale */
 .command-btn.primary {
-    background: rgba(16, 185, 129, 0.15);
+    background: linear-gradient(135deg, rgba(16, 185, 129, 0.2), rgba(16, 185, 129, 0.1));
     border-color: rgba(16, 185, 129, 0.4);
-    color: #10b981;
+    color: #34d399;
 }
 
 .command-btn.primary:hover {
-    background: #059669;
-    border-color: #059669;
+    background: linear-gradient(135deg, #10b981, #059669);
+    border-color: transparent;
     color: white;
-    box-shadow: 0 4px 12px rgba(5, 150, 105, 0.4);
+    box-shadow: 0 6px 20px rgba(16, 185, 129, 0.4);
 }
 
 /* Bouton large */
 .command-btn.large {
-    padding: 8px 16px;
-    font-size: 0.75rem;
-    min-height: 36px;
+    padding: 10px 20px;
+    font-size: 0.8rem;
+    min-height: 42px;
+    font-weight: 700;
 }
 
 /* ==================== ÉTAT DÉSACTIVÉ ==================== */
 .command-btn:disabled {
-    opacity: 0.5;
+    opacity: 0.4;
     cursor: not-allowed;
     transform: none !important;
     background: rgba(255, 255, 255, 0.02) !important;
@@ -281,16 +383,16 @@
 /* ==================== BOUTON CONFIGURATION ==================== */
 .command-config-btn {
     position: absolute;
-    top: 10px;
-    right: 10px;
-    width: 28px;
-    height: 28px;
+    top: 12px;
+    right: 12px;
+    width: 32px;
+    height: 32px;
     border-radius: 50%;
-    background: rgba(245, 158, 11, 0.08);
-    backdrop-filter: blur(8px);
-    border: 1px solid rgba(245, 158, 11, 0.2);
-    color: #f59e0b;
-    font-size: 0.75rem;
+    background: linear-gradient(135deg, rgba(245, 158, 11, 0.15), rgba(245, 158, 11, 0.08));
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(245, 158, 11, 0.3);
+    color: #fbbf24;
+    font-size: 0.8rem;
     cursor: pointer;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     display: flex;
@@ -298,50 +400,57 @@
     justify-content: center;
     text-decoration: none;
     z-index: 10;
-    box-shadow: 0 1px 4px rgba(245, 158, 11, 0.15);
+    box-shadow: 0 2px 8px rgba(245, 158, 11, 0.2);
 }
 
 .command-config-btn:hover {
-    background: #f59e0b;
+    background: linear-gradient(135deg, #f59e0b, #d97706);
     color: white;
-    transform: scale(1.05) rotate(90deg);
-    box-shadow: 0 2px 8px rgba(245, 158, 11, 0.3);
+    transform: scale(1.1) rotate(90deg);
+    box-shadow: 0 4px 16px rgba(245, 158, 11, 0.4);
+    border-color: transparent;
 }
 
 /* ==================== CONTRÔLES SPÉCIAUX ==================== */
-/* Toggle de multiplicateur */
+/* Toggle de multiplicateur amélioré */
 .multiplier-toggle {
-    background: rgba(255, 255, 255, 0.04);
-    border: 1px solid rgba(148, 163, 184, 0.08);
-    color: #cbd5e1;
-    padding: 5px 12px;
-    border-radius: 6px;
-    font-size: 0.68rem;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.02));
+    border: 1px solid rgba(148, 163, 184, 0.12);
+    color: #e2e8f0;
+    padding: 6px 14px;
+    border-radius: 8px;
+    font-size: 0.72rem;
+    font-weight: 600;
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     display: inline-flex;
     align-items: center;
-    gap: 6px;
-    margin-bottom: 8px;
+    gap: 8px;
+    margin-bottom: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
 }
 
 .multiplier-toggle.active {
-    background: rgba(16, 185, 129, 0.15);
-    color: #10b981;
+    background: linear-gradient(135deg, rgba(16, 185, 129, 0.2), rgba(16, 185, 129, 0.1));
+    color: #34d399;
     border-color: rgba(16, 185, 129, 0.3);
+    box-shadow: 0 2px 8px rgba(16, 185, 129, 0.2);
 }
 
 .multiplier-toggle.inactive {
-    background: rgba(239, 68, 68, 0.15);
-    color: #ef4444;
+    background: linear-gradient(135deg, rgba(239, 68, 68, 0.2), rgba(239, 68, 68, 0.1));
+    color: #f87171;
     border-color: rgba(239, 68, 68, 0.3);
+    box-shadow: 0 2px 8px rgba(239, 68, 68, 0.2);
 }
 
-/* ==================== RESPONSIVE ==================== */
+/* ==================== RESPONSIVE PREMIUM ==================== */
 @media (max-width: 1024px) {
     .command-bar {
-        max-width: calc(100% - 40px);
-        margin: 0 20px;
+        width: calc(100% - 32px);
+        max-width: calc(100% - 32px);
+        margin: 0 16px;
         left: 0;
         right: 0;
         transform: none;
@@ -350,23 +459,35 @@
     .command-buttons.grid-7 {
         grid-template-columns: repeat(4, 1fr);
     }
+    
+    .command-buttons.grid-5 {
+        grid-template-columns: repeat(3, 1fr);
+    }
 }
 
 @media (max-width: 768px) {
     .command-bar {
+        width: 100%;
         max-width: 100%;
         margin: 0;
-        border-radius: 10px 10px 0 0;
-        padding: 10px;
+        border-radius: 16px 16px 0 0;
+        padding: 12px;
+        max-height: 50vh;
     }
     
     .command-section {
-        padding: 8px;
-        margin-bottom: 8px;
+        padding: 10px;
+        margin-bottom: 10px;
+    }
+    
+    .command-section h3 {
+        font-size: 0.7rem;
+        padding: 5px 12px;
+        gap: 6px;
     }
     
     .command-buttons {
-        gap: 5px;
+        gap: 6px;
     }
     
     .command-buttons.grid-7,
@@ -376,26 +497,39 @@
     }
     
     .command-btn {
-        font-size: 0.65rem;
-        padding: 5px 10px;
-        min-height: 30px;
+        font-size: 0.68rem;
+        padding: 6px 10px;
+        min-height: 32px;
     }
     
     .command-btn.large {
-        padding: 6px 14px;
-        min-height: 34px;
+        padding: 8px 16px;
+        min-height: 38px;
+        font-size: 0.75rem;
     }
     
     .command-config-btn {
-        width: 26px;
-        height: 26px;
-        font-size: 0.7rem;
+        width: 28px;
+        height: 28px;
+        font-size: 0.75rem;
     }
 }
 
 @media (max-width: 480px) {
     .command-bar {
+        padding: 10px;
+        border-radius: 12px 12px 0 0;
+        max-height: 60vh;
+    }
+    
+    .command-section {
         padding: 8px;
+        margin-bottom: 8px;
+    }
+    
+    .command-section h3 {
+        font-size: 0.65rem;
+        padding: 4px 10px;
     }
     
     .command-buttons.grid-7,
@@ -405,9 +539,15 @@
     }
     
     .command-btn {
-        font-size: 0.62rem;
+        font-size: 0.65rem;
         padding: 5px 8px;
-        min-height: 28px;
+        min-height: 30px;
+    }
+    
+    .command-btn.large {
+        font-size: 0.7rem;
+        padding: 6px 12px;
+        min-height: 34px;
     }
 }
 
@@ -418,7 +558,7 @@
         box-shadow: 0 0 0 0 rgba(245, 158, 11, 0.4);
     }
     70% {
-        box-shadow: 0 0 0 10px rgba(245, 158, 11, 0);
+        box-shadow: 0 0 0 15px rgba(245, 158, 11, 0);
     }
     100% {
         box-shadow: 0 0 0 0 rgba(245, 158, 11, 0);
@@ -429,7 +569,7 @@
     animation: commandPulse 2s infinite;
 }
 
-/* Effet de vague sur les boutons */
+/* Effet de vague premium sur les boutons */
 @keyframes ripple {
     0% {
         transform: scale(0);
@@ -445,7 +585,7 @@
     content: '';
     position: absolute;
     border-radius: 50%;
-    background: rgba(255, 255, 255, 0.5);
+    background: rgba(255, 255, 255, 0.6);
     width: 10px;
     height: 10px;
     top: 50%;
@@ -457,3 +597,90 @@
 .command-btn:active::after {
     animation: ripple 0.6s ease-out;
 }
+
+/* ==================== EFFET ENTRÉE PROGRESSIVE ==================== */
+.command-section {
+    animation: fadeInUp 0.4s ease-out backwards;
+}
+
+.command-section:nth-child(1) { animation-delay: 0.1s; }
+.command-section:nth-child(2) { animation-delay: 0.2s; }
+.command-section:nth-child(3) { animation-delay: 0.3s; }
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* ==================== AJUSTEMENTS POUR ÉVITER LES COLLISIONS ==================== */
+/* S'assurer que le contenu principal n'est pas caché */
+body:has(.command-bar) .widget-container,
+body:has(.command-bar) .display {
+    padding-bottom: 180px !important; /* Espace pour le panneau de commandes */
+}
+
+/* Ajustement spécifique pour les différents modules */
+body:has(.command-bar) #main-display {
+    padding-bottom: 180px !important;
+}
+
+/* Fallback pour navigateurs sans support de :has() */
+@supports not selector(:has(*)) {
+    .widget-container[data-module="wins"] .display,
+    .widget-container[data-module="teams"] .display,
+    .widget-container .display {
+        padding-bottom: 180px !important;
+    }
+}
+
+/* Ajustements responsive pour l'espace */
+@media (max-width: 768px) {
+    body:has(.command-bar) .widget-container,
+    body:has(.command-bar) .display,
+    body:has(.command-bar) #main-display,
+    .widget-container[data-module="wins"] .display,
+    .widget-container[data-module="teams"] .display,
+    .widget-container .display {
+        padding-bottom: 220px !important; /* Plus d'espace sur mobile */
+    }
+}
+
+@media (max-width: 480px) {
+    body:has(.command-bar) .widget-container,
+    body:has(.command-bar) .display,
+    body:has(.command-bar) #main-display,
+    .widget-container[data-module="wins"] .display,
+    .widget-container[data-module="teams"] .display,
+    .widget-container .display {
+        padding-bottom: 260px !important; /* Encore plus d'espace sur petit mobile */
+    }
+}
+
+/* Ajuster la position du panneau si nécessaire */
+.command-bar.minimized {
+    transform: translateX(-50%) translateY(calc(100% - 60px));
+}
+
+/* ==================== STYLES POUR TEAM BATTLE SPÉCIFIQUES ==================== */
+/* Grille spéciale pour les contrôles d'équipes */
+.command-bar > div[style*="grid-template-columns: 1fr 1fr"] {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+}
+
+/* Ajustement pour les contrôles généraux */
+.command-bar > div[style*="display: flex"] {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+/* ==================== FIN DES STYLES ==================== */

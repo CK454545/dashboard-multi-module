@@ -202,7 +202,6 @@ $token = $_GET['token'] ?? '';
             justify-content: center;
             text-align: center;
             padding: var(--spacing-lg);
-            padding-bottom: 150px; /* Espace par défaut pour éviter la collision avec les contrôles */
         }
 
         /* ==================== CONFIG BUTTON FIXED ==================== */

@@ -484,7 +484,7 @@ $token = $_GET['token'] ?? '';
         
         <!-- Si paramètre control=true, afficher les contrôles -->
         <?php if($control): ?>
-        <div class="command-bar" style="max-width: 1000px;">
+        <div class="command-bar">
             <!-- Bouton Configuration Intégré -->
             <a href="/modules/teams-config.php?token=<?=$token?>" class="command-config-btn">
                 <i class="fas fa-cog"></i>
