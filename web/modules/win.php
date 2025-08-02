@@ -18,7 +18,6 @@ $token = $_GET['token'] ?? '';
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Luckiest+Guy&family=Orbitron:wght@400;700;900&family=Press+Start+2P&family=Russo+One&family=Audiowide&family=Bungee&family=Creepster&family=Nosifer&family=Walter+Turncoat&family=Fredoka+One&family=Cinzel:wght@400;600&family=Playfair+Display:wght@400;700&family=Dancing+Script:wght@400;700&family=Black+Ops+One&family=Faster+One&family=Jolly+Lodger&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="command-bar.css">
     <style>
         /* ==================== CSS VARIABLES ==================== */
         :root {
@@ -282,7 +281,214 @@ $token = $_GET['token'] ?? '';
             margin: 0;
         }
 
-        /* ==================== CONTROLS SECTION - Styles supprimés, utilisation de command-bar.css ==================== */
+        /* ==================== WIN ACTION BAR - NOUVELLE BARRE MODERNE ==================== */
+        .win-action-bar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(15, 23, 42, 0.95);
+            backdrop-filter: blur(20px);
+            border-top: 1px solid rgba(148, 163, 184, 0.1);
+            padding: var(--spacing-md) var(--spacing-lg);
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            gap: var(--spacing-md);
+        }
+
+        .win-action-bar-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: var(--spacing-sm);
+        }
+
+        .win-action-bar-title {
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: #10b981;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+        }
+
+        .win-action-bar-config {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid #10b981;
+            color: #10b981;
+            font-size: 0.75rem;
+            cursor: pointer;
+            transition: all var(--transition-fast);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+        }
+
+        .win-action-bar-config:hover {
+            background: #10b981;
+            color: white;
+            transform: scale(1.1);
+        }
+
+        .win-action-bar-sections {
+            display: flex;
+            flex-direction: column;
+            gap: var(--spacing-md);
+        }
+
+        .win-action-section {
+            background: rgba(30, 41, 59, 0.5);
+            border-radius: var(--radius-lg);
+            padding: var(--spacing-md);
+            border: 1px solid rgba(148, 163, 184, 0.1);
+        }
+
+        .win-action-section-header {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+            margin-bottom: var(--spacing-sm);
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .win-action-buttons {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: var(--spacing-xs);
+        }
+
+        .win-action-btn {
+            padding: var(--spacing-sm) var(--spacing-xs);
+            border: none;
+            border-radius: var(--radius-md);
+            font-size: 0.75rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all var(--transition-fast);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            min-height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .win-action-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: currentColor;
+            opacity: 0;
+            transition: opacity var(--transition-fast);
+            z-index: -1;
+        }
+
+        .win-action-btn:hover::before {
+            opacity: 0.1;
+        }
+
+        .win-action-btn.add {
+            background: rgba(16, 185, 129, 0.1);
+            color: #10b981;
+            border: 1px solid rgba(16, 185, 129, 0.3);
+        }
+
+        .win-action-btn.add:hover {
+            background: rgba(16, 185, 129, 0.2);
+            border-color: #10b981;
+            transform: translateY(-1px);
+        }
+
+        .win-action-btn.subtract {
+            background: rgba(239, 68, 68, 0.1);
+            color: #ef4444;
+            border: 1px solid rgba(239, 68, 68, 0.3);
+        }
+
+        .win-action-btn.subtract:hover {
+            background: rgba(239, 68, 68, 0.2);
+            border-color: #ef4444;
+            transform: translateY(-1px);
+        }
+
+        .win-action-btn.reset {
+            background: rgba(245, 158, 11, 0.1);
+            color: #f59e0b;
+            border: 1px solid rgba(245, 158, 11, 0.3);
+        }
+
+        .win-action-btn.reset:hover {
+            background: rgba(245, 158, 11, 0.2);
+            border-color: #f59e0b;
+            transform: translateY(-1px);
+        }
+
+        .win-action-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+
+        .win-multiplier-status {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: var(--spacing-sm);
+            padding: var(--spacing-sm) var(--spacing-md);
+            background: rgba(30, 41, 59, 0.5);
+            border-radius: var(--radius-md);
+            border: 1px solid rgba(148, 163, 184, 0.1);
+        }
+
+        .win-multiplier-toggle {
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            color: #10b981;
+            padding: var(--spacing-xs) var(--spacing-sm);
+            border-radius: var(--radius-md);
+            font-size: 0.75rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all var(--transition-fast);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-xs);
+        }
+
+        .win-multiplier-toggle.active {
+            background: #10b981;
+            color: white;
+            border-color: #10b981;
+        }
+
+        .win-multiplier-toggle.inactive {
+            background: rgba(239, 68, 68, 0.1);
+            color: #ef4444;
+            border-color: rgba(239, 68, 68, 0.3);
+        }
+
+        .win-multiplier-toggle.inactive:hover {
+            background: rgba(239, 68, 68, 0.2);
+            border-color: #ef4444;
+        }
 
         /* ==================== CONFIG BUTTON INTEGRATED ==================== */
         .config-btn-integrated {
@@ -450,16 +656,7 @@ $token = $_GET['token'] ?? '';
                  gap: var(--spacing-lg);
              }
              
-             .controls {
-                 margin-top: var(--spacing-lg);
-                 max-width: 600px;
-             }
-
-             .buttons {
-                 grid-template-columns: repeat(4, 1fr);
-             }
-
-             .buttons.multi {
+             .win-action-buttons {
                  grid-template-columns: repeat(4, 1fr);
              }
          }
@@ -477,24 +674,29 @@ $token = $_GET['token'] ?? '';
                  font-size: 2rem;
              }
              
-             .controls {
-                 max-width: 100%;
+             .win-action-bar {
+                 padding: var(--spacing-sm);
              }
              
-             .buttons {
+             .win-action-buttons {
                  grid-template-columns: repeat(4, 1fr);
                  gap: var(--spacing-xs);
              }
 
-             .buttons.multi {
-                 grid-template-columns: repeat(4, 1fr);
-                 gap: var(--spacing-xs);
-             }
-
-             .btn {
+             .win-action-btn {
                  font-size: 0.7rem;
                  padding: var(--spacing-xs);
-                 min-height: 32px;
+                 min-height: 44px;
+             }
+         }
+
+         @media (max-width: 480px) {
+             .win-action-buttons {
+                 grid-template-columns: repeat(3, 1fr);
+             }
+             
+             .win-action-section {
+                 padding: var(--spacing-sm);
              }
          }
     </style>
@@ -518,42 +720,42 @@ $token = $_GET['token'] ?? '';
         
         <!-- Si paramètre control=true, afficher les contrôles -->
         <?php if($control): ?>
-        <div class="command-bar">
+        <div class="win-action-bar">
             <!-- Bouton Configuration Intégré -->
-            <a href="/modules/wins-config.php?token=<?=$token?>" class="command-config-btn">
+            <a href="/modules/wins-config.php?token=<?=$token?>" class="win-action-bar-config">
                 <i class="fas fa-cog"></i>
             </a>
             
             <!-- Statut du multiplicateur -->
-            <div class="multiplier-status" style="text-align: center;">
-                <button class="multiplier-toggle active" id="multiplier-toggle" data-active="true">
+            <div class="win-multiplier-status">
+                <button class="win-multiplier-toggle active" id="multiplier-toggle" data-active="true">
                     <i class="fas fa-check"></i> Multiplicateur ACTIF
                 </button>
             </div>
             
-            <div class="command-section primary">
-                <h3><i class="fas fa-trophy"></i> Wins</h3>
-                <div class="command-buttons grid-7">
-                    <button class="command-btn subtract" data-action="add-wins" data-value="-10">-10</button>
-                    <button class="command-btn subtract" data-action="add-wins" data-value="-5">-5</button>
-                    <button class="command-btn subtract" data-action="add-wins" data-value="-1">-1</button>
-                    <button class="command-btn reset" data-action="reset-wins">RESET</button>
-                    <button class="command-btn add" data-action="add-wins" data-value="1">+1</button>
-                    <button class="command-btn add" data-action="add-wins" data-value="5">+5</button>
-                    <button class="command-btn add" data-action="add-wins" data-value="10">+10</button>
+            <div class="win-action-section">
+                <div class="win-action-section-header"><i class="fas fa-trophy"></i> Wins</div>
+                <div class="win-action-buttons">
+                    <button class="win-action-btn subtract" data-action="add-wins" data-value="-10">-10</button>
+                    <button class="win-action-btn subtract" data-action="add-wins" data-value="-5">-5</button>
+                    <button class="win-action-btn subtract" data-action="add-wins" data-value="-1">-1</button>
+                    <button class="win-action-btn reset" data-action="reset-wins">RESET</button>
+                    <button class="win-action-btn add" data-action="add-wins" data-value="1">+1</button>
+                    <button class="win-action-btn add" data-action="add-wins" data-value="5">+5</button>
+                    <button class="win-action-btn add" data-action="add-wins" data-value="10">+10</button>
                 </div>
             </div>
             
-            <div class="command-section warning">
-                <h3><i class="fas fa-times"></i> Multiplicateur</h3>
-                <div class="command-buttons grid-7">
-                    <button class="command-btn subtract" data-action="add-multi" data-value="-50">-50</button>
-                    <button class="command-btn subtract" data-action="add-multi" data-value="-10">-10</button>
-                    <button class="command-btn subtract" data-action="add-multi" data-value="-1">-1</button>
-                    <button class="command-btn reset" data-action="reset-multi">RESET</button>
-                    <button class="command-btn add" data-action="add-multi" data-value="1">+1</button>
-                    <button class="command-btn add" data-action="add-multi" data-value="10">+10</button>
-                    <button class="command-btn add" data-action="add-multi" data-value="50">+50</button>
+            <div class="win-action-section">
+                <div class="win-action-section-header"><i class="fas fa-times"></i> Multiplicateur</div>
+                <div class="win-action-buttons">
+                    <button class="win-action-btn subtract" data-action="add-multi" data-value="-50">-50</button>
+                    <button class="win-action-btn subtract" data-action="add-multi" data-value="-10">-10</button>
+                    <button class="win-action-btn subtract" data-action="add-multi" data-value="-1">-1</button>
+                    <button class="win-action-btn reset" data-action="reset-multi">RESET</button>
+                    <button class="win-action-btn add" data-action="add-multi" data-value="1">+1</button>
+                    <button class="win-action-btn add" data-action="add-multi" data-value="10">+10</button>
+                    <button class="win-action-btn add" data-action="add-multi" data-value="50">+50</button>
                 </div>
             </div>
         </div>
@@ -609,10 +811,10 @@ $token = $_GET['token'] ?? '';
             const toggle = document.getElementById('multiplier-toggle');
             if (toggle) {
                 if (multiplierActive) {
-                    toggle.className = 'multiplier-toggle active';
+                    toggle.className = 'win-multiplier-toggle active';
                     toggle.innerHTML = '<i class="fas fa-check"></i> Multiplicateur ACTIF';
                 } else {
-                    toggle.className = 'multiplier-toggle inactive';
+                    toggle.className = 'win-multiplier-toggle inactive';
                     toggle.innerHTML = '<i class="fas fa-times"></i> Multiplicateur INACTIF';
                 }
             }
@@ -772,10 +974,10 @@ $token = $_GET['token'] ?? '';
                 
                 // Masquer les contrôles si demandé
                 if (options['hide-controls'] === true || options['hide-controls'] === 'true' || options['hide-controls'] === 1) {
-                    css += '.command-bar { display: none !important; } ';
-                    css += '.command-config-btn { display: none !important; } ';
+                    css += '.win-action-bar { display: none !important; } ';
+                    css += '.win-action-bar-config { display: none !important; } ';
                 } else {
-                    css += '.command-bar { display: flex !important; } ';
+                    css += '.win-action-bar { display: flex !important; } ';
                 }
                 
                 // Masquer le multiplicateur si demandé
@@ -1229,7 +1431,7 @@ $token = $_GET['token'] ?? '';
         <?php if($control): ?>
         // Gestion des boutons
         setTimeout(() => {
-            const buttons = document.querySelectorAll('.command-btn');
+            const buttons = document.querySelectorAll('.win-action-btn');
             
             if (buttons.length === 0) {
                 return;
