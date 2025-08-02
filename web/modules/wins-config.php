@@ -1626,17 +1626,17 @@ $token = $_GET['token'] ?? '';
         function copyApiUrl(url) {
             const fullUrl = window.location.origin + url;
             navigator.clipboard.writeText(fullUrl).then(() => {
-                // Notification temporaire
+                // Afficher une notification
                 const notification = document.createElement('div');
                 notification.className = 'save-notification';
                 notification.innerHTML = '<i class="fas fa-check"></i> URL copiée !';
-                notification.style.bottom = '20px';
-                notification.style.top = 'auto';
                 document.body.appendChild(notification);
                 
                 setTimeout(() => {
                     notification.remove();
                 }, 2000);
+            }).catch(err => {
+                console.error('Erreur lors de la copie:', err);
             });
         }
 

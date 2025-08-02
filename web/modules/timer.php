@@ -909,10 +909,10 @@ $token = $_GET['token'] ?? '';
                         <i class="fas fa-play-circle"></i> Contrôles
                     </div>
                     <div class="timer-action-buttons controls">
-                        <button class="timer-action-btn primary large" data-action="start" id="startBtn" onclick="toggleTimer()">
+                        <button class="timer-action-btn primary large" data-action="start" id="startBtn" onclick="startTimerAction()">
                             <i class="fas fa-play"></i> Démarrer
                         </button>
-                        <button class="timer-action-btn warning large" data-action="pause" id="pauseBtn" onclick="toggleTimer()" style="display: none;">
+                        <button class="timer-action-btn warning large" data-action="pause" id="pauseBtn" onclick="pauseTimerAction()">
                             <i class="fas fa-pause"></i> Pause
                         </button>
                     </div>
@@ -1193,17 +1193,24 @@ $token = $_GET['token'] ?? '';
             }
         }
 
+        // Action pour démarrer le timer (bouton Démarrer)
+        async function startTimerAction() {
+            if (!timerState.isRunning) {
+                await startTimer(true);
+            }
+        }
+
+        // Action pour mettre en pause le timer (bouton Pause)
+        async function pauseTimerAction() {
+            if (timerState.isRunning) {
+                await pauseTimer();
+            }
+        }
+
         // Démarrer le timer
         async function startTimer(save = true) {
             timerState.isRunning = true;
             timerState.lastUpdate = Date.now();
-            
-            const startBtn = document.getElementById('startBtn');
-            const pauseBtn = document.getElementById('pauseBtn');
-            if (startBtn && pauseBtn) {
-                startBtn.style.display = 'none';
-                pauseBtn.style.display = 'flex';
-            }
             
             // Sauvegarder l'état
             if (save) {
@@ -1233,13 +1240,6 @@ $token = $_GET['token'] ?? '';
         // Mettre en pause le timer
         async function pauseTimer() {
             timerState.isRunning = false;
-            
-            const startBtn = document.getElementById('startBtn');
-            const pauseBtn = document.getElementById('pauseBtn');
-            if (startBtn && pauseBtn) {
-                startBtn.style.display = 'flex';
-                pauseBtn.style.display = 'none';
-            }
             
             // Arrêter l'intervalle
             if (interval) {
