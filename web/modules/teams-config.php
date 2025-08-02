@@ -683,6 +683,14 @@ $token = $_GET['token'] ?? '';
                             <input type="text" class="color-text" data-style="green-color" value="#10b981" placeholder="#10b981">
                         </div>
                     </div>
+                    
+                    <div class="form-group">
+                        <label for="green-score-color">Couleur du score</label>
+                        <div class="color-input-group">
+                            <input type="color" id="green-score-color" data-style="green-score-color" value="#10b981">
+                            <input type="text" class="color-text" data-style="green-score-color" value="#10b981" placeholder="#10b981">
+                        </div>
+                    </div>
                 </div>
 
                 <div class="form-row">
@@ -746,6 +754,14 @@ $token = $_GET['token'] ?? '';
                         <div class="color-input-group">
                             <input type="color" id="red-color" data-style="red-color" value="#ef4444">
                             <input type="text" class="color-text" data-style="red-color" value="#ef4444" placeholder="#ef4444">
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="red-score-color">Couleur du score</label>
+                        <div class="color-input-group">
+                            <input type="color" id="red-score-color" data-style="red-score-color" value="#ef4444">
+                            <input type="text" class="color-text" data-style="red-score-color" value="#ef4444" placeholder="#ef4444">
                         </div>
                     </div>
                 </div>
@@ -866,6 +882,10 @@ $token = $_GET['token'] ?? '';
                         <div class="checkbox-group">
                             <input type="checkbox" id="transparent" data-style="transparent">
                             <label for="transparent">Fond transparent</label>
+                        </div>
+                        <div class="checkbox-group">
+                            <input type="checkbox" id="team-background" data-style="team-background">
+                            <label for="team-background">Activer le fond des équipes</label>
                         </div>
                     </div>
                     
@@ -1119,6 +1139,7 @@ $token = $_GET['token'] ?? '';
                 green: {
                     name: getInputValue('green-name', 'ÉQUIPE VERTE'),
                     color: getInputValue('green-color', '#10b981'),
+                    'score-color': getInputValue('green-score-color', '#10b981'),
                     size: getInputValue('green-size', '80'),
                     stroke: getInputValue('green-stroke', '#000000'),
                     shadow: getInputValue('green-shadow', false),
@@ -1129,6 +1150,7 @@ $token = $_GET['token'] ?? '';
                 red: {
                     name: getInputValue('red-name', 'ÉQUIPE ROUGE'),
                     color: getInputValue('red-color', '#ef4444'),
+                    'score-color': getInputValue('red-score-color', '#ef4444'),
                     size: getInputValue('red-size', '80'),
                     stroke: getInputValue('red-stroke', '#000000'),
                     shadow: getInputValue('red-shadow', false),
@@ -1140,8 +1162,9 @@ $token = $_GET['token'] ?? '';
                     'font-family': selectedFont,
                     background: getInputValue('background', '#1e293b'),
                     'text-position': getInputValue('text-position', 'center'),
-                    'text-margin': getInputValue('text-margin', '20'),
-                    transparent: getInputValue('transparent', false)
+                    'text-margin': getInputValue('text-margin', '0'),
+                    transparent: getInputValue('transparent', false),
+                    'team-background': getInputValue('team-background', false)
                 },
                 options: {
                     'hide-controls': getInputValue('hide-controls', false)
@@ -1200,8 +1223,10 @@ $token = $_GET['token'] ?? '';
             }
             if (previewGreenScore) {
                 if (extracted.greenColor) {
-                    previewGreenScore.style.color = extracted.greenColor;
                     previewGreenName.style.color = extracted.greenColor;
+                }
+                if (extracted.greenScoreColor) {
+                    previewGreenScore.style.color = extracted.greenScoreColor;
                 }
                 if (extracted.greenSize) {
                     previewGreenScore.style.fontSize = `${extracted.greenSize}px`;
@@ -1222,8 +1247,10 @@ $token = $_GET['token'] ?? '';
             }
             if (previewRedScore) {
                 if (extracted.redColor) {
-                    previewRedScore.style.color = extracted.redColor;
                     previewRedName.style.color = extracted.redColor;
+                }
+                if (extracted.redScoreColor) {
+                    previewRedScore.style.color = extracted.redScoreColor;
                 }
                 if (extracted.redSize) {
                     previewRedScore.style.fontSize = `${extracted.redSize}px`;
@@ -1255,6 +1282,33 @@ $token = $_GET['token'] ?? '';
                 container.style.background = extracted.background;
                 container.style.border = '1px solid var(--border-color)';
             }
+            
+            // Fond des équipes
+            const greenTeam = document.querySelector('.preview-team.green');
+            const redTeam = document.querySelector('.preview-team.red');
+            if (extracted.teamBackground) {
+                if (greenTeam) {
+                    greenTeam.style.background = 'rgba(0, 0, 0, 0.5)';
+                    greenTeam.style.padding = '15px';
+                    greenTeam.style.borderRadius = '10px';
+                }
+                if (redTeam) {
+                    redTeam.style.background = 'rgba(0, 0, 0, 0.5)';
+                    redTeam.style.padding = '15px';
+                    redTeam.style.borderRadius = '10px';
+                }
+            } else {
+                if (greenTeam) {
+                    greenTeam.style.background = 'transparent';
+                    greenTeam.style.padding = '0';
+                    greenTeam.style.borderRadius = '0';
+                }
+                if (redTeam) {
+                    redTeam.style.background = 'transparent';
+                    redTeam.style.padding = '0';
+                    redTeam.style.borderRadius = '0';
+                }
+            }
         }
 
         // Fonction pour extraire les styles
@@ -1264,6 +1318,7 @@ $token = $_GET['token'] ?? '';
             if (data.green) {
                 extracted.greenName = data.green.name;
                 extracted.greenColor = data.green.color;
+                extracted.greenScoreColor = data.green['score-color'] || data.green.color;
                 extracted.greenSize = data.green.size;
                 extracted.greenStroke = data.green.stroke;
                 extracted.greenShadow = data.green.shadow;
@@ -1272,6 +1327,7 @@ $token = $_GET['token'] ?? '';
             if (data.red) {
                 extracted.redName = data.red.name;
                 extracted.redColor = data.red.color;
+                extracted.redScoreColor = data.red['score-color'] || data.red.color;
                 extracted.redSize = data.red.size;
                 extracted.redStroke = data.red.stroke;
                 extracted.redShadow = data.red.shadow;
@@ -1283,6 +1339,7 @@ $token = $_GET['token'] ?? '';
                 extracted.textPosition = data.general['text-position'];
                 extracted.textMargin = data.general['text-margin'];
                 extracted.transparent = data.general.transparent;
+                extracted.teamBackground = data.general['team-background'];
             }
             if (data.options) {
                 extracted.hideControls = data.options['hide-controls'];
@@ -1436,6 +1493,7 @@ $token = $_GET['token'] ?? '';
         function resetStyles() {
             document.getElementById('green-name').value = 'ÉQUIPE VERTE';
             document.getElementById('green-color').value = '#10b981';
+            document.getElementById('green-score-color').value = '#10b981';
             document.getElementById('green-size').value = '80';
             document.getElementById('green-stroke').value = '#000000';
             document.getElementById('green-shadow').checked = false;
@@ -1443,6 +1501,7 @@ $token = $_GET['token'] ?? '';
             
             document.getElementById('red-name').value = 'ÉQUIPE ROUGE';
             document.getElementById('red-color').value = '#ef4444';
+            document.getElementById('red-score-color').value = '#ef4444';
             document.getElementById('red-size').value = '80';
             document.getElementById('red-stroke').value = '#000000';
             document.getElementById('red-shadow').checked = false;
@@ -1451,8 +1510,9 @@ $token = $_GET['token'] ?? '';
             document.getElementById('font-family').value = 'Arial, Helvetica, sans-serif';
             document.getElementById('background').value = '#1e293b';
             document.getElementById('text-position').value = 'center';
-            document.getElementById('text-margin').value = '20';
+            document.getElementById('text-margin').value = '0';
             document.getElementById('transparent').checked = false;
+            document.getElementById('team-background').checked = false;
             document.getElementById('hide-controls').checked = false;
             
             // Mettre à jour les inputs secondaires
@@ -1497,6 +1557,7 @@ $token = $_GET['token'] ?? '';
             if (styles.green) {
                 setInputValue('green-name', styles.green.name);
                 setInputValue('green-color', styles.green.color);
+                setInputValue('green-score-color', styles.green['score-color'] || styles.green.color);
                 setInputValue('green-size', styles.green.size);
                 setInputValue('green-stroke', styles.green.stroke);
                 setInputValue('green-shadow', styles.green.shadow);
@@ -1506,6 +1567,7 @@ $token = $_GET['token'] ?? '';
             if (styles.red) {
                 setInputValue('red-name', styles.red.name);
                 setInputValue('red-color', styles.red.color);
+                setInputValue('red-score-color', styles.red['score-color'] || styles.red.color);
                 setInputValue('red-size', styles.red.size);
                 setInputValue('red-stroke', styles.red.stroke);
                 setInputValue('red-shadow', styles.red.shadow);
@@ -1518,6 +1580,7 @@ $token = $_GET['token'] ?? '';
                 setInputValue('text-position', styles.general['text-position']);
                 setInputValue('text-margin', styles.general['text-margin']);
                 setInputValue('transparent', styles.general.transparent);
+                setInputValue('team-background', styles.general['team-background']);
             }
             
             if (styles.options) {
