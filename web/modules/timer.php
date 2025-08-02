@@ -472,6 +472,63 @@ $token = $_GET['token'] ?? '';
             transform: none !important;
         }
 
+        /* ==================== MANUAL INPUT STYLES ==================== */
+        .timer-manual-inputs {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: var(--spacing-sm);
+            margin-bottom: var(--spacing-sm);
+        }
+
+        .manual-input-group {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .manual-input-group label {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            margin-bottom: var(--spacing-xs);
+            font-weight: 500;
+            text-align: center;
+        }
+
+        .manual-input {
+            width: 100%;
+            padding: var(--spacing-xs) var(--spacing-sm);
+            background: var(--bg-glass);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            color: var(--text-primary);
+            font-size: 0.875rem;
+            text-align: center;
+            transition: all var(--transition-fast);
+            backdrop-filter: blur(10px);
+        }
+
+        .manual-input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            background: rgba(255, 255, 255, 0.1);
+            box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.2);
+        }
+
+        .manual-input::placeholder {
+            color: var(--text-muted);
+        }
+
+        .timer-action-buttons.manual {
+            grid-template-columns: repeat(2, 1fr);
+            gap: var(--spacing-sm);
+        }
+
+        .timer-action-buttons.manual .timer-action-btn {
+            padding: var(--spacing-xs) var(--spacing-sm);
+            font-size: 0.75rem;
+            min-height: 36px;
+        }
+
         /* ==================== CONFIG BUTTON INTEGRATED ==================== */
         .config-btn-integrated {
             position: relative;
@@ -667,6 +724,30 @@ $token = $_GET['token'] ?? '';
                 grid-template-columns: repeat(2, 1fr);
             }
 
+            .timer-manual-inputs {
+                grid-template-columns: repeat(3, 1fr);
+                gap: var(--spacing-xs);
+            }
+
+            .manual-input {
+                font-size: 0.75rem;
+                padding: var(--spacing-xs);
+            }
+
+            .manual-input-group label {
+                font-size: 0.7rem;
+            }
+
+            .timer-action-buttons.manual {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .timer-action-buttons.manual .timer-action-btn {
+                font-size: 0.65rem;
+                padding: var(--spacing-xs);
+                min-height: 32px;
+            }
+
             .timer-action-btn {
                 font-size: 0.65rem;
                 padding: var(--spacing-xs);
@@ -757,6 +838,34 @@ $token = $_GET['token'] ?? '';
                         <button class="timer-action-btn add" onclick="handleTimeAction(event, 'add', 10)">+10s</button>
                         <button class="timer-action-btn add" onclick="handleTimeAction(event, 'add', 60)">+1min</button>
                         <button class="timer-action-btn add" onclick="handleTimeAction(event, 'add', 300)">+5min</button>
+                    </div>
+                </div>
+
+                <div class="timer-action-section">
+                    <div class="timer-action-section-header">
+                        <i class="fas fa-edit"></i> Saisie manuelle
+                    </div>
+                    <div class="timer-manual-inputs">
+                        <div class="manual-input-group">
+                            <label for="manual-hours">Heures</label>
+                            <input type="number" id="manual-hours" min="0" max="99" placeholder="0" class="manual-input">
+                        </div>
+                        <div class="manual-input-group">
+                            <label for="manual-minutes">Minutes</label>
+                            <input type="number" id="manual-minutes" min="0" max="59" placeholder="0" class="manual-input">
+                        </div>
+                        <div class="manual-input-group">
+                            <label for="manual-seconds">Secondes</label>
+                            <input type="number" id="manual-seconds" min="0" max="59" placeholder="0" class="manual-input">
+                        </div>
+                    </div>
+                    <div class="timer-action-buttons manual">
+                        <button class="timer-action-btn add" onclick="addManualTime()">
+                            <i class="fas fa-plus"></i> Ajouter
+                        </button>
+                        <button class="timer-action-btn subtract" onclick="subtractManualTime()">
+                            <i class="fas fa-minus"></i> Soustraire
+                        </button>
                     </div>
                 </div>
 
