@@ -344,16 +344,32 @@
 
 /* Bouton action principale */
 .command-btn.primary {
-    background: linear-gradient(135deg, rgba(16, 185, 129, 0.2), rgba(16, 185, 129, 0.1));
+    background: rgba(16, 185, 129, 0.2);
     border-color: rgba(16, 185, 129, 0.4);
     color: #34d399;
 }
 
 .command-btn.primary:hover {
-    background: linear-gradient(135deg, #10b981, #059669);
-    border-color: transparent;
+    background: rgba(16, 185, 129, 0.4);
+    border-color: #10b981;
     color: white;
-    box-shadow: 0 6px 20px rgba(16, 185, 129, 0.4);
+    box-shadow: 0 6px 20px rgba(16, 185, 129, 0.5);
+    transform: translateY(-2px);
+}
+
+/* Bouton warning (pause) */
+.command-btn.warning {
+    background: rgba(245, 158, 11, 0.2);
+    border-color: rgba(245, 158, 11, 0.4);
+    color: #fbbf24;
+}
+
+.command-btn.warning:hover {
+    background: rgba(245, 158, 11, 0.4);
+    border-color: #f59e0b;
+    color: white;
+    box-shadow: 0 6px 20px rgba(245, 158, 11, 0.5);
+    transform: translateY(-2px);
 }
 
 /* Bouton large */

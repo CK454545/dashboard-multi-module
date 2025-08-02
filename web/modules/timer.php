@@ -524,27 +524,29 @@ $token = $_GET['token'] ?? '';
                 <i class="fas fa-cog"></i>
             </a>
             
-            <div class="command-section danger">
-                <h3><i class="fas fa-clock"></i> Timer</h3>
-                <div class="command-buttons grid-7">
-                    <button class="command-btn subtract" onclick="handleTimeAction(event, 'subtract', 300)">-5min</button>
-                    <button class="command-btn subtract" onclick="handleTimeAction(event, 'subtract', 60)">-1min</button>
-                    <button class="command-btn subtract" onclick="handleTimeAction(event, 'subtract', 10)">-10s</button>
-                    <button class="command-btn reset" onclick="resetTimer()">Reset</button>
-                    <button class="command-btn add" onclick="handleTimeAction(event, 'add', 10)">+10s</button>
-                    <button class="command-btn add" onclick="handleTimeAction(event, 'add', 60)">+1min</button>
-                    <button class="command-btn add" onclick="handleTimeAction(event, 'add', 300)">+5min</button>
+            <div class="command-section">
+                <h3><i class="fas fa-clock"></i> Ajuster le temps</h3>
+                <div class="command-buttons" style="display: flex; gap: 8px; flex-wrap: wrap; justify-content: center;">
+                    <button class="command-btn subtract" onclick="handleTimeAction(event, 'subtract', 300)" style="flex: 1; min-width: 70px;">-5min</button>
+                    <button class="command-btn subtract" onclick="handleTimeAction(event, 'subtract', 60)" style="flex: 1; min-width: 70px;">-1min</button>
+                    <button class="command-btn subtract" onclick="handleTimeAction(event, 'subtract', 10)" style="flex: 1; min-width: 70px;">-10s</button>
+                    <button class="command-btn add" onclick="handleTimeAction(event, 'add', 10)" style="flex: 1; min-width: 70px;">+10s</button>
+                    <button class="command-btn add" onclick="handleTimeAction(event, 'add', 60)" style="flex: 1; min-width: 70px;">+1min</button>
+                    <button class="command-btn add" onclick="handleTimeAction(event, 'add', 300)" style="flex: 1; min-width: 70px;">+5min</button>
                 </div>
             </div>
 
-            <div class="command-section success">
-                <h3><i class="fas fa-play-circle"></i> Actions</h3>
-                <div class="command-buttons grid-2">
-                    <button class="command-btn primary large" data-action="start" id="startBtn" onclick="toggleTimer()">
+            <div class="command-section">
+                <h3><i class="fas fa-play-circle"></i> Contrôles</h3>
+                <div class="command-buttons" style="display: flex; gap: 8px; justify-content: center;">
+                    <button class="command-btn primary large" data-action="start" id="startBtn" onclick="toggleTimer()" style="flex: 1;">
                         <i class="fas fa-play"></i> Démarrer
                     </button>
-                    <button class="command-btn primary large" onclick="handleTimeAction(event, 'add', 30)">
-                        <i class="fas fa-plus"></i> +30s
+                    <button class="command-btn warning large" data-action="pause" id="pauseBtn" onclick="toggleTimer()" style="flex: 1; display: none;">
+                        <i class="fas fa-pause"></i> Pause
+                    </button>
+                    <button class="command-btn reset large" onclick="resetTimer()" style="flex: 1;">
+                        <i class="fas fa-redo"></i> Reset
                     </button>
                 </div>
             </div>
@@ -829,8 +831,10 @@ $token = $_GET['token'] ?? '';
             timerState.lastUpdate = Date.now();
             
             const startBtn = document.getElementById('startBtn');
-            if (startBtn) {
-                startBtn.innerHTML = '<i class="fas fa-pause"></i> Pause';
+            const pauseBtn = document.getElementById('pauseBtn');
+            if (startBtn && pauseBtn) {
+                startBtn.style.display = 'none';
+                pauseBtn.style.display = 'flex';
             }
             
             // Sauvegarder l'état
@@ -863,8 +867,10 @@ $token = $_GET['token'] ?? '';
             timerState.isRunning = false;
             
             const startBtn = document.getElementById('startBtn');
-            if (startBtn) {
-                startBtn.innerHTML = '<i class="fas fa-play"></i> Démarrer';
+            const pauseBtn = document.getElementById('pauseBtn');
+            if (startBtn && pauseBtn) {
+                startBtn.style.display = 'flex';
+                pauseBtn.style.display = 'none';
             }
             
             // Arrêter l'intervalle

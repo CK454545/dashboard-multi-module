@@ -531,29 +531,29 @@ $token = $_GET['token'] ?? '';
                 </button>
             </div>
             
-            <div class="command-section danger">
+            <div class="command-section">
                 <h3><i class="fas fa-trophy"></i> Wins</h3>
-                <div class="command-buttons grid-7">
-                    <button class="command-btn subtract" data-action="add-wins" data-value="-10">-10</button>
-                    <button class="command-btn subtract" data-action="add-wins" data-value="-5">-5</button>
-                    <button class="command-btn subtract" data-action="add-wins" data-value="-1">-1</button>
-                    <button class="command-btn reset" data-action="reset-wins">Reset</button>
-                    <button class="command-btn add" data-action="add-wins" data-value="1">+1</button>
-                    <button class="command-btn add" data-action="add-wins" data-value="5">+5</button>
-                    <button class="command-btn add" data-action="add-wins" data-value="10">+10</button>
+                <div class="command-buttons" style="display: flex; gap: 8px; flex-wrap: wrap; justify-content: center;">
+                    <button class="command-btn subtract" data-action="add-wins" data-value="-10" style="flex: 1; min-width: 60px;">-10</button>
+                    <button class="command-btn subtract" data-action="add-wins" data-value="-5" style="flex: 1; min-width: 60px;">-5</button>
+                    <button class="command-btn subtract" data-action="add-wins" data-value="-1" style="flex: 1; min-width: 60px;">-1</button>
+                    <button class="command-btn reset" data-action="reset-wins" style="flex: 1.5; min-width: 80px;">RESET</button>
+                    <button class="command-btn add" data-action="add-wins" data-value="1" style="flex: 1; min-width: 60px;">+1</button>
+                    <button class="command-btn add" data-action="add-wins" data-value="5" style="flex: 1; min-width: 60px;">+5</button>
+                    <button class="command-btn add" data-action="add-wins" data-value="10" style="flex: 1; min-width: 60px;">+10</button>
                 </div>
             </div>
             
-            <div class="command-section warning">
+            <div class="command-section">
                 <h3><i class="fas fa-times"></i> Multiplicateur</h3>
-                <div class="command-buttons grid-7">
-                    <button class="command-btn subtract" data-action="add-multi" data-value="-50">-50</button>
-                    <button class="command-btn subtract" data-action="add-multi" data-value="-10">-10</button>
-                    <button class="command-btn subtract" data-action="add-multi" data-value="-1">-1</button>
-                    <button class="command-btn reset" data-action="reset-multi">RESET</button>
-                    <button class="command-btn add" data-action="add-multi" data-value="1">+1</button>
-                    <button class="command-btn add" data-action="add-multi" data-value="10">+10</button>
-                    <button class="command-btn add" data-action="add-multi" data-value="50">+50</button>
+                <div class="command-buttons" style="display: flex; gap: 8px; flex-wrap: wrap; justify-content: center;">
+                    <button class="command-btn subtract" data-action="add-multi" data-value="-50" style="flex: 1; min-width: 60px;">-50</button>
+                    <button class="command-btn subtract" data-action="add-multi" data-value="-10" style="flex: 1; min-width: 60px;">-10</button>
+                    <button class="command-btn subtract" data-action="add-multi" data-value="-1" style="flex: 1; min-width: 60px;">-1</button>
+                    <button class="command-btn reset" data-action="reset-multi" style="flex: 1.5; min-width: 80px;">RESET</button>
+                    <button class="command-btn add" data-action="add-multi" data-value="1" style="flex: 1; min-width: 60px;">+1</button>
+                    <button class="command-btn add" data-action="add-multi" data-value="10" style="flex: 1; min-width: 60px;">+10</button>
+                    <button class="command-btn add" data-action="add-multi" data-value="50" style="flex: 1; min-width: 60px;">+50</button>
                 </div>
             </div>
         </div>

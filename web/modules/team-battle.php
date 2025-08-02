@@ -471,40 +471,50 @@ $token = $_GET['token'] ?? '';
                 <i class="fas fa-cog"></i>
             </a>
             
-            <div class="command-section success">
-                <h3><i class="fas fa-users"></i> Équipe Verte</h3>
-                <div class="command-buttons grid-7">
-                    <button class="command-btn subtract" data-action="add-score" data-team="green" data-value="-10">-10</button>
-                    <button class="command-btn subtract" data-action="add-score" data-team="green" data-value="-5">-5</button>
-                    <button class="command-btn subtract" data-action="add-score" data-team="green" data-value="-1">-1</button>
-                    <button class="command-btn reset" data-action="reset-score" data-team="green">Reset</button>
-                    <button class="command-btn add" data-action="add-score" data-team="green" data-value="1">+1</button>
-                    <button class="command-btn add" data-action="add-score" data-team="green" data-value="5">+5</button>
-                    <button class="command-btn add" data-action="add-score" data-team="green" data-value="10">+10</button>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+                <div class="command-section">
+                    <h3 style="background: linear-gradient(135deg, #10b981, #059669);"><i class="fas fa-users"></i> Équipe Verte</h3>
+                    <div class="command-buttons" style="display: flex; flex-direction: column; gap: 8px;">
+                        <div style="display: flex; gap: 8px;">
+                            <button class="command-btn subtract" data-action="add-score" data-team="green" data-value="-10" style="flex: 1;">-10</button>
+                            <button class="command-btn subtract" data-action="add-score" data-team="green" data-value="-5" style="flex: 1;">-5</button>
+                            <button class="command-btn subtract" data-action="add-score" data-team="green" data-value="-1" style="flex: 1;">-1</button>
+                        </div>
+                        <button class="command-btn reset" data-action="reset-score" data-team="green" style="width: 100%;">RESET</button>
+                        <div style="display: flex; gap: 8px;">
+                            <button class="command-btn add" data-action="add-score" data-team="green" data-value="1" style="flex: 1;">+1</button>
+                            <button class="command-btn add" data-action="add-score" data-team="green" data-value="5" style="flex: 1;">+5</button>
+                            <button class="command-btn add" data-action="add-score" data-team="green" data-value="10" style="flex: 1;">+10</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="command-section">
+                    <h3 style="background: linear-gradient(135deg, #ef4444, #dc2626);"><i class="fas fa-users"></i> Équipe Rouge</h3>
+                    <div class="command-buttons" style="display: flex; flex-direction: column; gap: 8px;">
+                        <div style="display: flex; gap: 8px;">
+                            <button class="command-btn subtract" data-action="add-score" data-team="red" data-value="-10" style="flex: 1;">-10</button>
+                            <button class="command-btn subtract" data-action="add-score" data-team="red" data-value="-5" style="flex: 1;">-5</button>
+                            <button class="command-btn subtract" data-action="add-score" data-team="red" data-value="-1" style="flex: 1;">-1</button>
+                        </div>
+                        <button class="command-btn reset" data-action="reset-score" data-team="red" style="width: 100%;">RESET</button>
+                        <div style="display: flex; gap: 8px;">
+                            <button class="command-btn add" data-action="add-score" data-team="red" data-value="1" style="flex: 1;">+1</button>
+                            <button class="command-btn add" data-action="add-score" data-team="red" data-value="5" style="flex: 1;">+5</button>
+                            <button class="command-btn add" data-action="add-score" data-team="red" data-value="10" style="flex: 1;">+10</button>
+                        </div>
+                    </div>
                 </div>
             </div>
             
-            <div class="command-section danger">
-                <h3><i class="fas fa-users"></i> Équipe Rouge</h3>
-                <div class="command-buttons grid-7">
-                    <button class="command-btn subtract" data-action="add-score" data-team="red" data-value="-10">-10</button>
-                    <button class="command-btn subtract" data-action="add-score" data-team="red" data-value="-5">-5</button>
-                    <button class="command-btn subtract" data-action="add-score" data-team="red" data-value="-1">-1</button>
-                    <button class="command-btn reset" data-action="reset-score" data-team="red">Reset</button>
-                    <button class="command-btn add" data-action="add-score" data-team="red" data-value="1">+1</button>
-                    <button class="command-btn add" data-action="add-score" data-team="red" data-value="5">+5</button>
-                    <button class="command-btn add" data-action="add-score" data-team="red" data-value="10">+10</button>
-                </div>
-            </div>
-            
-            <div class="command-section warning">
-                <h3><i class="fas fa-gamepad"></i> Actions</h3>
-                <div class="command-buttons grid-2">
-                    <button class="command-btn reset large" data-action="reset-all">
+            <div class="command-section">
+                <h3><i class="fas fa-gamepad"></i> Actions Générales</h3>
+                <div class="command-buttons" style="display: flex; gap: 8px; justify-content: center;">
+                    <button class="command-btn reset large" data-action="reset-all" style="flex: 1;">
                         <i class="fas fa-redo"></i> Reset Tout
                     </button>
-                    <button class="command-btn primary large" data-action="swap-scores">
-                        <i class="fas fa-exchange-alt"></i> Échanger
+                    <button class="command-btn primary large" data-action="swap-scores" style="flex: 1;">
+                        <i class="fas fa-exchange-alt"></i> Échanger Scores
                     </button>
                 </div>
             </div>
