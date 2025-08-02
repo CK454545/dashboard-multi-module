@@ -857,9 +857,11 @@ $token = $_GET['token'] ?? '';
                     <div class="timer-action-buttons">
                         <button class="timer-action-btn subtract" onclick="handleTimeAction(event, 'subtract', 300)">-5min</button>
                         <button class="timer-action-btn subtract" onclick="handleTimeAction(event, 'subtract', 60)">-1min</button>
+                        <button class="timer-action-btn subtract" onclick="handleTimeAction(event, 'subtract', 30)">-30s</button>
                         <button class="timer-action-btn subtract" onclick="handleTimeAction(event, 'subtract', 10)">-10s</button>
                         <button class="timer-action-btn reset" onclick="resetTimer()">RESET</button>
                         <button class="timer-action-btn add" onclick="handleTimeAction(event, 'add', 10)">+10s</button>
+                        <button class="timer-action-btn add" onclick="handleTimeAction(event, 'add', 30)">+30s</button>
                         <button class="timer-action-btn add" onclick="handleTimeAction(event, 'add', 60)">+1min</button>
                         <button class="timer-action-btn add" onclick="handleTimeAction(event, 'add', 300)">+5min</button>
                     </div>
@@ -903,9 +905,6 @@ $token = $_GET['token'] ?? '';
                         </button>
                         <button class="timer-action-btn warning large" data-action="pause" id="pauseBtn" onclick="toggleTimer()" style="display: none;">
                             <i class="fas fa-pause"></i> Pause
-                        </button>
-                        <button class="timer-action-btn primary large" onclick="handleTimeAction(event, 'add', 30)">
-                            <i class="fas fa-plus"></i> +30s
                         </button>
                     </div>
                 </div>
