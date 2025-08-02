@@ -794,9 +794,12 @@ $token = $_GET['token'] ?? '';
                     }
                     
                     // Forcer la mise à jour des noms d'équipes après l'application des styles
-                    setTimeout(() => {
-                        applyTeamNames(baseStyles);
-                    }, 50);
+                    // Seulement si on n'est pas en mode temps réel
+                    if (!isApplyingRealtimeStyles) {
+                        setTimeout(() => {
+                            applyTeamNames(baseStyles);
+                        }, 50);
+                    }
                 } else {
                 }
             } catch (error) {
@@ -1029,20 +1032,32 @@ $token = $_GET['token'] ?? '';
                 return;
             }
             
-            if (styles.green && styles.green.name) {
-                const greenNameElement = document.getElementById('green-name');
-                if (greenNameElement && greenNameElement.textContent !== styles.green.name) {
-                    console.log('🔄 Mise à jour nom équipe verte:', styles.green.name);
-                    greenNameElement.textContent = styles.green.name;
-                }
+            // Utiliser un flag pour éviter les mises à jour simultanées
+            if (window.isUpdatingTeamNames) {
+                return;
             }
             
-            if (styles.red && styles.red.name) {
-                const redNameElement = document.getElementById('red-name');
-                if (redNameElement && redNameElement.textContent !== styles.red.name) {
-                    console.log('🔄 Mise à jour nom équipe rouge:', styles.red.name);
-                    redNameElement.textContent = styles.red.name;
+            window.isUpdatingTeamNames = true;
+            
+            try {
+                if (styles.green && styles.green.name) {
+                    const greenNameElement = document.getElementById('green-name');
+                    if (greenNameElement && greenNameElement.textContent !== styles.green.name) {
+                        greenNameElement.textContent = styles.green.name;
+                    }
                 }
+                
+                if (styles.red && styles.red.name) {
+                    const redNameElement = document.getElementById('red-name');
+                    if (redNameElement && redNameElement.textContent !== styles.red.name) {
+                        redNameElement.textContent = styles.red.name;
+                    }
+                }
+            } finally {
+                // Libérer le flag après un court délai
+                setTimeout(() => {
+                    window.isUpdatingTeamNames = false;
+                }, 50);
             }
         }
         
@@ -1085,9 +1100,9 @@ $token = $_GET['token'] ?? '';
         
         // Auto-refresh simplifié (sans restrictions)
         setInterval(() => {
-            // Auto-refresh ultra-rapide toutes les 200ms
+            // Auto-refresh toutes les 500ms pour éviter les conflits
             apiCall('get');
-        }, 200); // Réduit à 200ms pour une synchronisation quasi-instantanée
+        }, 500); // Augmenté à 500ms pour réduire les conflits
         
         // Charger les données initiales
         apiCall('get');
@@ -1159,20 +1174,8 @@ $token = $_GET['token'] ?? '';
             // Appliquer immédiatement les styles avec la nouvelle fonction
             applyStyles(styles);
             
-            // Appliquer les noms d'équipes directement sans délai
-            if (styles.green && styles.green.name) {
-                const greenNameElement = document.getElementById('green-name');
-                if (greenNameElement && greenNameElement.textContent !== styles.green.name) {
-                    greenNameElement.textContent = styles.green.name;
-                }
-            }
-            
-            if (styles.red && styles.red.name) {
-                const redNameElement = document.getElementById('red-name');
-                if (redNameElement && redNameElement.textContent !== styles.red.name) {
-                    redNameElement.textContent = styles.red.name;
-                }
-            }
+            // Appliquer les noms d'équipes avec la fonction dédiée
+            applyTeamNames(styles);
             
             // Réactiver le flag après un délai très court pour une meilleure réactivité
             setTimeout(() => {
@@ -1245,7 +1248,7 @@ $token = $_GET['token'] ?? '';
                     window.lastTeamsStylesTimestamp = parseInt(stylesTimestamp);
                 }
             }
-        }, 15); // Encore plus rapide : 15ms pour une réactivité ultra-rapide
+        }, 100); // Réduit à 100ms pour éviter les conflits
         
         <?php if($control): ?>
         // Gestion des boutons

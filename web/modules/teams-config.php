@@ -1474,6 +1474,23 @@ $token = $_GET['token'] ?? '';
             }, 3000);
         }
 
+        // Fonction pour sauvegarder les styles dans la base de données
+        async function saveStylesToDatabase(styles) {
+            try {
+                const response = await fetch(`/api.php?token=${token}&module=teams-style&action=save&value=${encodeURIComponent(JSON.stringify(styles))}`);
+                const result = await response.json();
+                
+                if (result.success) {
+                    notifyAllTeamsPages(styles);
+                    console.log('✅ Styles réinitialisés sauvegardés dans la base de données');
+                } else {
+                    console.error('❌ Erreur lors de la sauvegarde des styles réinitialisés:', result.error);
+                }
+            } catch (error) {
+                console.error('❌ Erreur lors de la sauvegarde des styles réinitialisés:', error);
+            }
+        }
+
         // Fonction pour sauvegarder manuellement
         async function saveStyles() {
             const styles = collectStyles();
@@ -1554,6 +1571,9 @@ $token = $_GET['token'] ?? '';
             const styles = collectStyles();
             applyPreviewStyles(styles);
             autoSaveStyles(styles);
+            
+            // Sauvegarder les styles réinitialisés dans la base de données
+            saveStylesToDatabase(styles);
         }
 
         // Fonction pour charger les styles
