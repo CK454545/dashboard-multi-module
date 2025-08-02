@@ -454,6 +454,106 @@ $token = $_GET['token'] ?? '';
             }
         }
 
+        /* ==================== URLS SECTION ==================== */
+        .urls-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: var(--spacing-lg);
+            margin-bottom: var(--spacing-xl);
+        }
+
+        .url-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-lg);
+            padding: var(--spacing-lg);
+            transition: all var(--transition-normal);
+            backdrop-filter: blur(10px);
+        }
+
+        .url-card:hover {
+            border-color: var(--border-hover);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .url-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: var(--spacing-md);
+            font-size: 1.25rem;
+            color: white;
+        }
+
+        .url-card h3 {
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: var(--spacing-sm);
+            color: var(--text-primary);
+        }
+
+        .url-card p {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            margin-bottom: var(--spacing-md);
+        }
+
+        .url-btn {
+            width: 100%;
+            padding: var(--spacing-sm) var(--spacing-md);
+            background: var(--bg-glass);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            color: var(--text-primary);
+            font-size: 0.875rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all var(--transition-fast);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .url-btn::after {
+            content: "Cliquez pour copier l'URL";
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: var(--spacing-xs) var(--spacing-sm);
+            border-radius: var(--radius-sm);
+            font-size: 0.75rem;
+            opacity: 0;
+            transition: opacity var(--transition-fast);
+            pointer-events: none;
+            white-space: nowrap;
+        }
+
+        .url-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: var(--border-hover);
+            transform: translateY(-1px);
+        }
+
+        .url-btn:hover::after {
+            opacity: 1;
+        }
+
+        .url-btn.active {
+            background: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+
+        .url-btn.active:hover {
+            background: var(--primary-hover);
+        }
+
         /* ==================== RESPONSIVE ==================== */
         @media (max-width: 768px) {
             .tabs {
@@ -471,6 +571,10 @@ $token = $_GET['token'] ?? '';
             .btn {
                 width: 100%;
                 justify-content: center;
+            }
+            
+            .urls-grid {
+                grid-template-columns: 1fr;
             }
         }
         
@@ -498,6 +602,9 @@ $token = $_GET['token'] ?? '';
             </button>
             <button class="tab-btn" data-tab="general">
                 <i class="fas fa-cog"></i> Général
+            </button>
+            <button class="tab-btn" data-tab="urls">
+                <i class="fas fa-link"></i> URLs
             </button>
         </div>
 
@@ -658,7 +765,146 @@ $token = $_GET['token'] ?? '';
             </div>
         </div>
 
+        <!-- URLs Tab -->
+        <div id="tab-urls" class="tab-content">
+            <div class="config-section">
+                <h2 class="section-title">
+                    <i class="fas fa-clock"></i> URLs API - TIMER
+                </h2>
+                
+                <div class="urls-grid">
+                    <!-- Actions de temps -->
+                    <div class="url-card">
+                        <div class="url-icon" style="background: linear-gradient(135deg, #ef4444, #dc2626);">
+                            <i class="fas fa-minus"></i>
+                        </div>
+                        <h3>Soustraire 5 minutes</h3>
+                        <p>Retire 5 minutes du timer</p>
+                        <button class="url-btn" onclick="copyApiUrl('/api.php?token=<?php echo $token; ?>&module=timer&action=subtract&value=300')">
+                            Copier l'URL
+                        </button>
+                    </div>
 
+                    <div class="url-card">
+                        <div class="url-icon" style="background: linear-gradient(135deg, #f97316, #ea580c);">
+                            <i class="fas fa-minus"></i>
+                        </div>
+                        <h3>Soustraire 1 minute</h3>
+                        <p>Retire 1 minute du timer</p>
+                        <button class="url-btn" onclick="copyApiUrl('/api.php?token=<?php echo $token; ?>&module=timer&action=subtract&value=60')">
+                            Copier l'URL
+                        </button>
+                    </div>
+
+                    <div class="url-card">
+                        <div class="url-icon" style="background: linear-gradient(135deg, #f59e0b, #d97706);">
+                            <i class="fas fa-minus"></i>
+                        </div>
+                        <h3>Soustraire 10 secondes</h3>
+                        <p>Retire 10 secondes du timer</p>
+                        <button class="url-btn" onclick="copyApiUrl('/api.php?token=<?php echo $token; ?>&module=timer&action=subtract&value=10')">
+                            Copier l'URL
+                        </button>
+                    </div>
+
+                    <div class="url-card">
+                        <div class="url-icon" style="background: linear-gradient(135deg, #0ea5e9, #0284c7);">
+                            <i class="fas fa-undo"></i>
+                        </div>
+                        <h3>Réinitialiser</h3>
+                        <p>Remet le timer à zéro</p>
+                        <button class="url-btn" onclick="copyApiUrl('/api.php?token=<?php echo $token; ?>&module=timer&action=reset')">
+                            Copier l'URL
+                        </button>
+                    </div>
+
+                    <div class="url-card">
+                        <div class="url-icon" style="background: linear-gradient(135deg, #10b981, #059669);">
+                            <i class="fas fa-plus"></i>
+                        </div>
+                        <h3>Ajouter 10 secondes</h3>
+                        <p>Ajoute 10 secondes au timer</p>
+                        <button class="url-btn" onclick="copyApiUrl('/api.php?token=<?php echo $token; ?>&module=timer&action=add&value=10')">
+                            Copier l'URL
+                        </button>
+                    </div>
+
+                    <div class="url-card">
+                        <div class="url-icon" style="background: linear-gradient(135deg, #6366f1, #5855eb);">
+                            <i class="fas fa-plus"></i>
+                        </div>
+                        <h3>Ajouter 1 minute</h3>
+                        <p>Ajoute 1 minute au timer</p>
+                        <button class="url-btn" onclick="copyApiUrl('/api.php?token=<?php echo $token; ?>&module=timer&action=add&value=60')">
+                            Copier l'URL
+                        </button>
+                    </div>
+
+                    <div class="url-card">
+                        <div class="url-icon" style="background: linear-gradient(135deg, #8b5cf6, #7c3aed);">
+                            <i class="fas fa-plus"></i>
+                        </div>
+                        <h3>Ajouter 5 minutes</h3>
+                        <p>Ajoute 5 minutes au timer</p>
+                        <button class="url-btn" onclick="copyApiUrl('/api.php?token=<?php echo $token; ?>&module=timer&action=add&value=300')">
+                            Copier l'URL
+                        </button>
+                    </div>
+
+                    <div class="url-card">
+                        <div class="url-icon" style="background: linear-gradient(135deg, #ec4899, #db2777);">
+                            <i class="fas fa-plus"></i>
+                        </div>
+                        <h3>Ajouter 30 secondes</h3>
+                        <p>Ajoute 30 secondes au timer</p>
+                        <button class="url-btn" onclick="copyApiUrl('/api.php?token=<?php echo $token; ?>&module=timer&action=add&value=30')">
+                            Copier l'URL
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="config-section">
+                <h2 class="section-title">
+                    <i class="fas fa-play-circle"></i> URLs API - CONTRÔLES
+                </h2>
+                
+                <div class="urls-grid">
+                    <div class="url-card">
+                        <div class="url-icon" style="background: linear-gradient(135deg, #10b981, #059669);">
+                            <i class="fas fa-play"></i>
+                        </div>
+                        <h3>Démarrer le timer</h3>
+                        <p>Lance le décompte du timer</p>
+                        <button class="url-btn" onclick="copyApiUrl('/api.php?token=<?php echo $token; ?>&module=timer&action=start')">
+                            Copier l'URL
+                        </button>
+                    </div>
+
+                    <div class="url-card">
+                        <div class="url-icon" style="background: linear-gradient(135deg, #f59e0b, #d97706);">
+                            <i class="fas fa-pause"></i>
+                        </div>
+                        <h3>Mettre en pause</h3>
+                        <p>Met le timer en pause</p>
+                        <button class="url-btn" onclick="copyApiUrl('/api.php?token=<?php echo $token; ?>&module=timer&action=pause')">
+                            Copier l'URL
+                        </button>
+                    </div>
+
+                    <div class="url-card">
+                        <div class="url-icon" style="background: linear-gradient(135deg, #8b5cf6, #7c3aed);">
+                            <i class="fas fa-sync"></i>
+                        </div>
+                        <h3>Basculer play/pause</h3>
+                        <p>Change l'état du timer</p>
+                        <button class="url-btn" onclick="copyApiUrl('/api.php?token=<?php echo $token; ?>&module=timer&action=toggle')">
+                            Copier l'URL
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
 
         <!-- Buttons -->
         <div class="button-group">
@@ -1106,6 +1352,24 @@ $token = $_GET['token'] ?? '';
                         }
                     });
                 }
+            });
+        }
+
+        // Fonction pour copier une URL API
+        function copyApiUrl(url) {
+            const fullUrl = window.location.origin + url;
+            navigator.clipboard.writeText(fullUrl).then(() => {
+                // Afficher une notification
+                const notification = document.createElement('div');
+                notification.className = 'save-notification';
+                notification.innerHTML = '<i class="fas fa-check"></i> URL copiée !';
+                document.body.appendChild(notification);
+                
+                setTimeout(() => {
+                    notification.remove();
+                }, 2000);
+            }).catch(err => {
+                console.error('Erreur lors de la copie:', err);
             });
         }
 
