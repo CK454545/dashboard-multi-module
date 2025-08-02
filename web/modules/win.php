@@ -721,41 +721,52 @@ $token = $_GET['token'] ?? '';
         <!-- Si paramètre control=true, afficher les contrôles -->
         <?php if($control): ?>
         <div class="win-action-bar">
-            <!-- Bouton Configuration Intégré -->
-            <a href="/modules/wins-config.php?token=<?=$token?>" class="win-action-bar-config">
-                <i class="fas fa-cog"></i>
-            </a>
-            
-            <!-- Statut du multiplicateur -->
-            <div class="win-multiplier-status">
-                <button class="win-multiplier-toggle active" id="multiplier-toggle" data-active="true">
-                    <i class="fas fa-check"></i> Multiplicateur ACTIF
-                </button>
-            </div>
-            
-            <div class="win-action-section">
-                <div class="win-action-section-header"><i class="fas fa-trophy"></i> Wins</div>
-                <div class="win-action-buttons">
-                    <button class="win-action-btn subtract" data-action="add-wins" data-value="-10">-10</button>
-                    <button class="win-action-btn subtract" data-action="add-wins" data-value="-5">-5</button>
-                    <button class="win-action-btn subtract" data-action="add-wins" data-value="-1">-1</button>
-                    <button class="win-action-btn reset" data-action="reset-wins">RESET</button>
-                    <button class="win-action-btn add" data-action="add-wins" data-value="1">+1</button>
-                    <button class="win-action-btn add" data-action="add-wins" data-value="5">+5</button>
-                    <button class="win-action-btn add" data-action="add-wins" data-value="10">+10</button>
+            <div class="win-action-bar-header">
+                <div class="win-action-bar-title">
+                    <i class="fas fa-trophy"></i>
+                    Module Wins
                 </div>
+                <a href="/modules/wins-config.php?token=<?=$token?>" class="win-action-bar-config">
+                    <i class="fas fa-cog"></i>
+                </a>
             </div>
             
-            <div class="win-action-section">
-                <div class="win-action-section-header"><i class="fas fa-times"></i> Multiplicateur</div>
-                <div class="win-action-buttons">
-                    <button class="win-action-btn subtract" data-action="add-multi" data-value="-50">-50</button>
-                    <button class="win-action-btn subtract" data-action="add-multi" data-value="-10">-10</button>
-                    <button class="win-action-btn subtract" data-action="add-multi" data-value="-1">-1</button>
-                    <button class="win-action-btn reset" data-action="reset-multi">RESET</button>
-                    <button class="win-action-btn add" data-action="add-multi" data-value="1">+1</button>
-                    <button class="win-action-btn add" data-action="add-multi" data-value="10">+10</button>
-                    <button class="win-action-btn add" data-action="add-multi" data-value="50">+50</button>
+            <div class="win-action-bar-sections">
+                <!-- Statut du multiplicateur -->
+                <div class="win-multiplier-status">
+                    <button class="win-multiplier-toggle active" id="multiplier-toggle" data-active="true">
+                        <i class="fas fa-check"></i> Multiplicateur ACTIF
+                    </button>
+                </div>
+                
+                <div class="win-action-section">
+                    <div class="win-action-section-header">
+                        <i class="fas fa-trophy"></i> Wins
+                    </div>
+                    <div class="win-action-buttons">
+                        <button class="win-action-btn subtract" data-action="add-wins" data-value="-10">-10</button>
+                        <button class="win-action-btn subtract" data-action="add-wins" data-value="-5">-5</button>
+                        <button class="win-action-btn subtract" data-action="add-wins" data-value="-1">-1</button>
+                        <button class="win-action-btn reset" data-action="reset-wins">RESET</button>
+                        <button class="win-action-btn add" data-action="add-wins" data-value="1">+1</button>
+                        <button class="win-action-btn add" data-action="add-wins" data-value="5">+5</button>
+                        <button class="win-action-btn add" data-action="add-wins" data-value="10">+10</button>
+                    </div>
+                </div>
+                
+                <div class="win-action-section">
+                    <div class="win-action-section-header">
+                        <i class="fas fa-times"></i> Multiplicateur
+                    </div>
+                    <div class="win-action-buttons">
+                        <button class="win-action-btn subtract" data-action="add-multi" data-value="-50">-50</button>
+                        <button class="win-action-btn subtract" data-action="add-multi" data-value="-10">-10</button>
+                        <button class="win-action-btn subtract" data-action="add-multi" data-value="-1">-1</button>
+                        <button class="win-action-btn reset" data-action="reset-multi">RESET</button>
+                        <button class="win-action-btn add" data-action="add-multi" data-value="1">+1</button>
+                        <button class="win-action-btn add" data-action="add-multi" data-value="10">+10</button>
+                        <button class="win-action-btn add" data-action="add-multi" data-value="50">+50</button>
+                    </div>
                 </div>
             </div>
         </div>
