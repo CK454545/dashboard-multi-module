@@ -568,27 +568,7 @@ $token = $_GET['token'] ?? '';
                 </div>
             </div>
             
-            <div class="command-section">
-                <h3><i class="fas fa-link"></i> URLs de commandes</h3>
-                <div style="display: flex; flex-direction: column; gap: 8px; font-size: 0.65rem;">
-                    <div style="display: flex; gap: 8px; align-items: center;">
-                        <span style="color: #94a3b8;">Démarrer/Pause:</span>
-                        <code style="background: rgba(0,0,0,0.3); padding: 4px 8px; border-radius: 4px; color: #f59e0b; flex: 1; overflow-x: auto;">/api.php?token=<?=$token?>&module=timer&action=toggle</code>
-                    </div>
-                    <div style="display: flex; gap: 8px; align-items: center;">
-                        <span style="color: #94a3b8;">Reset:</span>
-                        <code style="background: rgba(0,0,0,0.3); padding: 4px 8px; border-radius: 4px; color: #f59e0b; flex: 1; overflow-x: auto;">/api.php?token=<?=$token?>&module=timer&action=reset</code>
-                    </div>
-                    <div style="display: flex; gap: 8px; align-items: center;">
-                        <span style="color: #94a3b8;">Ajouter temps:</span>
-                        <code style="background: rgba(0,0,0,0.3); padding: 4px 8px; border-radius: 4px; color: #f59e0b; flex: 1; overflow-x: auto;">/api.php?token=<?=$token?>&module=timer&action=add&value=60</code>
-                    </div>
-                    <div style="display: flex; gap: 8px; align-items: center;">
-                        <span style="color: #94a3b8;">Soustraire temps:</span>
-                        <code style="background: rgba(0,0,0,0.3); padding: 4px 8px; border-radius: 4px; color: #f59e0b; flex: 1; overflow-x: auto;">/api.php?token=<?=$token?>&module=timer&action=subtract&value=60</code>
-                    </div>
-                </div>
-            </div>
+
         </div>
         <?php endif; ?>
     </div>
