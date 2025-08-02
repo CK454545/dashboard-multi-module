@@ -296,6 +296,7 @@ $token = $_GET['token'] ?? '';
             flex-direction: column;
             align-items: center;
             gap: 0;
+            margin-top: -10px;
         }
         
         .score-label {
@@ -304,7 +305,7 @@ $token = $_GET['token'] ?? '';
             text-transform: uppercase;
             letter-spacing: 1px;
             color: var(--text-muted);
-            margin-bottom: -5px;
+            margin-bottom: -10px;
         }
         
         .team-score {
@@ -791,6 +792,11 @@ $token = $_GET['token'] ?? '';
                         currentStyles = baseStyles;
                         applyStyles(baseStyles);
                     }
+                    
+                    // Forcer la mise à jour des noms d'équipes après l'application des styles
+                    setTimeout(() => {
+                        applyTeamNames(baseStyles);
+                    }, 50);
                 } else {
                 }
             } catch (error) {
@@ -912,7 +918,7 @@ $token = $_GET['token'] ?? '';
                 }
                 
                 // Fond des équipes
-                if (green['background-color']) {
+                if (green['activate-background'] && green['background-color']) {
                     css += `#team-green { background: ${green['background-color']} !important; } `;
                 }
             }
@@ -964,7 +970,7 @@ $token = $_GET['token'] ?? '';
                 }
                 
                 // Fond des équipes
-                if (red['background-color']) {
+                if (red['activate-background'] && red['background-color']) {
                     css += `#team-red { background: ${red['background-color']} !important; } `;
                 }
             }
@@ -1021,12 +1027,14 @@ $token = $_GET['token'] ?? '';
             if (styles.green && styles.green.name) {
                 const greenNameElement = document.getElementById('green-name');
                 if (greenNameElement && greenNameElement.textContent !== styles.green.name) {
+                    console.log('🔄 Mise à jour nom équipe verte:', styles.green.name);
                     greenNameElement.textContent = styles.green.name;
                 } else if (!greenNameElement) {
                     // Retry après 50ms si l'élément n'est pas trouvé
                     setTimeout(() => {
                         const retryElement = document.getElementById('green-name');
                         if (retryElement && retryElement.textContent !== styles.green.name) {
+                            console.log('🔄 Retry mise à jour nom équipe verte:', styles.green.name);
                             retryElement.textContent = styles.green.name;
                         }
                     }, 50);
@@ -1036,12 +1044,14 @@ $token = $_GET['token'] ?? '';
             if (styles.red && styles.red.name) {
                 const redNameElement = document.getElementById('red-name');
                 if (redNameElement && redNameElement.textContent !== styles.red.name) {
+                    console.log('🔄 Mise à jour nom équipe rouge:', styles.red.name);
                     redNameElement.textContent = styles.red.name;
                 } else if (!redNameElement) {
                     // Retry après 50ms si l'élément n'est pas trouvé
                     setTimeout(() => {
                         const retryElement = document.getElementById('red-name');
                         if (retryElement && retryElement.textContent !== styles.red.name) {
+                            console.log('🔄 Retry mise à jour nom équipe rouge:', styles.red.name);
                             retryElement.textContent = styles.red.name;
                         }
                     }, 50);
@@ -1161,6 +1171,11 @@ $token = $_GET['token'] ?? '';
             
             // Appliquer immédiatement les styles avec la nouvelle fonction
             applyStyles(styles);
+            
+            // Forcer la mise à jour des noms d'équipes après l'application des styles temps réel
+            setTimeout(() => {
+                applyTeamNames(styles);
+            }, 25);
             
             // Réactiver le flag après un délai très court pour une meilleure réactivité
             setTimeout(() => {

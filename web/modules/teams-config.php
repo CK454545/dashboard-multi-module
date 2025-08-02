@@ -722,8 +722,13 @@ $token = $_GET['token'] ?? '';
                     </div>
                     
                     <div class="form-group">
-                        <label for="green-background-color">Couleur du fond d'équipe</label>
-                        <div class="color-input-group">
+                        <label>Fond d'équipe</label>
+                        <div class="checkbox-group">
+                            <input type="checkbox" id="green-activate-background" data-style="green-activate-background">
+                            <label for="green-activate-background">Activer le fond</label>
+                        </div>
+                        <div class="color-input-group" id="green-background-color-group" style="display: none;">
+                            <label for="green-background-color">Couleur du fond</label>
                             <input type="color" id="green-background-color" data-style="green-background-color" value="#000000">
                             <input type="text" class="color-text" data-style="green-background-color" value="#000000" placeholder="#000000">
                         </div>
@@ -791,8 +796,13 @@ $token = $_GET['token'] ?? '';
                     </div>
                     
                     <div class="form-group">
-                        <label for="red-background-color">Couleur du fond d'équipe</label>
-                        <div class="color-input-group">
+                        <label>Fond d'équipe</label>
+                        <div class="checkbox-group">
+                            <input type="checkbox" id="red-activate-background" data-style="red-activate-background">
+                            <label for="red-activate-background">Activer le fond</label>
+                        </div>
+                        <div class="color-input-group" id="red-background-color-group" style="display: none;">
+                            <label for="red-background-color">Couleur du fond</label>
                             <input type="color" id="red-background-color" data-style="red-background-color" value="#000000">
                             <input type="text" class="color-text" data-style="red-background-color" value="#000000" placeholder="#000000">
                         </div>
@@ -874,10 +884,6 @@ $token = $_GET['token'] ?? '';
                         <div class="checkbox-group">
                             <input type="checkbox" id="transparent" data-style="transparent">
                             <label for="transparent">Fond transparent</label>
-                        </div>
-                        <div class="checkbox-group">
-                            <input type="checkbox" id="team-background" data-style="team-background">
-                            <label for="team-background">Activer le fond des équipes</label>
                         </div>
                     </div>
                     
@@ -1159,6 +1165,7 @@ $token = $_GET['token'] ?? '';
                     size: getInputValue('green-size', '80'),
                     stroke: getInputValue('green-stroke', '#000000'),
                     shadow: getInputValue('green-shadow', false),
+                    'activate-background': getInputValue('green-activate-background', false),
                     'background-color': getInputValue('green-background-color', '#000000')
                 },
                 red: {
@@ -1168,6 +1175,7 @@ $token = $_GET['token'] ?? '';
                     size: getInputValue('red-size', '80'),
                     stroke: getInputValue('red-stroke', '#000000'),
                     shadow: getInputValue('red-shadow', false),
+                    'activate-background': getInputValue('red-activate-background', false),
                     'background-color': getInputValue('red-background-color', '#000000')
                 },
                 general: {
@@ -1511,6 +1519,7 @@ $token = $_GET['token'] ?? '';
             document.getElementById('green-size').value = '80';
             document.getElementById('green-stroke').value = '#000000';
             document.getElementById('green-shadow').checked = false;
+            document.getElementById('green-activate-background').checked = false;
             document.getElementById('green-background-color').value = '#000000';
             
             document.getElementById('red-name').value = 'ÉQUIPE ROUGE';
@@ -1519,6 +1528,7 @@ $token = $_GET['token'] ?? '';
             document.getElementById('red-size').value = '80';
             document.getElementById('red-stroke').value = '#000000';
             document.getElementById('red-shadow').checked = false;
+            document.getElementById('red-activate-background').checked = false;
             document.getElementById('red-background-color').value = '#000000';
             
             document.getElementById('font-family').value = 'Arial, Helvetica, sans-serif';
@@ -1575,6 +1585,7 @@ $token = $_GET['token'] ?? '';
                 setInputValue('green-size', styles.green.size);
                 setInputValue('green-stroke', styles.green.stroke);
                 setInputValue('green-shadow', styles.green.shadow);
+                setInputValue('green-activate-background', styles.green['activate-background'] || false);
                 setInputValue('green-background-color', styles.green['background-color'] || '#000000');
             }
             
@@ -1585,6 +1596,7 @@ $token = $_GET['token'] ?? '';
                 setInputValue('red-size', styles.red.size);
                 setInputValue('red-stroke', styles.red.stroke);
                 setInputValue('red-shadow', styles.red.shadow);
+                setInputValue('red-activate-background', styles.red['activate-background'] || false);
                 setInputValue('red-background-color', styles.red['background-color'] || '#000000');
             }
             
@@ -1764,6 +1776,31 @@ $token = $_GET['token'] ?? '';
         document.addEventListener('DOMContentLoaded', () => {
             initTabs();
             initInputSync();
+            
+            // Gestion des checkboxes pour activer/désactiver les color pickers
+            const greenActivateBackground = document.getElementById('green-activate-background');
+            const redActivateBackground = document.getElementById('red-activate-background');
+            const greenBackgroundColorGroup = document.getElementById('green-background-color-group');
+            const redBackgroundColorGroup = document.getElementById('red-background-color-group');
+            
+            function updateBackgroundColorVisibility() {
+                if (greenActivateBackground && greenBackgroundColorGroup) {
+                    greenBackgroundColorGroup.style.display = greenActivateBackground.checked ? 'block' : 'none';
+                }
+                if (redActivateBackground && redBackgroundColorGroup) {
+                    redBackgroundColorGroup.style.display = redActivateBackground.checked ? 'block' : 'none';
+                }
+            }
+            
+            if (greenActivateBackground) {
+                greenActivateBackground.addEventListener('change', updateBackgroundColorVisibility);
+            }
+            if (redActivateBackground) {
+                redActivateBackground.addEventListener('change', updateBackgroundColorVisibility);
+            }
+            
+            // Initialiser la visibilité
+            updateBackgroundColorVisibility();
             
             // Charger les styles et les données en parallèle
             Promise.all([
