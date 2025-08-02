@@ -18,7 +18,6 @@ $token = $_GET['token'] ?? '';
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Luckiest+Guy&family=Orbitron:wght@400;700;900&family=Press+Start+2P&family=Russo+One&family=Audiowide&family=Bungee&family=Creepster&family=Nosifer&family=Walter+Turncoat&family=Fredoka+One&family=Cinzel:wght@400;600&family=Playfair+Display:wght@400;700&family=Dancing+Script:wght@400;700&family=Black+Ops+One&family=Faster+One&family=Jolly+Lodger&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="command-bar.css">
     <style>
         /* ==================== CSS VARIABLES ==================== */
         :root {
@@ -275,7 +274,203 @@ $token = $_GET['token'] ?? '';
             font-variant-numeric: tabular-nums;
         }
 
-        /* ==================== CONTROLS SECTION - Styles supprimés, utilisation de command-bar.css ==================== */
+        /* ==================== TIMER ACTION BAR - NOUVELLE BARRE MODERNE ==================== */
+        .timer-action-bar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(15, 23, 42, 0.95);
+            backdrop-filter: blur(20px);
+            border-top: 1px solid rgba(148, 163, 184, 0.1);
+            padding: var(--spacing-md) var(--spacing-lg);
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            gap: var(--spacing-md);
+        }
+
+        .timer-action-bar-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: var(--spacing-sm);
+        }
+
+        .timer-action-bar-title {
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: #3b82f6;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+        }
+
+        .timer-action-bar-config {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: rgba(59, 130, 246, 0.1);
+            border: 1px solid #3b82f6;
+            color: #3b82f6;
+            font-size: 0.75rem;
+            cursor: pointer;
+            transition: all var(--transition-fast);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+        }
+
+        .timer-action-bar-config:hover {
+            background: #3b82f6;
+            color: white;
+            transform: scale(1.1);
+        }
+
+        .timer-action-bar-sections {
+            display: flex;
+            flex-direction: column;
+            gap: var(--spacing-md);
+        }
+
+        .timer-action-section {
+            background: rgba(30, 41, 59, 0.5);
+            border-radius: var(--radius-lg);
+            padding: var(--spacing-md);
+            border: 1px solid rgba(148, 163, 184, 0.1);
+        }
+
+        .timer-action-section-header {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+            margin-bottom: var(--spacing-sm);
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .timer-action-buttons {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: var(--spacing-xs);
+        }
+
+        .timer-action-buttons.controls {
+            grid-template-columns: repeat(3, 1fr);
+        }
+
+        .timer-action-btn {
+            padding: var(--spacing-sm) var(--spacing-xs);
+            border: none;
+            border-radius: var(--radius-md);
+            font-size: 0.75rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all var(--transition-fast);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            min-height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .timer-action-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: currentColor;
+            opacity: 0;
+            transition: opacity var(--transition-fast);
+            z-index: -1;
+        }
+
+        .timer-action-btn:hover::before {
+            opacity: 0.1;
+        }
+
+        .timer-action-btn.add {
+            background: rgba(59, 130, 246, 0.1);
+            color: #3b82f6;
+            border: 1px solid rgba(59, 130, 246, 0.3);
+        }
+
+        .timer-action-btn.add:hover {
+            background: rgba(59, 130, 246, 0.2);
+            border-color: #3b82f6;
+            transform: translateY(-1px);
+        }
+
+        .timer-action-btn.subtract {
+            background: rgba(239, 68, 68, 0.1);
+            color: #ef4444;
+            border: 1px solid rgba(239, 68, 68, 0.3);
+        }
+
+        .timer-action-btn.subtract:hover {
+            background: rgba(239, 68, 68, 0.2);
+            border-color: #ef4444;
+            transform: translateY(-1px);
+        }
+
+        .timer-action-btn.reset {
+            background: rgba(245, 158, 11, 0.1);
+            color: #f59e0b;
+            border: 1px solid rgba(245, 158, 11, 0.3);
+        }
+
+        .timer-action-btn.reset:hover {
+            background: rgba(245, 158, 11, 0.2);
+            border-color: #f59e0b;
+            transform: translateY(-1px);
+        }
+
+        .timer-action-btn.primary {
+            background: rgba(59, 130, 246, 0.1);
+            color: #3b82f6;
+            border: 1px solid rgba(59, 130, 246, 0.3);
+        }
+
+        .timer-action-btn.primary:hover {
+            background: rgba(59, 130, 246, 0.2);
+            border-color: #3b82f6;
+            transform: translateY(-1px);
+        }
+
+        .timer-action-btn.warning {
+            background: rgba(245, 158, 11, 0.1);
+            color: #f59e0b;
+            border: 1px solid rgba(245, 158, 11, 0.3);
+        }
+
+        .timer-action-btn.warning:hover {
+            background: rgba(245, 158, 11, 0.2);
+            border-color: #f59e0b;
+            transform: translateY(-1px);
+        }
+
+        .timer-action-btn.large {
+            padding: var(--spacing-md) var(--spacing-sm);
+            font-size: 0.875rem;
+            min-height: 52px;
+        }
+
+        .timer-action-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none !important;
+        }
 
         /* ==================== CONFIG BUTTON INTEGRATED ==================== */
         .config-btn-integrated {
@@ -460,16 +655,16 @@ $token = $_GET['token'] ?? '';
                 font-size: 2rem;
             }
 
-            .controls {
-                padding: var(--spacing-xs);
+            .timer-action-bar {
+                padding: var(--spacing-sm);
             }
 
-            .buttons {
+            .timer-action-buttons {
+                grid-template-columns: repeat(4, 1fr);
+            }
+
+            .timer-action-buttons.controls {
                 grid-template-columns: repeat(2, 1fr);
-            }
-
-            .buttons.actions {
-                grid-template-columns: 1fr 1fr;
             }
         }
 
@@ -491,6 +686,20 @@ $token = $_GET['token'] ?? '';
                 width: 50px;
                 height: 50px;
                 font-size: 1.2rem;
+            }
+
+            .timer-action-buttons {
+                grid-template-columns: repeat(3, 1fr);
+            }
+
+            .timer-action-buttons.controls {
+                grid-template-columns: 1fr;
+            }
+
+            .timer-action-btn {
+                font-size: 0.7rem;
+                padding: var(--spacing-xs);
+                min-height: 44px;
             }
         }
     </style>
@@ -518,37 +727,48 @@ $token = $_GET['token'] ?? '';
         <?php endif; ?>
 
         <?php if ($control): ?>
-        <div class="command-bar">
-            <!-- Bouton Configuration Intégré -->
-            <a href="/modules/timer-config.php?token=<?php echo htmlspecialchars($token); ?>" class="command-config-btn">
-                <i class="fas fa-cog"></i>
-            </a>
-            
-            <div class="command-section danger">
-                <h3><i class="fas fa-clock"></i> Ajuster le temps</h3>
-                <div class="command-buttons grid-7">
-                    <button class="command-btn subtract" onclick="handleTimeAction(event, 'subtract', 300)">-5min</button>
-                    <button class="command-btn subtract" onclick="handleTimeAction(event, 'subtract', 60)">-1min</button>
-                    <button class="command-btn subtract" onclick="handleTimeAction(event, 'subtract', 10)">-10s</button>
-                    <button class="command-btn reset" onclick="resetTimer()">RESET</button>
-                    <button class="command-btn add" onclick="handleTimeAction(event, 'add', 10)">+10s</button>
-                    <button class="command-btn add" onclick="handleTimeAction(event, 'add', 60)">+1min</button>
-                    <button class="command-btn add" onclick="handleTimeAction(event, 'add', 300)">+5min</button>
+        <div class="timer-action-bar">
+            <div class="timer-action-bar-header">
+                <div class="timer-action-bar-title">
+                    <i class="fas fa-clock"></i>
+                    Module Timer
                 </div>
+                <a href="/modules/timer-config.php?token=<?php echo htmlspecialchars($token); ?>" class="timer-action-bar-config">
+                    <i class="fas fa-cog"></i>
+                </a>
             </div>
 
-            <div class="command-section success">
-                <h3><i class="fas fa-play-circle"></i> Contrôles</h3>
-                <div class="command-buttons grid-3">
-                    <button class="command-btn primary large" data-action="start" id="startBtn" onclick="toggleTimer()">
-                        <i class="fas fa-play"></i> Démarrer
-                    </button>
-                    <button class="command-btn warning large" data-action="pause" id="pauseBtn" onclick="toggleTimer()" style="display: none;">
-                        <i class="fas fa-pause"></i> Pause
-                    </button>
-                    <button class="command-btn primary large" onclick="handleTimeAction(event, 'add', 30)">
-                        <i class="fas fa-plus"></i> +30s
-                    </button>
+            <div class="timer-action-bar-sections">
+                <div class="timer-action-section">
+                    <div class="timer-action-section-header">
+                        <i class="fas fa-clock"></i> Ajuster le temps
+                    </div>
+                    <div class="timer-action-buttons">
+                        <button class="timer-action-btn subtract" onclick="handleTimeAction(event, 'subtract', 300)">-5min</button>
+                        <button class="timer-action-btn subtract" onclick="handleTimeAction(event, 'subtract', 60)">-1min</button>
+                        <button class="timer-action-btn subtract" onclick="handleTimeAction(event, 'subtract', 10)">-10s</button>
+                        <button class="timer-action-btn reset" onclick="resetTimer()">RESET</button>
+                        <button class="timer-action-btn add" onclick="handleTimeAction(event, 'add', 10)">+10s</button>
+                        <button class="timer-action-btn add" onclick="handleTimeAction(event, 'add', 60)">+1min</button>
+                        <button class="timer-action-btn add" onclick="handleTimeAction(event, 'add', 300)">+5min</button>
+                    </div>
+                </div>
+
+                <div class="timer-action-section">
+                    <div class="timer-action-section-header">
+                        <i class="fas fa-play-circle"></i> Contrôles
+                    </div>
+                    <div class="timer-action-buttons controls">
+                        <button class="timer-action-btn primary large" data-action="start" id="startBtn" onclick="toggleTimer()">
+                            <i class="fas fa-play"></i> Démarrer
+                        </button>
+                        <button class="timer-action-btn warning large" data-action="pause" id="pauseBtn" onclick="toggleTimer()" style="display: none;">
+                            <i class="fas fa-pause"></i> Pause
+                        </button>
+                        <button class="timer-action-btn primary large" onclick="handleTimeAction(event, 'add', 30)">
+                            <i class="fas fa-plus"></i> +30s
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>

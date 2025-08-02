@@ -18,7 +18,6 @@ $token = $_GET['token'] ?? '';
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Luckiest+Guy&family=Orbitron:wght@400;700;900&family=Press+Start+2P&family=Russo+One&family=Audiowide&family=Bungee&family=Creepster&family=Nosifer&family=Walter+Turncoat&family=Fredoka+One&family=Cinzel:wght@400;600&family=Playfair+Display:wght@400;700&family=Dancing+Script:wght@400;700&family=Black+Ops+One&family=Faster+One&family=Jolly+Lodger&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="command-bar.css">
     <style>
         /* ==================== CSS VARIABLES ==================== */
         :root {
@@ -323,7 +322,191 @@ $token = $_GET['token'] ?? '';
             text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
         }
 
-        /* ==================== CONTROLS SECTION - Styles supprimés, utilisation de command-bar.css ==================== */
+        /* ==================== TEAM ACTION BAR - NOUVELLE BARRE MODERNE ==================== */
+        .team-action-bar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(15, 23, 42, 0.95);
+            backdrop-filter: blur(20px);
+            border-top: 1px solid rgba(148, 163, 184, 0.1);
+            padding: var(--spacing-md) var(--spacing-lg);
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            gap: var(--spacing-md);
+        }
+
+        .team-action-bar-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: var(--spacing-sm);
+        }
+
+        .team-action-bar-title {
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: #ef4444;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+        }
+
+        .team-action-bar-config {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid #ef4444;
+            color: #ef4444;
+            font-size: 0.75rem;
+            cursor: pointer;
+            transition: all var(--transition-fast);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+        }
+
+        .team-action-bar-config:hover {
+            background: #ef4444;
+            color: white;
+            transform: scale(1.1);
+        }
+
+        .team-action-bar-sections {
+            display: flex;
+            flex-direction: column;
+            gap: var(--spacing-md);
+        }
+
+        .team-action-section {
+            background: rgba(30, 41, 59, 0.5);
+            border-radius: var(--radius-lg);
+            padding: var(--spacing-md);
+            border: 1px solid rgba(148, 163, 184, 0.1);
+        }
+
+        .team-action-section-header {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+            margin-bottom: var(--spacing-sm);
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .team-action-buttons {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: var(--spacing-xs);
+        }
+
+        .team-action-buttons.general {
+            grid-template-columns: repeat(2, 1fr);
+        }
+
+        .team-action-btn {
+            padding: var(--spacing-sm) var(--spacing-xs);
+            border: none;
+            border-radius: var(--radius-md);
+            font-size: 0.75rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all var(--transition-fast);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            min-height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .team-action-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: currentColor;
+            opacity: 0;
+            transition: opacity var(--transition-fast);
+            z-index: -1;
+        }
+
+        .team-action-btn:hover::before {
+            opacity: 0.1;
+        }
+
+        .team-action-btn.add {
+            background: rgba(16, 185, 129, 0.1);
+            color: #10b981;
+            border: 1px solid rgba(16, 185, 129, 0.3);
+        }
+
+        .team-action-btn.add:hover {
+            background: rgba(16, 185, 129, 0.2);
+            border-color: #10b981;
+            transform: translateY(-1px);
+        }
+
+        .team-action-btn.subtract {
+            background: rgba(239, 68, 68, 0.1);
+            color: #ef4444;
+            border: 1px solid rgba(239, 68, 68, 0.3);
+        }
+
+        .team-action-btn.subtract:hover {
+            background: rgba(239, 68, 68, 0.2);
+            border-color: #ef4444;
+            transform: translateY(-1px);
+        }
+
+        .team-action-btn.reset {
+            background: rgba(245, 158, 11, 0.1);
+            color: #f59e0b;
+            border: 1px solid rgba(245, 158, 11, 0.3);
+        }
+
+        .team-action-btn.reset:hover {
+            background: rgba(245, 158, 11, 0.2);
+            border-color: #f59e0b;
+            transform: translateY(-1px);
+        }
+
+        .team-action-btn.primary {
+            background: rgba(99, 102, 241, 0.1);
+            color: #6366f1;
+            border: 1px solid rgba(99, 102, 241, 0.3);
+        }
+
+        .team-action-btn.primary:hover {
+            background: rgba(99, 102, 241, 0.2);
+            border-color: #6366f1;
+            transform: translateY(-1px);
+        }
+
+        .team-action-btn.large {
+            padding: var(--spacing-md) var(--spacing-sm);
+            font-size: 0.875rem;
+            min-height: 52px;
+        }
+
+        .team-action-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none !important;
+        }
 
         /* ==================== CONFIG BUTTON INTEGRATED ==================== */
         .config-btn-integrated {
@@ -376,13 +559,8 @@ $token = $_GET['token'] ?? '';
                 gap: var(--spacing-lg);
             }
             
-            .controls {
-                margin-top: var(--spacing-lg);
-                max-width: 100%;
-            }
-
-            .buttons {
-                grid-template-columns: repeat(3, 1fr);
+            .team-action-buttons {
+                grid-template-columns: repeat(4, 1fr);
             }
 
             .teams-container {
@@ -408,24 +586,33 @@ $token = $_GET['token'] ?? '';
                 font-size: 3rem;
             }
             
-            .controls {
-                max-width: 100%;
+            .team-action-bar {
+                padding: var(--spacing-sm);
             }
             
-            .team-controls {
-                grid-template-columns: 1fr;
-                gap: var(--spacing-md);
-            }
-            
-            .buttons {
-                grid-template-columns: repeat(3, 1fr);
+            .team-action-buttons {
+                grid-template-columns: repeat(4, 1fr);
                 gap: var(--spacing-xs);
             }
 
-            .btn {
+            .team-action-btn {
                 font-size: 0.7rem;
                 padding: var(--spacing-xs);
-                min-height: 32px;
+                min-height: 44px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .team-action-buttons {
+                grid-template-columns: repeat(3, 1fr);
+            }
+            
+            .team-action-buttons.general {
+                grid-template-columns: 1fr;
+            }
+            
+            .team-action-section {
+                padding: var(--spacing-sm);
             }
         }
     </style>
@@ -465,47 +652,60 @@ $token = $_GET['token'] ?? '';
         
         <!-- Si paramètre control=true, afficher les contrôles -->
         <?php if($control): ?>
-        <div class="command-bar">
-            <!-- Bouton Configuration Intégré -->
-            <a href="/modules/teams-config.php?token=<?=$token?>" class="command-config-btn">
-                <i class="fas fa-cog"></i>
-            </a>
-            
-            <div class="command-section success">
-                <h3><i class="fas fa-users"></i> Équipe Verte</h3>
-                <div class="command-buttons grid-7">
-                    <button class="command-btn subtract" data-action="add-score" data-team="green" data-value="-10">-10</button>
-                    <button class="command-btn subtract" data-action="add-score" data-team="green" data-value="-5">-5</button>
-                    <button class="command-btn subtract" data-action="add-score" data-team="green" data-value="-1">-1</button>
-                    <button class="command-btn reset" data-action="reset-score" data-team="green">RESET</button>
-                    <button class="command-btn add" data-action="add-score" data-team="green" data-value="1">+1</button>
-                    <button class="command-btn add" data-action="add-score" data-team="green" data-value="5">+5</button>
-                    <button class="command-btn add" data-action="add-score" data-team="green" data-value="10">+10</button>
+        <div class="team-action-bar">
+            <div class="team-action-bar-header">
+                <div class="team-action-bar-title">
+                    <i class="fas fa-users"></i>
+                    Module Team VS Team
                 </div>
+                <a href="/modules/teams-config.php?token=<?=$token?>" class="team-action-bar-config">
+                    <i class="fas fa-cog"></i>
+                </a>
             </div>
             
-            <div class="command-section danger">
-                <h3><i class="fas fa-users"></i> Équipe Rouge</h3>
-                <div class="command-buttons grid-7">
-                    <button class="command-btn subtract" data-action="add-score" data-team="red" data-value="-10">-10</button>
-                    <button class="command-btn subtract" data-action="add-score" data-team="red" data-value="-5">-5</button>
-                    <button class="command-btn subtract" data-action="add-score" data-team="red" data-value="-1">-1</button>
-                    <button class="command-btn reset" data-action="reset-score" data-team="red">RESET</button>
-                    <button class="command-btn add" data-action="add-score" data-team="red" data-value="1">+1</button>
-                    <button class="command-btn add" data-action="add-score" data-team="red" data-value="5">+5</button>
-                    <button class="command-btn add" data-action="add-score" data-team="red" data-value="10">+10</button>
+            <div class="team-action-bar-sections">
+                <div class="team-action-section">
+                    <div class="team-action-section-header">
+                        <i class="fas fa-users"></i> Équipe Verte
+                    </div>
+                    <div class="team-action-buttons">
+                        <button class="team-action-btn subtract" data-action="add-score" data-team="green" data-value="-10">-10</button>
+                        <button class="team-action-btn subtract" data-action="add-score" data-team="green" data-value="-5">-5</button>
+                        <button class="team-action-btn subtract" data-action="add-score" data-team="green" data-value="-1">-1</button>
+                        <button class="team-action-btn reset" data-action="reset-score" data-team="green">RESET</button>
+                        <button class="team-action-btn add" data-action="add-score" data-team="green" data-value="1">+1</button>
+                        <button class="team-action-btn add" data-action="add-score" data-team="green" data-value="5">+5</button>
+                        <button class="team-action-btn add" data-action="add-score" data-team="green" data-value="10">+10</button>
+                    </div>
                 </div>
-            </div>
-            
-            <div class="command-section warning">
-                <h3><i class="fas fa-gamepad"></i> Actions Générales</h3>
-                <div class="command-buttons grid-2">
-                    <button class="command-btn reset large" data-action="reset-all">
-                        <i class="fas fa-redo"></i> Reset Tout
-                    </button>
-                    <button class="command-btn primary large" data-action="swap-scores">
-                        <i class="fas fa-exchange-alt"></i> Échanger
-                    </button>
+                
+                <div class="team-action-section">
+                    <div class="team-action-section-header">
+                        <i class="fas fa-users"></i> Équipe Rouge
+                    </div>
+                    <div class="team-action-buttons">
+                        <button class="team-action-btn subtract" data-action="add-score" data-team="red" data-value="-10">-10</button>
+                        <button class="team-action-btn subtract" data-action="add-score" data-team="red" data-value="-5">-5</button>
+                        <button class="team-action-btn subtract" data-action="add-score" data-team="red" data-value="-1">-1</button>
+                        <button class="team-action-btn reset" data-action="reset-score" data-team="red">RESET</button>
+                        <button class="team-action-btn add" data-action="add-score" data-team="red" data-value="1">+1</button>
+                        <button class="team-action-btn add" data-action="add-score" data-team="red" data-value="5">+5</button>
+                        <button class="team-action-btn add" data-action="add-score" data-team="red" data-value="10">+10</button>
+                    </div>
+                </div>
+                
+                <div class="team-action-section">
+                    <div class="team-action-section-header">
+                        <i class="fas fa-gamepad"></i> Actions Générales
+                    </div>
+                    <div class="team-action-buttons general">
+                        <button class="team-action-btn reset large" data-action="reset-all">
+                            <i class="fas fa-redo"></i> Reset Tout
+                        </button>
+                        <button class="team-action-btn primary large" data-action="swap-scores">
+                            <i class="fas fa-exchange-alt"></i> Échanger
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -657,11 +857,11 @@ $token = $_GET['token'] ?? '';
                 
                 // Masquer les contrôles si demandé
                 if (options['hide-controls'] === true || options['hide-controls'] === 'true' || options['hide-controls'] === 1) {
-                    css += '.command-bar { display: none !important; } ';
-                     css += '.command-config-btn { display: none !important; } ';
-                     css += '.config-btn-small { display: none !important; } ';
+                    css += '.team-action-bar { display: none !important; } ';
+                     css += '.team-action-bar-config { display: none !important; } ';
+                     css += '.team-action-btn { display: none !important; } ';
                  } else {
-                     css += '.command-bar { display: flex !important; } ';
+                     css += '.team-action-bar { display: flex !important; } ';
                 }
             }
             
@@ -1062,7 +1262,7 @@ $token = $_GET['token'] ?? '';
         <?php if($control): ?>
         // Gestion des boutons
         setTimeout(() => {
-            const buttons = document.querySelectorAll('.command-btn');
+            const buttons = document.querySelectorAll('.team-action-btn');
             
             if (buttons.length === 0) {
                 return;
