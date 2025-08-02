@@ -465,7 +465,7 @@ $token = $_GET['token'] ?? '';
         
         <!-- Si paramètre control=true, afficher les contrôles -->
         <?php if($control): ?>
-        <div class="command-bar" style="max-width: 1000px;">
+        <div class="command-bar">
             
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
                 <!-- Contrôles Équipe Verte -->
