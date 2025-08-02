@@ -912,13 +912,8 @@ $token = $_GET['token'] ?? '';
                 }
                 
                 // Fond des équipes
-                if (green.background) {
-                    css += `#team-green { background: ${green.background} !important; } `;
-                }
-                
-                // Effets d'animation
-                if (green.effect && green.effect !== 'none') {
-                    css += generateEffectCSS('green', green.effect, green['effect-speed'] || '1', green['effect-pause'] || false);
+                if (green['background-color']) {
+                    css += `#team-green { background: ${green['background-color']} !important; } `;
                 }
             }
             
@@ -969,13 +964,8 @@ $token = $_GET['token'] ?? '';
                 }
                 
                 // Fond des équipes
-                if (red.background) {
-                    css += `#team-red { background: ${red.background} !important; } `;
-                }
-                
-                // Effets d'animation
-                if (red.effect && red.effect !== 'none') {
-                    css += generateEffectCSS('red', red.effect, red['effect-speed'] || '1', red['effect-pause'] || false);
+                if (red['background-color']) {
+                    css += `#team-red { background: ${red['background-color']} !important; } `;
                 }
             }
             
@@ -1026,25 +1016,18 @@ $token = $_GET['token'] ?? '';
             }
         }
 
-        // Fonction pour appliquer les noms d'équipes avec retry
+        // Fonction pour appliquer les noms d'équipes sans flickering
         function applyTeamNames(styles) {
             if (styles.green && styles.green.name) {
                 const greenNameElement = document.getElementById('green-name');
-                if (greenNameElement) {
+                if (greenNameElement && greenNameElement.textContent !== styles.green.name) {
                     greenNameElement.textContent = styles.green.name;
-                    // Forcer la mise à jour du DOM
-                    greenNameElement.style.display = 'none';
-                    greenNameElement.offsetHeight; // Force reflow
-                    greenNameElement.style.display = '';
-                } else {
+                } else if (!greenNameElement) {
                     // Retry après 50ms si l'élément n'est pas trouvé
                     setTimeout(() => {
                         const retryElement = document.getElementById('green-name');
-                        if (retryElement) {
+                        if (retryElement && retryElement.textContent !== styles.green.name) {
                             retryElement.textContent = styles.green.name;
-                            retryElement.style.display = 'none';
-                            retryElement.offsetHeight; // Force reflow
-                            retryElement.style.display = '';
                         }
                     }, 50);
                 }
@@ -1052,21 +1035,14 @@ $token = $_GET['token'] ?? '';
             
             if (styles.red && styles.red.name) {
                 const redNameElement = document.getElementById('red-name');
-                if (redNameElement) {
+                if (redNameElement && redNameElement.textContent !== styles.red.name) {
                     redNameElement.textContent = styles.red.name;
-                    // Forcer la mise à jour du DOM
-                    redNameElement.style.display = 'none';
-                    redNameElement.offsetHeight; // Force reflow
-                    redNameElement.style.display = '';
-                } else {
+                } else if (!redNameElement) {
                     // Retry après 50ms si l'élément n'est pas trouvé
                     setTimeout(() => {
                         const retryElement = document.getElementById('red-name');
-                        if (retryElement) {
+                        if (retryElement && retryElement.textContent !== styles.red.name) {
                             retryElement.textContent = styles.red.name;
-                            retryElement.style.display = 'none';
-                            retryElement.offsetHeight; // Force reflow
-                            retryElement.style.display = '';
                         }
                     }, 50);
                 }

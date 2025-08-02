@@ -722,15 +722,11 @@ $token = $_GET['token'] ?? '';
                     </div>
                     
                     <div class="form-group">
-                        <label for="green-effect">Effet d'animation</label>
-                        <select id="green-effect" data-style="green-effect">
-                            <option value="none">Aucun</option>
-                            <option value="zoom">Zoom</option>
-                            <option value="pulse">Pulsation</option>
-                            <option value="bounce">Rebond</option>
-                            <option value="glow">Lueur</option>
-                            <option value="shake">Secousse</option>
-                        </select>
+                        <label for="green-background-color">Couleur du fond d'équipe</label>
+                        <div class="color-input-group">
+                            <input type="color" id="green-background-color" data-style="green-background-color" value="#000000">
+                            <input type="text" class="color-text" data-style="green-background-color" value="#000000" placeholder="#000000">
+                        </div>
                     </div>
                 </div>
             </div>
@@ -795,15 +791,11 @@ $token = $_GET['token'] ?? '';
                     </div>
                     
                     <div class="form-group">
-                        <label for="red-effect">Effet d'animation</label>
-                        <select id="red-effect" data-style="red-effect">
-                            <option value="none">Aucun</option>
-                            <option value="zoom">Zoom</option>
-                            <option value="pulse">Pulsation</option>
-                            <option value="bounce">Rebond</option>
-                            <option value="glow">Lueur</option>
-                            <option value="shake">Secousse</option>
-                        </select>
+                        <label for="red-background-color">Couleur du fond d'équipe</label>
+                        <div class="color-input-group">
+                            <input type="color" id="red-background-color" data-style="red-background-color" value="#000000">
+                            <input type="text" class="color-text" data-style="red-background-color" value="#000000" placeholder="#000000">
+                        </div>
                     </div>
                 </div>
             </div>
@@ -1167,9 +1159,7 @@ $token = $_GET['token'] ?? '';
                     size: getInputValue('green-size', '80'),
                     stroke: getInputValue('green-stroke', '#000000'),
                     shadow: getInputValue('green-shadow', false),
-                    effect: getInputValue('green-effect', 'none'),
-                    'effect-speed': '1',
-                    'effect-pause': false
+                    'background-color': getInputValue('green-background-color', '#000000')
                 },
                 red: {
                     name: getInputValue('red-name', 'ÉQUIPE ROUGE'),
@@ -1178,9 +1168,7 @@ $token = $_GET['token'] ?? '';
                     size: getInputValue('red-size', '80'),
                     stroke: getInputValue('red-stroke', '#000000'),
                     shadow: getInputValue('red-shadow', false),
-                    effect: getInputValue('red-effect', 'none'),
-                    'effect-speed': '1',
-                    'effect-pause': false
+                    'background-color': getInputValue('red-background-color', '#000000')
                 },
                 general: {
                     'font-family': selectedFont,
@@ -1308,16 +1296,18 @@ $token = $_GET['token'] ?? '';
             }
             
             // Fond des équipes
-            const greenTeam = document.querySelector('.preview-team.green');
-            const redTeam = document.querySelector('.preview-team.red');
+            const greenTeam = document.querySelector('.preview-team');
+            const redTeam = document.querySelector('.preview-team:last-child');
             if (extracted.teamBackground) {
                 if (greenTeam) {
-                    greenTeam.style.background = 'rgba(0, 0, 0, 0.5)';
+                    const greenBgColor = extracted.greenBackgroundColor || '#000000';
+                    greenTeam.style.background = greenBgColor;
                     greenTeam.style.padding = '15px';
                     greenTeam.style.borderRadius = '10px';
                 }
                 if (redTeam) {
-                    redTeam.style.background = 'rgba(0, 0, 0, 0.5)';
+                    const redBgColor = extracted.redBackgroundColor || '#000000';
+                    redTeam.style.background = redBgColor;
                     redTeam.style.padding = '15px';
                     redTeam.style.borderRadius = '10px';
                 }
@@ -1346,7 +1336,7 @@ $token = $_GET['token'] ?? '';
                 extracted.greenSize = data.green.size;
                 extracted.greenStroke = data.green.stroke;
                 extracted.greenShadow = data.green.shadow;
-                extracted.greenEffect = data.green.effect;
+                extracted.greenBackgroundColor = data.green['background-color'];
             }
             if (data.red) {
                 extracted.redName = data.red.name;
@@ -1355,7 +1345,7 @@ $token = $_GET['token'] ?? '';
                 extracted.redSize = data.red.size;
                 extracted.redStroke = data.red.stroke;
                 extracted.redShadow = data.red.shadow;
-                extracted.redEffect = data.red.effect;
+                extracted.redBackgroundColor = data.red['background-color'];
             }
             if (data.general) {
                 extracted.fontFamily = data.general['font-family'];
@@ -1521,7 +1511,7 @@ $token = $_GET['token'] ?? '';
             document.getElementById('green-size').value = '80';
             document.getElementById('green-stroke').value = '#000000';
             document.getElementById('green-shadow').checked = false;
-            document.getElementById('green-effect').value = 'none';
+            document.getElementById('green-background-color').value = '#000000';
             
             document.getElementById('red-name').value = 'ÉQUIPE ROUGE';
             document.getElementById('red-color').value = '#ef4444';
@@ -1529,7 +1519,7 @@ $token = $_GET['token'] ?? '';
             document.getElementById('red-size').value = '80';
             document.getElementById('red-stroke').value = '#000000';
             document.getElementById('red-shadow').checked = false;
-            document.getElementById('red-effect').value = 'none';
+            document.getElementById('red-background-color').value = '#000000';
             
             document.getElementById('font-family').value = 'Arial, Helvetica, sans-serif';
             document.getElementById('background').value = '#1e293b';
@@ -1585,7 +1575,7 @@ $token = $_GET['token'] ?? '';
                 setInputValue('green-size', styles.green.size);
                 setInputValue('green-stroke', styles.green.stroke);
                 setInputValue('green-shadow', styles.green.shadow);
-                setInputValue('green-effect', styles.green.effect);
+                setInputValue('green-background-color', styles.green['background-color'] || '#000000');
             }
             
             if (styles.red) {
@@ -1595,7 +1585,7 @@ $token = $_GET['token'] ?? '';
                 setInputValue('red-size', styles.red.size);
                 setInputValue('red-stroke', styles.red.stroke);
                 setInputValue('red-shadow', styles.red.shadow);
-                setInputValue('red-effect', styles.red.effect);
+                setInputValue('red-background-color', styles.red['background-color'] || '#000000');
             }
             
             if (styles.general) {
