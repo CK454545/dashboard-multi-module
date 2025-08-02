@@ -479,21 +479,14 @@ $token = $_GET['token'] ?? '';
                         <button class="command-btn add" data-action="add-score" data-team="green" data-value="1">+1</button>
                         <button class="command-btn add" data-action="add-score" data-team="green" data-value="5">+5</button>
                         <button class="command-btn add" data-action="add-score" data-team="green" data-value="10">+10</button>
-<<<<<<< HEAD
-                        <button class="command-btn reset" data-action="reset-score" data-team="green">Reset</button>
-=======
->>>>>>> 5b1251e14b228fd39bb0cbe55b28e46be0cd2da9
+
                     </div>
                 </div>
                 
                 <!-- Contrôles Équipe Rouge -->
                 <div class="command-section danger">
                     <h3><i class="fas fa-users"></i> Équipe Rouge</h3>
-<<<<<<< HEAD
-                    <div class="command-buttons grid-4">
-=======
-                    <div class="command-buttons">
->>>>>>> 5b1251e14b228fd39bb0cbe55b28e46be0cd2da9
+                     <div class="command-buttons">
                         <button class="command-btn subtract" data-action="add-score" data-team="red" data-value="-10">-10</button>
                         <button class="command-btn subtract" data-action="add-score" data-team="red" data-value="-5">-5</button>
                         <button class="command-btn subtract" data-action="add-score" data-team="red" data-value="-1">-1</button>
@@ -501,10 +494,7 @@ $token = $_GET['token'] ?? '';
                         <button class="command-btn add" data-action="add-score" data-team="red" data-value="1">+1</button>
                         <button class="command-btn add" data-action="add-score" data-team="red" data-value="5">+5</button>
                         <button class="command-btn add" data-action="add-score" data-team="red" data-value="10">+10</button>
-<<<<<<< HEAD
-                        <button class="command-btn reset" data-action="reset-score" data-team="red">Reset</button>
-=======
->>>>>>> 5b1251e14b228fd39bb0cbe55b28e46be0cd2da9
+
                     </div>
                 </div>
             </div>
@@ -671,16 +661,10 @@ $token = $_GET['token'] ?? '';
                 // Masquer les contrôles si demandé
                 if (options['hide-controls'] === true || options['hide-controls'] === 'true' || options['hide-controls'] === 1) {
                     css += '.command-bar { display: none !important; } ';
-<<<<<<< HEAD
-                    css += '.config-button-fixed { display: none !important; } ';
-                } else {
-                    css += '.command-bar { display: block !important; } ';
-=======
-                    css += '.command-config-btn { display: none !important; } ';
-                    css += '.config-btn-small { display: none !important; } ';
-                } else {
-                    css += '.command-bar { display: flex !important; } ';
->>>>>>> 5b1251e14b228fd39bb0cbe55b28e46be0cd2da9
+                     css += '.command-config-btn { display: none !important; } ';
+                     css += '.config-btn-small { display: none !important; } ';
+                 } else {
+                     css += '.command-bar { display: flex !important; } ';
                 }
             }
             
@@ -700,22 +684,8 @@ $token = $_GET['token'] ?? '';
                 //     }
                 // }
                 
-<<<<<<< HEAD
-                // Couleur du score (séparée du nom)
-                if (green.scoreColor) {
-                    css += `#green-score { color: ${green.scoreColor} !important; } `;
-                } else if (green.color) {
-                    css += `#green-score { color: ${green.color} !important; } `;
-                }
-                
-                // Couleur du nom
-                if (green.nameColor) {
-                    css += `#green-name { color: ${green.nameColor} !important; } `;
-                } else if (green.color) {
-=======
-                // Couleur
-                if (green.color) {
->>>>>>> 5b1251e14b228fd39bb0cbe55b28e46be0cd2da9
+                 // Couleur
+                 if (green.color) {
                     css += `#green-name { color: ${green.color} !important; } `;
                 }
                 
@@ -771,22 +741,8 @@ $token = $_GET['token'] ?? '';
                 //     }
                 // }
                 
-<<<<<<< HEAD
-                // Couleur du score (séparée du nom)
-                if (red.scoreColor) {
-                    css += `#red-score { color: ${red.scoreColor} !important; } `;
-                } else if (red.color) {
-                    css += `#red-score { color: ${red.color} !important; } `;
-                }
-                
-                // Couleur du nom
-                if (red.nameColor) {
-                    css += `#red-name { color: ${red.nameColor} !important; } `;
-                } else if (red.color) {
-=======
-                // Couleur
-                if (red.color) {
->>>>>>> 5b1251e14b228fd39bb0cbe55b28e46be0cd2da9
+                 // Couleur
+                 if (red.color) {
                     css += `#red-name { color: ${red.color} !important; } `;
                 }
                 

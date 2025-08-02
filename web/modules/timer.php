@@ -699,12 +699,8 @@ $token = $_GET['token'] ?? '';
                 // Masquer les contrôles si demandé
                 if (options['hide-controls'] === true || options['hide-controls'] === 'true' || options['hide-controls'] === 1) {
                     css += '.command-bar { display: none !important; } ';
-<<<<<<< HEAD
-                    css += '.config-button-fixed { display: none !important; } ';
-=======
                     css += '.command-config-btn { display: none !important; } ';
                     css += '.config-btn-small { display: none !important; } ';
->>>>>>> 5b1251e14b228fd39bb0cbe55b28e46be0cd2da9
                 }
             }
             
@@ -813,8 +809,7 @@ $token = $_GET['token'] ?? '';
             }
         }
         
-<<<<<<< HEAD
-        // Génération du CSS de positionnement (basé sur Win)
+        // Génération du CSS de positionnement
         function generatePositionCSS(position, margin) {
             const positions = {
                 'top-left': `.display { justify-content: flex-start !important; align-items: flex-start !important; padding: ${margin}px !important; }`,
@@ -831,7 +826,7 @@ $token = $_GET['token'] ?? '';
             return positions[position] || positions['center'];
         }
         
-        // Application optimisée du CSS (basé sur Win)
+        // Application optimisée du CSS
         function applyCSS(css) {
             const existingStyle = document.getElementById('dynamic-styles');
             if (existingStyle) {
@@ -845,9 +840,6 @@ $token = $_GET['token'] ?? '';
                 document.head.appendChild(styleElement);
             }
         }
-=======
-
->>>>>>> 5b1251e14b228fd39bb0cbe55b28e46be0cd2da9
 
         // Formater le temps en HH:MM:SS
         function formatTime(totalSeconds) {
