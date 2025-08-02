@@ -779,6 +779,30 @@ $token = $_GET['token'] ?? '';
                 grid-template-columns: repeat(3, 1fr);
             }
 
+            .timer-manual-inputs {
+                grid-template-columns: repeat(3, 1fr);
+                gap: var(--spacing-xs);
+            }
+
+            .manual-input {
+                font-size: 0.7rem;
+                padding: var(--spacing-xs);
+            }
+
+            .manual-input-group label {
+                font-size: 0.65rem;
+            }
+
+            .timer-action-buttons.manual {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .timer-action-buttons.manual .timer-action-btn {
+                font-size: 0.6rem;
+                padding: var(--spacing-xs);
+                min-height: 28px;
+            }
+
             .timer-action-buttons.controls {
                 grid-template-columns: 1fr;
             }
