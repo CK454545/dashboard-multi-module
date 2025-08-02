@@ -519,19 +519,21 @@ $token = $_GET['token'] ?? '';
 
         <?php if ($control): ?>
         <div class="command-bar">
+            <!-- Bouton Configuration Intégré -->
+            <a href="/modules/timer-config.php?token=<?php echo htmlspecialchars($token); ?>" class="command-config-btn">
+                <i class="fas fa-cog"></i>
+            </a>
             
-            <div class="command-section">
-                <h3><i class="fas fa-clock"></i> Ajuster le temps</h3>
-                <div class="command-buttons grid-4">
+            <div class="command-section danger">
+                <h3><i class="fas fa-clock"></i> Timer</h3>
+                <div class="command-buttons grid-7">
+                    <button class="command-btn subtract" onclick="handleTimeAction(event, 'subtract', 300)">-5min</button>
+                    <button class="command-btn subtract" onclick="handleTimeAction(event, 'subtract', 60)">-1min</button>
+                    <button class="command-btn subtract" onclick="handleTimeAction(event, 'subtract', 10)">-10s</button>
+                    <button class="command-btn reset" onclick="resetTimer()">Reset</button>
                     <button class="command-btn add" onclick="handleTimeAction(event, 'add', 10)">+10s</button>
-                    <button class="command-btn add" onclick="handleTimeAction(event, 'add', 30)">+30s</button>
                     <button class="command-btn add" onclick="handleTimeAction(event, 'add', 60)">+1min</button>
                     <button class="command-btn add" onclick="handleTimeAction(event, 'add', 300)">+5min</button>
-                    
-                    <button class="command-btn subtract" onclick="handleTimeAction(event, 'subtract', 10)">-10s</button>
-                    <button class="command-btn subtract" onclick="handleTimeAction(event, 'subtract', 30)">-30s</button>
-                    <button class="command-btn subtract" onclick="handleTimeAction(event, 'subtract', 60)">-1min</button>
-                    <button class="command-btn subtract" onclick="handleTimeAction(event, 'subtract', 300)">-5min</button>
                 </div>
             </div>
 
@@ -541,34 +543,11 @@ $token = $_GET['token'] ?? '';
                     <button class="command-btn primary large" data-action="start" id="startBtn" onclick="toggleTimer()">
                         <i class="fas fa-play"></i> Démarrer
                     </button>
-                    <button class="command-btn reset large" data-action="reset" onclick="resetTimer()">
-                        <i class="fas fa-redo"></i> Reset
+                    <button class="command-btn primary large" onclick="handleTimeAction(event, 'add', 30)">
+                        <i class="fas fa-plus"></i> +30s
                     </button>
                 </div>
             </div>
-
-            <div class="command-section">
-                <h3><i class="fas fa-sliders-h"></i> Ajustement manuel</h3>
-                <div style="display: flex; gap: 10px; align-items: center; justify-content: center; flex-wrap: wrap;">
-                    <input type="number" id="manual-hours" min="0" max="99" value="0" style="width: 60px; padding: 8px; border-radius: 8px; border: 1px solid rgba(148, 163, 184, 0.1); background: rgba(255, 255, 255, 0.05); color: #f8fafc; text-align: center;">
-                    <span style="color: #cbd5e1;">h</span>
-                    <input type="number" id="manual-minutes" min="0" max="59" value="0" style="width: 60px; padding: 8px; border-radius: 8px; border: 1px solid rgba(148, 163, 184, 0.1); background: rgba(255, 255, 255, 0.05); color: #f8fafc; text-align: center;">
-                    <span style="color: #cbd5e1;">m</span>
-                    <input type="number" id="manual-seconds" min="0" max="59" value="0" style="width: 60px; padding: 8px; border-radius: 8px; border: 1px solid rgba(148, 163, 184, 0.1); background: rgba(255, 255, 255, 0.05); color: #f8fafc; text-align: center;">
-                    <span style="color: #cbd5e1;">s</span>
-                    <button class="command-btn add" onclick="addManualTime()" style="padding: 8px 16px;">
-                        <i class="fas fa-plus"></i>
-                    </button>
-                    <button class="command-btn subtract" onclick="subtractManualTime()" style="padding: 8px 16px;">
-                        <i class="fas fa-minus"></i>
-                    </button>
-                    <a href="/modules/timer-config.php?token=<?php echo htmlspecialchars($token); ?>" class="command-config-btn">
-                        <i class="fas fa-cog"></i>
-                    </a>
-                </div>
-            </div>
-            
-
         </div>
         <?php endif; ?>
     </div>

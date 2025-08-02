@@ -466,50 +466,47 @@ $token = $_GET['token'] ?? '';
         <!-- Si paramètre control=true, afficher les contrôles -->
         <?php if($control): ?>
         <div class="command-bar">
+            <!-- Bouton Configuration Intégré -->
+            <a href="/modules/teams-config.php?token=<?=$token?>" class="command-config-btn">
+                <i class="fas fa-cog"></i>
+            </a>
             
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
-                <!-- Contrôles Équipe Verte -->
-                <div class="command-section success">
-                    <h3><i class="fas fa-users"></i> Équipe Verte</h3>
-                    <div class="command-buttons">
-                        <button class="command-btn subtract" data-action="add-score" data-team="green" data-value="-10">-10</button>
-                        <button class="command-btn subtract" data-action="add-score" data-team="green" data-value="-5">-5</button>
-                        <button class="command-btn subtract" data-action="add-score" data-team="green" data-value="-1">-1</button>
-                        <button class="command-btn reset" data-action="reset-score" data-team="green">Reset</button>
-                        <button class="command-btn add" data-action="add-score" data-team="green" data-value="1">+1</button>
-                        <button class="command-btn add" data-action="add-score" data-team="green" data-value="5">+5</button>
-                        <button class="command-btn add" data-action="add-score" data-team="green" data-value="10">+10</button>
-
-                    </div>
-                </div>
-                
-                <!-- Contrôles Équipe Rouge -->
-                <div class="command-section danger">
-                    <h3><i class="fas fa-users"></i> Équipe Rouge</h3>
-                     <div class="command-buttons">
-                        <button class="command-btn subtract" data-action="add-score" data-team="red" data-value="-10">-10</button>
-                        <button class="command-btn subtract" data-action="add-score" data-team="red" data-value="-5">-5</button>
-                        <button class="command-btn subtract" data-action="add-score" data-team="red" data-value="-1">-1</button>
-                        <button class="command-btn reset" data-action="reset-score" data-team="red">Reset</button>
-                        <button class="command-btn add" data-action="add-score" data-team="red" data-value="1">+1</button>
-                        <button class="command-btn add" data-action="add-score" data-team="red" data-value="5">+5</button>
-                        <button class="command-btn add" data-action="add-score" data-team="red" data-value="10">+10</button>
-
-                    </div>
+            <div class="command-section success">
+                <h3><i class="fas fa-users"></i> Équipe Verte</h3>
+                <div class="command-buttons grid-7">
+                    <button class="command-btn subtract" data-action="add-score" data-team="green" data-value="-10">-10</button>
+                    <button class="command-btn subtract" data-action="add-score" data-team="green" data-value="-5">-5</button>
+                    <button class="command-btn subtract" data-action="add-score" data-team="green" data-value="-1">-1</button>
+                    <button class="command-btn reset" data-action="reset-score" data-team="green">Reset</button>
+                    <button class="command-btn add" data-action="add-score" data-team="green" data-value="1">+1</button>
+                    <button class="command-btn add" data-action="add-score" data-team="green" data-value="5">+5</button>
+                    <button class="command-btn add" data-action="add-score" data-team="green" data-value="10">+10</button>
                 </div>
             </div>
             
-            <!-- Contrôles généraux -->
-            <div style="display: flex; justify-content: center; gap: 10px; margin-top: 10px;">
-                <button class="command-btn reset large" data-action="reset-all">
-                    <i class="fas fa-redo"></i> Reset Tout
-                </button>
-                <button class="command-btn primary large" data-action="swap-scores">
-                    <i class="fas fa-exchange-alt"></i> Échanger Scores
-                </button>
-                <a href="/modules/teams-config.php?token=<?=$token?>" class="command-config-btn" style="position: static; width: 32px; height: 32px; font-size: 0.8rem;">
-                    <i class="fas fa-cog"></i>
-                </a>
+            <div class="command-section danger">
+                <h3><i class="fas fa-users"></i> Équipe Rouge</h3>
+                <div class="command-buttons grid-7">
+                    <button class="command-btn subtract" data-action="add-score" data-team="red" data-value="-10">-10</button>
+                    <button class="command-btn subtract" data-action="add-score" data-team="red" data-value="-5">-5</button>
+                    <button class="command-btn subtract" data-action="add-score" data-team="red" data-value="-1">-1</button>
+                    <button class="command-btn reset" data-action="reset-score" data-team="red">Reset</button>
+                    <button class="command-btn add" data-action="add-score" data-team="red" data-value="1">+1</button>
+                    <button class="command-btn add" data-action="add-score" data-team="red" data-value="5">+5</button>
+                    <button class="command-btn add" data-action="add-score" data-team="red" data-value="10">+10</button>
+                </div>
+            </div>
+            
+            <div class="command-section warning">
+                <h3><i class="fas fa-gamepad"></i> Actions</h3>
+                <div class="command-buttons grid-2">
+                    <button class="command-btn reset large" data-action="reset-all">
+                        <i class="fas fa-redo"></i> Reset Tout
+                    </button>
+                    <button class="command-btn primary large" data-action="swap-scores">
+                        <i class="fas fa-exchange-alt"></i> Échanger
+                    </button>
+                </div>
             </div>
         </div>
         <?php endif; ?>

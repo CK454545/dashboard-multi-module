@@ -5,11 +5,11 @@
 /* ==================== VARIABLES CSS DÉDIÉES ==================== */
 :root {
     /* Couleurs du panneau de commandes */
-    --cmd-bg: rgba(15, 23, 42, 0.95);
-    --cmd-border: rgba(148, 163, 184, 0.12);
+    --cmd-bg: rgba(30, 41, 59, 0.98);
+    --cmd-border: rgba(148, 163, 184, 0.15);
     --cmd-border-top: #f59e0b;
-    --cmd-glass: rgba(255, 255, 255, 0.03);
-    --cmd-shadow: 0 -10px 40px rgba(0, 0, 0, 0.3);
+    --cmd-glass: rgba(255, 255, 255, 0.04);
+    --cmd-shadow: 0 -10px 40px rgba(0, 0, 0, 0.4);
     
     /* Hauteur du panneau pour calculs */
     --cmd-bar-height: auto;
@@ -23,20 +23,20 @@
     left: 50%;
     transform: translateX(-50%);
     width: calc(100% - 40px);
-    max-width: 800px;
+    max-width: 900px;
     background: var(--cmd-bg);
     backdrop-filter: blur(20px) saturate(180%);
     -webkit-backdrop-filter: blur(20px) saturate(180%);
     border: 1px solid var(--cmd-border);
-    border-top: 2px solid var(--cmd-border-top);
-    border-radius: 20px 20px 0 0;
-    padding: 16px;
+    border-top: 3px solid var(--cmd-border-top);
+    border-radius: 24px 24px 0 0;
+    padding: 20px;
     box-shadow: var(--cmd-shadow);
     z-index: 1000;
     transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-    max-height: var(--cmd-bar-max-height);
-    overflow-y: auto;
-    overflow-x: hidden;
+    /* Suppression du scroll - hauteur fixe automatique */
+    height: auto;
+    overflow: visible;
 }
 
 /* Scrollbar personnalisée */
@@ -114,11 +114,11 @@
 
 /* ==================== SECTIONS ==================== */
 .command-section {
-    background: var(--cmd-glass);
-    border: 1px solid rgba(148, 163, 184, 0.08);
-    border-radius: 12px;
-    padding: 12px;
-    margin-bottom: 12px;
+    background: rgba(51, 65, 85, 0.4);
+    border: 1px solid rgba(148, 163, 184, 0.1);
+    border-radius: 16px;
+    padding: 16px;
+    margin-bottom: 16px;
     position: relative;
     overflow: hidden;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
@@ -158,22 +158,22 @@
 
 /* Titre de section premium */
 .command-section h3 {
-    font-size: 0.75rem;
-    font-weight: 600;
-    color: #f8fafc;
-    margin-bottom: 10px;
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: #ffffff;
+    margin-bottom: 14px;
     text-align: center;
     text-transform: uppercase;
-    letter-spacing: 1.2px;
-    padding: 6px 16px;
-    border-radius: 8px;
+    letter-spacing: 1.5px;
+    padding: 10px 20px;
+    border-radius: 12px;
     background: linear-gradient(135deg, #6366f1, #5855eb);
     display: inline-flex;
     align-items: center;
-    gap: 8px;
+    gap: 10px;
     width: 100%;
     justify-content: center;
-    box-shadow: 0 2px 8px rgba(99, 102, 241, 0.25);
+    box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
     position: relative;
     overflow: hidden;
 }
@@ -239,28 +239,28 @@
 
 /* ==================== BOUTONS HARMONISÉS PREMIUM ==================== */
 .command-btn {
-    background: linear-gradient(135deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.02));
-    border: 1px solid rgba(148, 163, 184, 0.12);
-    color: #e2e8f0;
-    padding: 8px 14px;
-    border-radius: 10px;
-    font-weight: 600;
-    font-size: 0.72rem;
+    background: rgba(71, 85, 105, 0.5);
+    border: 1px solid rgba(148, 163, 184, 0.2);
+    color: #f1f5f9;
+    padding: 10px 16px;
+    border-radius: 12px;
+    font-weight: 700;
+    font-size: 0.75rem;
     cursor: pointer;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     text-transform: uppercase;
-    letter-spacing: 0.5px;
-    min-height: 36px;
+    letter-spacing: 0.8px;
+    min-height: 40px;
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 6px;
+    gap: 8px;
     position: relative;
     overflow: hidden;
     text-decoration: none;
     outline: none;
     backdrop-filter: blur(10px);
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
 /* Effet de hover amélioré */
@@ -299,44 +299,47 @@
 /* ==================== VARIANTES DE BOUTONS PREMIUM ==================== */
 /* Bouton d'ajout */
 .command-btn.add {
-    background: linear-gradient(135deg, rgba(34, 197, 94, 0.15), rgba(34, 197, 94, 0.08));
-    border-color: rgba(34, 197, 94, 0.3);
+    background: rgba(34, 197, 94, 0.2);
+    border-color: rgba(34, 197, 94, 0.4);
     color: #4ade80;
 }
 
 .command-btn.add:hover {
-    background: linear-gradient(135deg, #22c55e, #16a34a);
-    border-color: transparent;
+    background: rgba(34, 197, 94, 0.4);
+    border-color: #22c55e;
     color: white;
-    box-shadow: 0 6px 20px rgba(34, 197, 94, 0.4);
+    box-shadow: 0 6px 20px rgba(34, 197, 94, 0.5);
+    transform: translateY(-2px);
 }
 
 /* Bouton de soustraction */
 .command-btn.subtract {
-    background: linear-gradient(135deg, rgba(239, 68, 68, 0.15), rgba(239, 68, 68, 0.08));
-    border-color: rgba(239, 68, 68, 0.3);
-    color: #f87171;
-}
-
-.command-btn.subtract:hover {
-    background: linear-gradient(135deg, #ef4444, #dc2626);
-    border-color: transparent;
-    color: white;
-    box-shadow: 0 6px 20px rgba(239, 68, 68, 0.4);
-}
-
-/* Bouton reset */
-.command-btn.reset {
-    background: linear-gradient(135deg, rgba(239, 68, 68, 0.2), rgba(239, 68, 68, 0.1));
+    background: rgba(239, 68, 68, 0.2);
     border-color: rgba(239, 68, 68, 0.4);
     color: #f87171;
 }
 
-.command-btn.reset:hover {
-    background: linear-gradient(135deg, #dc2626, #b91c1c);
-    border-color: transparent;
+.command-btn.subtract:hover {
+    background: rgba(239, 68, 68, 0.4);
+    border-color: #ef4444;
     color: white;
-    box-shadow: 0 6px 20px rgba(220, 38, 38, 0.4);
+    box-shadow: 0 6px 20px rgba(239, 68, 68, 0.5);
+    transform: translateY(-2px);
+}
+
+/* Bouton reset */
+.command-btn.reset {
+    background: rgba(220, 38, 38, 0.3);
+    border-color: rgba(220, 38, 38, 0.5);
+    color: #fca5a5;
+}
+
+.command-btn.reset:hover {
+    background: rgba(220, 38, 38, 0.5);
+    border-color: #dc2626;
+    color: white;
+    box-shadow: 0 6px 20px rgba(220, 38, 38, 0.6);
+    transform: translateY(-2px);
 }
 
 /* Bouton action principale */
@@ -672,20 +675,7 @@ body:has(.command-bar) #main-display {
     transform: translateX(-50%) translateY(calc(100% - 60px));
 }
 
-/* ==================== STYLES POUR TEAM BATTLE SPÉCIFIQUES ==================== */
-/* Grille spéciale pour les contrôles d'équipes */
-.command-bar > div[style*="grid-template-columns: 1fr 1fr"] {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 12px;
-}
-
-/* Ajustement pour les contrôles généraux */
-.command-bar > div[style*="display: flex"] {
-    display: flex;
-    justify-content: center;
-    gap: 10px;
-    margin-top: 10px;
-}
+/* ==================== STYLES POUR MODULES SPÉCIFIQUES ==================== */
+/* Styles supprimés - tous les modules utilisent maintenant la même structure */
 
 /* ==================== FIN DES STYLES ==================== */
