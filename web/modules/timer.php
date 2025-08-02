@@ -283,39 +283,39 @@ $token = $_GET['token'] ?? '';
             background: rgba(15, 23, 42, 0.95);
             backdrop-filter: blur(20px);
             border-top: 1px solid rgba(148, 163, 184, 0.1);
-            padding: var(--spacing-md) var(--spacing-lg);
+            padding: var(--spacing-sm) var(--spacing-md);
             z-index: 1000;
             display: flex;
             flex-direction: column;
-            gap: var(--spacing-md);
+            gap: var(--spacing-sm);
         }
 
         .timer-action-bar-header {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            margin-bottom: var(--spacing-sm);
+            margin-bottom: var(--spacing-xs);
         }
 
         .timer-action-bar-title {
-            font-size: 0.875rem;
+            font-size: 0.75rem;
             font-weight: 600;
             color: #3b82f6;
             text-transform: uppercase;
-            letter-spacing: 1px;
+            letter-spacing: 0.5px;
             display: flex;
             align-items: center;
-            gap: var(--spacing-sm);
+            gap: var(--spacing-xs);
         }
 
         .timer-action-bar-config {
-            width: 32px;
-            height: 32px;
+            width: 28px;
+            height: 28px;
             border-radius: 50%;
             background: rgba(59, 130, 246, 0.1);
             border: 1px solid #3b82f6;
             color: #3b82f6;
-            font-size: 0.75rem;
+            font-size: 0.7rem;
             cursor: pointer;
             transition: all var(--transition-fast);
             display: flex;
@@ -327,32 +327,32 @@ $token = $_GET['token'] ?? '';
         .timer-action-bar-config:hover {
             background: #3b82f6;
             color: white;
-            transform: scale(1.1);
+            transform: scale(1.05);
         }
 
         .timer-action-bar-sections {
             display: flex;
             flex-direction: column;
-            gap: var(--spacing-md);
+            gap: var(--spacing-sm);
         }
 
         .timer-action-section {
             background: rgba(30, 41, 59, 0.5);
-            border-radius: var(--radius-lg);
-            padding: var(--spacing-md);
+            border-radius: var(--radius-md);
+            padding: var(--spacing-sm);
             border: 1px solid rgba(148, 163, 184, 0.1);
         }
 
         .timer-action-section-header {
             display: flex;
             align-items: center;
-            gap: var(--spacing-sm);
-            margin-bottom: var(--spacing-sm);
-            font-size: 0.75rem;
+            gap: var(--spacing-xs);
+            margin-bottom: var(--spacing-xs);
+            font-size: 0.7rem;
             font-weight: 600;
             color: var(--text-secondary);
             text-transform: uppercase;
-            letter-spacing: 0.5px;
+            letter-spacing: 0.3px;
         }
 
         .timer-action-buttons {
@@ -366,16 +366,16 @@ $token = $_GET['token'] ?? '';
         }
 
         .timer-action-btn {
-            padding: var(--spacing-sm) var(--spacing-xs);
+            padding: var(--spacing-xs) var(--spacing-xs);
             border: none;
             border-radius: var(--radius-md);
-            font-size: 0.75rem;
+            font-size: 0.7rem;
             font-weight: 600;
             cursor: pointer;
             transition: all var(--transition-fast);
             text-transform: uppercase;
-            letter-spacing: 0.5px;
-            min-height: 44px;
+            letter-spacing: 0.3px;
+            min-height: 36px;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -656,7 +656,7 @@ $token = $_GET['token'] ?? '';
             }
 
             .timer-action-bar {
-                padding: var(--spacing-sm);
+                padding: var(--spacing-xs);
             }
 
             .timer-action-buttons {
@@ -665,6 +665,12 @@ $token = $_GET['token'] ?? '';
 
             .timer-action-buttons.controls {
                 grid-template-columns: repeat(2, 1fr);
+            }
+
+            .timer-action-btn {
+                font-size: 0.65rem;
+                padding: var(--spacing-xs);
+                min-height: 32px;
             }
         }
 
@@ -697,9 +703,9 @@ $token = $_GET['token'] ?? '';
             }
 
             .timer-action-btn {
-                font-size: 0.7rem;
+                font-size: 0.65rem;
                 padding: var(--spacing-xs);
-                min-height: 44px;
+                min-height: 32px;
             }
         }
     </style>
