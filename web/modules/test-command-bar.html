@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test - Panneau de Commandes Ultra Premium</title>
+    <link rel="stylesheet" href="command-bar.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #334155 100%);
+            min-height: 100vh;
+            color: #f1f5f9;
+        }
+        
+        .test-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+        
+        .test-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        
+        .test-header h1 {
+            font-size: 2.5rem;
+            font-weight: 900;
+            background: linear-gradient(135deg, #6366f1, #8b5cf6, #f59e0b);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 20px;
+        }
+        
+        .test-content {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(148, 163, 184, 0.1);
+            border-radius: 20px;
+            padding: 40px;
+            margin-bottom: 40px;
+            backdrop-filter: blur(10px);
+            min-height: 300px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: #94a3b8;
+        }
+        
+        .test-info {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(148, 163, 184, 0.2);
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 40px;
+            backdrop-filter: blur(10px);
+        }
+        
+        .test-info h3 {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #fbbf24;
+            margin-bottom: 16px;
+        }
+        
+        .test-info p {
+            color: #cbd5e1;
+            line-height: 1.6;
+            margin-bottom: 12px;
+        }
+        
+        .test-info ul {
+            color: #cbd5e1;
+            line-height: 1.6;
+            margin-left: 20px;
+        }
+        
+        .test-info li {
+            margin-bottom: 8px;
+        }
+        
+        @media (max-width: 768px) {
+            .test-container {
+                padding: 20px 10px;
+            }
+            
+            .test-header h1 {
+                font-size: 2rem;
+            }
+            
+            .test-content {
+                padding: 20px;
+                min-height: 200px;
+                font-size: 1.2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <!-- En-tête de test -->
+        <div class="test-header">
+            <h1>🧪 Test - Panneau de Commandes Ultra Premium</h1>
+        </div>
+
+        <!-- Informations de test -->
+        <div class="test-info">
+            <h3>✅ Points de Test</h3>
+            <ul>
+                <li><strong>Glass Morphism</strong> : Vérifiez les effets de transparence et de flou</li>
+                <li><strong>Animations</strong> : Testez les effets de hover et les transitions</li>
+                <li><strong>Responsive</strong> : Redimensionnez la fenêtre pour tester l'adaptation</li>
+                <li><strong>Icônes SVG</strong> : Vérifiez que les icônes s'affichent correctement</li>
+                <li><strong>Accessibilité</strong> : Testez la navigation au clavier (Tab)</li>
+                <li><strong>Performance</strong> : Vérifiez la fluidité des animations</li>
+            </ul>
+        </div>
+
+        <!-- Contenu de test -->
+        <div class="test-content">
+            <div style="text-align: center;">
+                <div style="font-size: 4rem; font-weight: 900; color: #fbbf24; margin-bottom: 20px;">🎯</div>
+                <div style="font-size: 2rem; font-weight: 800; color: #ffffff; margin-bottom: 10px;">Test en Cours</div>
+                <div style="font-size: 1.2rem; color: #94a3b8;">Vérifiez le panneau de commandes ci-dessous</div>
+            </div>
+        </div>
+
+        <!-- Panneau de commandes de test -->
+        <div class="command-bar">
+            <!-- Bouton Configuration Intégré -->
+            <a href="#" class="command-config-btn">
+                <i class="fas fa-cog"></i>
+            </a>
+            
+            <!-- Section de test 1 -->
+            <div class="command-section primary">
+                <h3><i class="fas fa-trophy"></i> Test Actions</h3>
+                <div class="command-buttons grid-7">
+                    <button class="command-btn subtract" data-action="test-subtract" data-value="-10">-10</button>
+                    <button class="command-btn subtract" data-action="test-subtract" data-value="-5">-5</button>
+                    <button class="command-btn subtract" data-action="test-subtract" data-value="-1">-1</button>
+                    <button class="command-btn reset" data-action="test-reset">RESET</button>
+                    <button class="command-btn add" data-action="test-add" data-value="1">+1</button>
+                    <button class="command-btn add" data-action="test-add" data-value="5">+5</button>
+                    <button class="command-btn add" data-action="test-add" data-value="10">+10</button>
+                </div>
+            </div>
+            
+            <!-- Section de test 2 -->
+            <div class="command-section success">
+                <h3><i class="fas fa-play-circle"></i> Test Contrôles</h3>
+                <div class="command-buttons grid-3">
+                    <button class="command-btn primary large" data-action="test-start">
+                        <i class="fas fa-play"></i> Démarrer
+                    </button>
+                    <button class="command-btn warning large" data-action="test-pause">
+                        <i class="fas fa-pause"></i> Pause
+                    </button>
+                    <button class="command-btn primary large" data-action="test-add-30">
+                        <i class="fas fa-plus"></i> +30s
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Section de test 3 -->
+            <div class="command-section danger">
+                <h3><i class="fas fa-users"></i> Test Équipes</h3>
+                <div class="command-buttons grid-2">
+                    <button class="command-btn reset large" data-action="test-reset-all">
+                        <i class="fas fa-redo"></i> Reset Tout
+                    </button>
+                    <button class="command-btn primary large" data-action="test-swap">
+                        <i class="fas fa-exchange-alt"></i> Échanger
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Script de test pour vérifier les interactions
+        console.log('🧪 Test du Panneau de Commandes Ultra Premium');
+        
+        // Test des boutons
+        document.querySelectorAll('.command-btn').forEach(button => {
+            button.addEventListener('click', function(e) {
+                const action = this.dataset.action;
+                const value = this.dataset.value;
+                
+                console.log(`🎯 Action testée: ${action}${value ? ` (${value})` : ''}`);
+                
+                // Effet de feedback visuel
+                this.style.transform = 'scale(0.95)';
+                setTimeout(() => {
+                    this.style.transform = '';
+                }, 150);
+                
+                // Afficher une notification de test
+                showTestNotification(`Action testée: ${action}${value ? ` (${value})` : ''}`);
+            });
+        });
+        
+        // Test du bouton de configuration
+        document.querySelector('.command-config-btn').addEventListener('click', function(e) {
+            e.preventDefault();
+            console.log('⚙️ Bouton de configuration testé');
+            showTestNotification('Bouton de configuration testé');
+        });
+        
+        // Fonction pour afficher des notifications de test
+        function showTestNotification(message) {
+            // Créer une notification temporaire
+            const notification = document.createElement('div');
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                background: linear-gradient(135deg, #6366f1, #8b5cf6);
+                color: white;
+                padding: 12px 20px;
+                border-radius: 8px;
+                font-size: 0.9rem;
+                font-weight: 600;
+                z-index: 10000;
+                box-shadow: 0 4px 16px rgba(99, 102, 241, 0.4);
+                animation: slideIn 0.3s ease-out;
+            `;
+            notification.textContent = message;
+            
+            // Ajouter l'animation CSS
+            const style = document.createElement('style');
+            style.textContent = `
+                @keyframes slideIn {
+                    from {
+                        transform: translateX(100%);
+                        opacity: 0;
+                    }
+                    to {
+                        transform: translateX(0);
+                        opacity: 1;
+                    }
+                }
+            `;
+            document.head.appendChild(style);
+            
+            document.body.appendChild(notification);
+            
+            // Supprimer après 3 secondes
+            setTimeout(() => {
+                notification.remove();
+            }, 3000);
+        }
+        
+        // Test de l'accessibilité au clavier
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Tab') {
+                console.log('⌨️ Navigation au clavier testée');
+            }
+        });
+        
+        // Test du responsive
+        function testResponsive() {
+            const width = window.innerWidth;
+            console.log(`📱 Largeur d'écran: ${width}px`);
+            
+            if (width < 480) {
+                console.log('📱 Mode: Petit mobile');
+            } else if (width < 768) {
+                console.log('📱 Mode: Mobile');
+            } else if (width < 1200) {
+                console.log('📱 Mode: Tablet');
+            } else {
+                console.log('📱 Mode: Desktop');
+            }
+        }
+        
+        // Tester au chargement et au redimensionnement
+        testResponsive();
+        window.addEventListener('resize', testResponsive);
+        
+        // Test des animations
+        setTimeout(() => {
+            console.log('🎭 Animations d\'entrée testées');
+        }, 1000);
+        
+        console.log('✅ Test initialisé - Vérifiez la console pour les logs');
+    </script>
+</body>
+</html> 
