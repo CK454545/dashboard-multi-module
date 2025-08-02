@@ -474,85 +474,7 @@ $token = $_GET['token'] ?? '';
             }
         }
         
-        /* Styles pour l'onglet URLs */
-        .url-list {
-            display: flex;
-            flex-direction: column;
-            gap: 1rem;
-        }
-        
-        .url-item {
-            background: var(--bg-secondary);
-            padding: 1rem;
-            border-radius: var(--radius-md);
-            border: 1px solid var(--border-color);
-        }
-        
-        .url-label {
-            font-size: 0.875rem;
-            color: var(--text-secondary);
-            margin-bottom: 0.5rem;
-        }
-        
-        .url-box {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            background: var(--bg-input);
-            padding: 0.75rem;
-            border-radius: var(--radius-md);
-            border: 1px solid var(--border-color);
-        }
-        
-        .url-box code {
-            flex: 1;
-            font-family: 'Courier New', monospace;
-            font-size: 0.875rem;
-            color: var(--accent-color);
-            overflow-x: auto;
-            white-space: nowrap;
-        }
-        
-        .copy-btn {
-            background: var(--primary-color);
-            color: white;
-            border: none;
-            padding: 0.5rem 0.75rem;
-            border-radius: var(--radius-md);
-            cursor: pointer;
-            transition: all var(--transition-fast);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        
-        .copy-btn:hover {
-            background: var(--primary-hover);
-            transform: translateY(-1px);
-        }
-        
-        .copy-btn.copied {
-            background: var(--success-color);
-        }
-        
-        .info-box {
-            background: rgba(99, 102, 241, 0.1);
-            border: 1px solid rgba(99, 102, 241, 0.3);
-            border-radius: var(--radius-md);
-            padding: 1rem;
-            margin-top: 1.5rem;
-        }
-        
-        .info-box i {
-            color: var(--primary-color);
-            margin-right: 0.5rem;
-        }
-        
-        .info-box p {
-            margin: 0.5rem 0;
-            color: var(--text-secondary);
-            font-size: 0.875rem;
-        }
+
     </style>
 </head>
 <body>
@@ -576,9 +498,6 @@ $token = $_GET['token'] ?? '';
             </button>
             <button class="tab-btn" data-tab="general">
                 <i class="fas fa-cog"></i> Général
-            </button>
-            <button class="tab-btn" data-tab="urls">
-                <i class="fas fa-link"></i> URLs
             </button>
         </div>
 
@@ -739,82 +658,7 @@ $token = $_GET['token'] ?? '';
             </div>
         </div>
 
-        <!-- URLs Tab -->
-        <div id="tab-urls" class="tab-content">
-            <div class="config-section">
-                <h2 class="section-title">
-                    <i class="fas fa-link"></i> URLs de Commandes API
-                </h2>
-                
-                <div class="url-list">
-                    <div class="url-item">
-                        <div class="url-label">Démarrer/Pause le timer</div>
-                        <div class="url-box">
-                            <code>/api.php?token=<?php echo htmlspecialchars($token); ?>&module=timer&action=toggle</code>
-                            <button class="copy-btn" onclick="copyToClipboard(this)" title="Copier">
-                                <i class="fas fa-copy"></i>
-                            </button>
-                        </div>
-                    </div>
-                    
-                    <div class="url-item">
-                        <div class="url-label">Réinitialiser le timer</div>
-                        <div class="url-box">
-                            <code>/api.php?token=<?php echo htmlspecialchars($token); ?>&module=timer&action=reset</code>
-                            <button class="copy-btn" onclick="copyToClipboard(this)" title="Copier">
-                                <i class="fas fa-copy"></i>
-                            </button>
-                        </div>
-                    </div>
-                    
-                    <div class="url-item">
-                        <div class="url-label">Ajouter du temps (exemple: 60 secondes)</div>
-                        <div class="url-box">
-                            <code>/api.php?token=<?php echo htmlspecialchars($token); ?>&module=timer&action=add&value=60</code>
-                            <button class="copy-btn" onclick="copyToClipboard(this)" title="Copier">
-                                <i class="fas fa-copy"></i>
-                            </button>
-                        </div>
-                    </div>
-                    
-                    <div class="url-item">
-                        <div class="url-label">Soustraire du temps (exemple: 60 secondes)</div>
-                        <div class="url-box">
-                            <code>/api.php?token=<?php echo htmlspecialchars($token); ?>&module=timer&action=subtract&value=60</code>
-                            <button class="copy-btn" onclick="copyToClipboard(this)" title="Copier">
-                                <i class="fas fa-copy"></i>
-                            </button>
-                        </div>
-                    </div>
-                    
-                    <div class="url-item">
-                        <div class="url-label">Définir un temps spécifique (exemple: 5 minutes)</div>
-                        <div class="url-box">
-                            <code>/api.php?token=<?php echo htmlspecialchars($token); ?>&module=timer&action=set&value=300</code>
-                            <button class="copy-btn" onclick="copyToClipboard(this)" title="Copier">
-                                <i class="fas fa-copy"></i>
-                            </button>
-                        </div>
-                    </div>
-                    
-                    <div class="url-item">
-                        <div class="url-label">Obtenir l'état actuel du timer</div>
-                        <div class="url-box">
-                            <code>/api.php?token=<?php echo htmlspecialchars($token); ?>&module=timer&action=get</code>
-                            <button class="copy-btn" onclick="copyToClipboard(this)" title="Copier">
-                                <i class="fas fa-copy"></i>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="info-box" style="margin-top: 2rem;">
-                    <i class="fas fa-info-circle"></i>
-                    <p>Ces URLs peuvent être utilisées avec OBS, Streamlabs ou tout autre logiciel supportant les requêtes HTTP.</p>
-                    <p>La valeur du temps est en secondes. Pour définir 5 minutes, utilisez value=300.</p>
-                </div>
-            </div>
-        </div>
+
 
         <!-- Buttons -->
         <div class="button-group">
@@ -844,47 +688,7 @@ $token = $_GET['token'] ?? '';
         let timerInterval = null;
         let seconds = 0;
         
-        // Fonction pour copier dans le presse-papiers
-        function copyToClipboard(button) {
-            const codeElement = button.parentElement.querySelector('code');
-            const textToCopy = codeElement.textContent;
-            
-            // Copier le texte
-            navigator.clipboard.writeText(textToCopy).then(() => {
-                // Feedback visuel
-                button.classList.add('copied');
-                const originalHTML = button.innerHTML;
-                button.innerHTML = '<i class="fas fa-check"></i>';
-                
-                // Restaurer après 2 secondes
-                setTimeout(() => {
-                    button.classList.remove('copied');
-                    button.innerHTML = originalHTML;
-                }, 2000);
-            }).catch(err => {
-                console.error('Erreur lors de la copie:', err);
-                // Fallback pour les anciens navigateurs
-                const textArea = document.createElement('textarea');
-                textArea.value = textToCopy;
-                textArea.style.position = 'fixed';
-                textArea.style.left = '-9999px';
-                document.body.appendChild(textArea);
-                textArea.select();
-                try {
-                    document.execCommand('copy');
-                    button.classList.add('copied');
-                    const originalHTML = button.innerHTML;
-                    button.innerHTML = '<i class="fas fa-check"></i>';
-                    setTimeout(() => {
-                        button.classList.remove('copied');
-                        button.innerHTML = originalHTML;
-                    }, 2000);
-                } catch (err) {
-                    console.error('Erreur lors de la copie (fallback):', err);
-                }
-                document.body.removeChild(textArea);
-            });
-        }
+
 
         // Fonction pour le timer de prévisualisation
         function updatePreviewTimer() {
