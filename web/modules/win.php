@@ -304,6 +304,20 @@ $token = $_GET['token'] ?? '';
             margin-bottom: var(--spacing-xs);
         }
 
+        .win-action-bar-controls {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-xs);
+        }
+
+        /* Bouton toggle supprimé - panneau toujours visible */
+
+        .win-action-bar-sections {
+            display: flex;
+            flex-direction: column;
+            gap: var(--spacing-sm);
+        }
+
         .win-action-bar-title {
             font-size: 0.75rem;
             font-weight: 600;
@@ -368,104 +382,7 @@ $token = $_GET['token'] ?? '';
             gap: var(--spacing-xs);
         }
 
-        .win-action-btn {
-            padding: var(--spacing-xs) var(--spacing-xs);
-            border: none;
-            border-radius: var(--radius-md);
-            font-size: 0.7rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all var(--transition-fast);
-            text-transform: uppercase;
-            letter-spacing: 0.3px;
-            min-height: 36px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .win-action-btn::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: currentColor;
-            opacity: 0;
-            transition: opacity var(--transition-fast);
-            z-index: -1;
-        }
-
-        .win-action-btn:hover::before {
-            opacity: 0.1;
-        }
-
-        .win-action-btn.add {
-            background: rgba(16, 185, 129, 0.1);
-            color: #10b981;
-            border: 1px solid rgba(16, 185, 129, 0.3);
-        }
-
-        .win-action-btn.add:hover {
-            background: rgba(16, 185, 129, 0.2);
-            border-color: #10b981;
-            transform: translateY(-1px);
-        }
-
-        .win-action-btn.subtract {
-            background: rgba(239, 68, 68, 0.1);
-            color: #ef4444;
-            border: 1px solid rgba(239, 68, 68, 0.3);
-        }
-
-        .win-action-btn.subtract:hover {
-            background: rgba(239, 68, 68, 0.2);
-            border-color: #ef4444;
-            transform: translateY(-1px);
-        }
-
-        .win-action-btn.reset {
-            background: rgba(245, 158, 11, 0.1);
-            color: #f59e0b;
-            border: 1px solid rgba(245, 158, 11, 0.3);
-        }
-
-        .win-action-btn.reset:hover {
-            background: rgba(245, 158, 11, 0.2);
-            border-color: #f59e0b;
-            transform: translateY(-1px);
-        }
-
-        .win-action-btn:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-            transform: none !important;
-        }
-
-        .win-multiplier-status {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: var(--spacing-sm);
-            padding: var(--spacing-sm) var(--spacing-md);
-            background: rgba(30, 41, 59, 0.5);
-            border-radius: var(--radius-md);
-            border: 1px solid rgba(148, 163, 184, 0.1);
-        }
-
-        .win-multiplier-toggle {
-            background: rgba(16, 185, 129, 0.1);
-            border: 1px solid rgba(16, 185, 129, 0.3);
-            color: #10b981;
-            padding: var(--spacing-xs) var(--spacing-sm);
-            border-radius: var(--radius-md);
-            font-size: 0.75rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all var(--transition-fast);
+        /* Anciens styles supprimés - remplacés par le nouveau design ultra compact */
             text-transform: uppercase;
             letter-spacing: 0.5px;
             display: flex;
@@ -699,6 +616,238 @@ $token = $_GET['token'] ?? '';
                  padding: var(--spacing-sm);
              }
          }
+
+        /* ==================== ULTRA COMPACT CONTROL PANELS ==================== */
+        .win-action-bar {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(15, 23, 42, 0.95);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(148, 163, 184, 0.1);
+            border-radius: 8px;
+            padding: 8px 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            z-index: 1000;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            min-width: 400px;
+            max-width: 90vw;
+        }
+
+        .win-action-bar-sections {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .win-action-section {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .win-action-section-header {
+            font-size: 10px;
+            font-weight: 600;
+            color: #94a3b8;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            white-space: nowrap;
+            margin-right: 4px;
+        }
+
+        .win-action-buttons {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        /* ==================== ULTRA COMPACT BUTTONS ==================== */
+        .win-action-btn {
+            padding: 4px 8px;
+            border: none;
+            border-radius: 4px;
+            font-size: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.15s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+            height: 24px;
+            min-width: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+            background: transparent;
+            color: #ffffff;
+        }
+
+        .win-action-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: currentColor;
+            opacity: 0;
+            transition: opacity 0.15s ease;
+            z-index: -1;
+        }
+
+        .win-action-btn:hover::before {
+            opacity: 0.1;
+        }
+
+        .win-action-btn.add {
+            background: rgba(16, 185, 129, 0.15);
+            color: #10b981;
+            border: 1px solid rgba(16, 185, 129, 0.3);
+        }
+
+        .win-action-btn.add:hover {
+            background: rgba(16, 185, 129, 0.25);
+            border-color: #10b981;
+            transform: translateY(-1px);
+        }
+
+        .win-action-btn.subtract {
+            background: rgba(239, 68, 68, 0.15);
+            color: #ef4444;
+            border: 1px solid rgba(239, 68, 68, 0.3);
+        }
+
+        .win-action-btn.subtract:hover {
+            background: rgba(239, 68, 68, 0.25);
+            border-color: #ef4444;
+            transform: translateY(-1px);
+        }
+
+        .win-action-btn.reset {
+            background: rgba(245, 158, 11, 0.15);
+            color: #f59e0b;
+            border: 1px solid rgba(245, 158, 11, 0.3);
+        }
+
+        .win-action-btn.reset:hover {
+            background: rgba(245, 158, 11, 0.25);
+            border-color: #f59e0b;
+            transform: translateY(-1px);
+        }
+
+        .win-action-btn:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+
+        /* ==================== ULTRA COMPACT MULTIPLIER STATUS ==================== */
+        .win-multiplier-status {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 8px;
+            background: rgba(30, 41, 59, 0.3);
+            border-radius: 4px;
+            border: 1px solid rgba(148, 163, 184, 0.1);
+        }
+
+        .win-multiplier-toggle {
+            background: rgba(16, 185, 129, 0.15);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            color: #10b981;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.15s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .win-multiplier-toggle:hover {
+            background: rgba(16, 185, 129, 0.25);
+            border-color: #10b981;
+            transform: translateY(-1px);
+        }
+
+        .win-multiplier-toggle.inactive {
+            background: rgba(239, 68, 68, 0.15);
+            border-color: rgba(239, 68, 68, 0.3);
+            color: #ef4444;
+        }
+
+        .win-multiplier-toggle.inactive:hover {
+            background: rgba(239, 68, 68, 0.25);
+            border-color: #ef4444;
+        }
+
+        .win-multiplier-toggle i {
+            font-size: 8px;
+        }
+
+        /* ==================== RESPONSIVE DESIGN ==================== */
+        @media (max-width: 768px) {
+            .win-action-bar {
+                bottom: 10px;
+                padding: 6px 8px;
+                gap: 6px;
+                min-width: 320px;
+            }
+
+            .win-action-bar-sections {
+                gap: 8px;
+            }
+
+            .win-action-section {
+                gap: 4px;
+            }
+
+            .win-action-buttons {
+                gap: 3px;
+            }
+
+            .win-action-btn {
+                padding: 3px 6px;
+                font-size: 9px;
+                height: 22px;
+                min-width: 28px;
+            }
+
+            .win-action-section-header {
+                font-size: 9px;
+                margin-right: 3px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .win-action-bar {
+                flex-direction: column;
+                gap: 6px;
+                padding: 8px;
+                min-width: 280px;
+            }
+
+            .win-action-bar-sections {
+                flex-direction: column;
+                gap: 6px;
+            }
+
+            .win-action-section {
+                justify-content: center;
+            }
+        }
     </style>
     <style id="custom-styles"></style>
 </head>
@@ -720,15 +869,17 @@ $token = $_GET['token'] ?? '';
         
         <!-- Si paramètre control=true, afficher les contrôles -->
         <?php if($control): ?>
-        <div class="win-action-bar">
+        <div class="win-action-bar" id="win-action-bar">
             <div class="win-action-bar-header">
                 <div class="win-action-bar-title">
                     <i class="fas fa-trophy"></i>
                     Module Wins
                 </div>
-                <a href="/modules/wins-config.php?token=<?=$token?>" class="win-action-bar-config">
-                    <i class="fas fa-cog"></i>
-                </a>
+                <div class="win-action-bar-controls">
+                    <a href="/modules/wins-config.php?token=<?=$token?>" class="win-action-bar-config">
+                        <i class="fas fa-cog"></i>
+                    </a>
+                </div>
             </div>
             
             <div class="win-action-bar-sections">
@@ -885,34 +1036,36 @@ $token = $_GET['token'] ?? '';
             document.querySelector('#wins-display').innerHTML = displayText;
         }
         
-                 // Fonction pour charger les styles
-                 async function loadStyles() {
+                         // Fonction pour charger les styles
+        async function loadStyles() {
             try {
-                // Utiliser l'URL complète depuis la configuration
-                const baseUrl = window.location.origin;
-                const response = await fetch(`${baseUrl}/api.php?token=${token}&module=style&action=get`);
-                const result = await response.json();
-                if (result.success && result.data) {
+                // CORRECTION : Utiliser le bon endpoint pour récupérer les styles
+                const response = await fetch(`/api.php?token=${token}&module=style&action=get`);
+                const data = await response.json();
+                
+                if (data.success && data.data) {
+                    currentStyles = data.data;
+                    applyStyles(currentStyles);
                     
-                    // Sauvegarder les styles de base (sans écraser les styles temps réel)
-                    const baseStyles = result.data;
-                    
-                    // Vérifier s'il y a des styles temps réel actifs
-                    const realtimeStyles = localStorage.getItem('realtimeStyles');
-                    if (realtimeStyles && Object.keys(JSON.parse(realtimeStyles)).length > 0) {
-                        currentStyles = JSON.parse(realtimeStyles);
-                        // Ne pas appliquer les styles de base, utiliser les temps réel
-                        applyStyles(currentStyles);
-                    } else {
-                        currentStyles = baseStyles;
-                        applyStyles(baseStyles);
-                    }
-                    
-                    // Mettre à jour l'affichage du multiplicateur après avoir chargé les styles
-                    updateMultiplierDisplay();
+                    // Sauvegarder en localStorage comme fallback
+                    localStorage.setItem('winsStylesFallback', JSON.stringify(data.data));
+                    localStorage.setItem('winsStylesTimestamp', data.timestamp || Date.now());
                 } else {
+                    // Fallback : essayer localStorage
+                    const fallbackStyles = localStorage.getItem('winsStylesFallback');
+                    if (fallbackStyles) {
+                        currentStyles = JSON.parse(fallbackStyles);
+                        applyStyles(currentStyles);
+                    }
                 }
             } catch (error) {
+                console.error('Erreur lors du chargement des styles:', error);
+                // Fallback : essayer localStorage
+                const fallbackStyles = localStorage.getItem('winsStylesFallback');
+                if (fallbackStyles) {
+                    currentStyles = JSON.parse(fallbackStyles);
+                    applyStyles(currentStyles);
+                }
             }
         }
         
@@ -928,23 +1081,18 @@ $token = $_GET['token'] ?? '';
             
             // Validation des styles
             if (!styles || typeof styles !== 'object') {
-                console.warn('Styles invalides reçus:', styles);
                 return;
             }
             
             // Migration automatique si ancienne structure détectée
             if (!styles.wins && styles['wins-color']) {
-                console.log('🔄 Migration automatique des styles vers la nouvelle structure');
                 styles = migrateStylesStructure(styles);
             }
             
             // Vérifier currentData
             if (!currentData) {
-                console.warn('currentData non disponible pour applyStyles');
                 return;
             }
-            
-            console.log('🎨 Application des styles groupés:', styles);
             
             let css = '';
             
@@ -1091,7 +1239,7 @@ $token = $_GET['token'] ?? '';
             // 🎯 APPLICATION FINALE DES STYLES
             // ===================================================
             applyCSS(css);
-            console.log('✅ Styles appliqués avec succès (structure groupée)');
+            
         }
         
         // ===================================================
@@ -1140,7 +1288,7 @@ $token = $_GET['token'] ?? '';
                 }
             };
             
-            console.log('✅ Migration des styles terminée:', newStyles);
+            
             return newStyles;
         }
         
@@ -1236,42 +1384,64 @@ $token = $_GET['token'] ?? '';
             apiCall('get');
         }, 200); // Réduit à 200ms pour une synchronisation quasi-instantanée
         
-        // Charger les données initiales
-        apiCall('get');
+        // NOUVELLE FONCTION : Initialisation robuste
+        function initializeRobustly() {
+            // Charger les données initiales
+            apiCall('get');
+            
+            // Charger les styles avec retry
+            loadStyles().catch(error => {
+                console.error('Erreur lors du chargement des styles:', error);
+                
+                // Retry après 2 secondes
+                setTimeout(() => {
+                    loadStyles();
+                }, 2000);
+            });
+            
+            // Charger les styles temps réel persistés avec priorité
+            try {
+                const persistedStyles = localStorage.getItem('currentRealtimeStyles');
+                const realtimeStyles = localStorage.getItem('realtimeStyles');
+                
+                if (realtimeStyles && Object.keys(JSON.parse(realtimeStyles)).length > 0) {
+                    const styles = JSON.parse(realtimeStyles);
+                    currentRealtimeStyles = styles;
+                    setTimeout(() => {
+                        applyRealtimeStyles(styles);
+                    }, 100); // Application rapide des styles temps réel
+                } else if (persistedStyles) {
+                    const styles = JSON.parse(persistedStyles);
+                    if (Object.keys(styles).length > 0) {
+                        currentRealtimeStyles = styles;
+                        setTimeout(() => {
+                            applyRealtimeStyles(styles);
+                        }, 200);
+                    }
+                }
+            } catch (error) {
+                console.warn('Erreur lors du chargement des styles temps réel:', error);
+            }
+        }
+
+        // Système de toggle supprimé - panneau toujours visible
         
-        // Initialisation propre avec gestion du conflit styles sauvegardés vs temps réel
-        setTimeout(() => {
-            loadStyles();
-        }, 100); // Optimisé à 100ms
+        // MODIFIER l'initialisation pour être plus robuste
+        document.addEventListener('DOMContentLoaded', () => {
+            initializeRobustly();
+        });
+        
+        // Initialisation de fallback si DOMContentLoaded n'est pas déclenché
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initializeRobustly);
+        } else {
+            initializeRobustly();
+        }
         
         // Forcer un rechargement des styles après 500ms
         setTimeout(() => {
             loadStyles();
         }, 500);
-        
-        // Charger les styles temps réel persistés avec priorité
-        try {
-            const persistedStyles = localStorage.getItem('currentRealtimeStyles');
-            const realtimeStyles = localStorage.getItem('realtimeStyles');
-            
-            if (realtimeStyles && Object.keys(JSON.parse(realtimeStyles)).length > 0) {
-                const styles = JSON.parse(realtimeStyles);
-                currentRealtimeStyles = styles;
-                setTimeout(() => {
-                    applyRealtimeStyles(styles);
-                }, 100); // Application rapide des styles temps réel
-            } else if (persistedStyles) {
-                const styles = JSON.parse(persistedStyles);
-                if (Object.keys(styles).length > 0) {
-                    currentRealtimeStyles = styles;
-                    setTimeout(() => {
-                        applyRealtimeStyles(styles);
-                    }, 200);
-                }
-            }
-        } catch (error) {
-            // Ignorer les erreurs de chargement
-        }
         
         // SYSTÈME DE TEMPS RÉEL SIMPLIFIÉ AVEC AUTO-SAVE
         let isRealtimeMode = false;
@@ -1289,7 +1459,6 @@ $token = $_GET['token'] ?? '';
         function applyRealtimeStyles(styles) {
             // Migration automatique si nécessaire
             if (!styles.wins && styles['wins-color']) {
-                console.log('🔄 Migration temps réel des styles');
                 styles = migrateStylesStructure(styles);
             }
             
@@ -1365,7 +1534,6 @@ $token = $_GET['token'] ?? '';
             // Vérifier le signal de force update avec réactivité améliorée
             const forceUpdate = localStorage.getItem('forceStyleUpdate');
             if (forceUpdate && forceUpdate !== window.lastForceUpdate) {
-                console.log('🚀 Force update détecté, application immédiate');
                 window.lastForceUpdate = forceUpdate;
                 const styles = JSON.parse(localStorage.getItem('realtimeStyles') || '{}');
                 
@@ -1411,7 +1579,6 @@ $token = $_GET['token'] ?? '';
                     if (hasColorBasedOnValue && currentData.count !== undefined) {
                         const currentHash = JSON.stringify(styles) + currentData.count;
                         if (currentHash !== window.lastColorUpdateHash) {
-                            console.log('🎨 Mise à jour couleur basée sur valeur:', currentData.count);
                             // Migration automatique si nécessaire
                             const finalStyles = (!styles.wins && styles['wins-color']) ? 
                                 migrateStylesStructure(styles) : styles;

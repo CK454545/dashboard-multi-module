@@ -204,72 +204,113 @@ $token = $_GET['token'] ?? '';
         /* ==================== TIMER ACTION BAR ==================== */
         .timer-action-bar {
             position: fixed;
-            bottom: 20px;
-            left: 50%;
-            transform: translateX(-50%);
+            bottom: 0;
+            left: 0;
+            right: 0;
             background: rgba(15, 23, 42, 0.95);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(148, 163, 184, 0.1);
-            border-radius: 8px;
-            padding: 8px 12px;
+            backdrop-filter: blur(20px);
+            border-top: 1px solid rgba(148, 163, 184, 0.1);
+            padding: var(--spacing-sm) var(--spacing-md);
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            gap: var(--spacing-sm);
+        }
+
+        .timer-action-bar-header {
             display: flex;
             align-items: center;
-            gap: 8px;
-            z-index: 1000;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-            min-width: 400px;
-            max-width: 90vw;
+            justify-content: space-between;
+            margin-bottom: var(--spacing-xs);
+        }
+
+        .timer-action-bar-title {
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: #3b82f6;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-xs);
+        }
+
+        .timer-action-bar-config {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            background: rgba(59, 130, 246, 0.1);
+            border: 1px solid #3b82f6;
+            color: #3b82f6;
+            font-size: 0.7rem;
+            cursor: pointer;
+            transition: all var(--transition-fast);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+        }
+
+        .timer-action-bar-config:hover {
+            background: #3b82f6;
+            color: white;
+            transform: scale(1.05);
         }
 
         .timer-action-bar-sections {
             display: flex;
-            align-items: center;
-            gap: 12px;
-            flex-wrap: wrap;
+            flex-direction: column;
+            gap: var(--spacing-sm);
         }
 
         .timer-action-section {
-            display: flex;
-            align-items: center;
-            gap: 6px;
+            background: rgba(30, 41, 59, 0.5);
+            border-radius: var(--radius-md);
+            padding: var(--spacing-sm);
+            border: 1px solid rgba(148, 163, 184, 0.1);
         }
 
         .timer-action-section-header {
-            font-size: 10px;
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-xs);
+            margin-bottom: var(--spacing-xs);
+            font-size: 0.7rem;
             font-weight: 600;
-            color: #94a3b8;
+            color: var(--text-secondary);
             text-transform: uppercase;
-            letter-spacing: 0.5px;
-            white-space: nowrap;
-            margin-right: 4px;
+            letter-spacing: 0.3px;
         }
 
         .timer-action-buttons {
-            display: flex;
-            align-items: center;
-            gap: 4px;
+            display: grid;
+            grid-template-columns: repeat(9, 1fr);
+            gap: var(--spacing-xs);
         }
 
-        /* ==================== ULTRA COMPACT BUTTONS ==================== */
+        .timer-action-buttons.controls {
+            grid-template-columns: repeat(2, 1fr);
+            justify-items: center;
+            max-width: 300px;
+            margin: 0 auto;
+        }
+
         .timer-action-btn {
-            padding: 4px 8px;
+            padding: var(--spacing-xs) var(--spacing-xs);
             border: none;
-            border-radius: 4px;
-            font-size: 10px;
+            border-radius: var(--radius-md);
+            font-size: 0.65rem;
             font-weight: 600;
             cursor: pointer;
-            transition: all 0.15s ease;
+            transition: all var(--transition-fast);
             text-transform: uppercase;
-            letter-spacing: 0.3px;
-            height: 24px;
-            min-width: 32px;
+            letter-spacing: 0.2px;
+            min-height: 32px;
             display: flex;
             align-items: center;
             justify-content: center;
             position: relative;
             overflow: hidden;
-            background: transparent;
-            color: #ffffff;
         }
 
         .timer-action-btn::before {
@@ -281,7 +322,7 @@ $token = $_GET['token'] ?? '';
             bottom: 0;
             background: currentColor;
             opacity: 0;
-            transition: opacity 0.15s ease;
+            transition: opacity var(--transition-fast);
             z-index: -1;
         }
 
@@ -290,172 +331,240 @@ $token = $_GET['token'] ?? '';
         }
 
         .timer-action-btn.add {
-            background: rgba(16, 185, 129, 0.15);
-            color: #10b981;
-            border: 1px solid rgba(16, 185, 129, 0.3);
+            background: rgba(59, 130, 246, 0.1);
+            color: #3b82f6;
+            border: 1px solid rgba(59, 130, 246, 0.3);
         }
 
         .timer-action-btn.add:hover {
-            background: rgba(16, 185, 129, 0.25);
-            border-color: #10b981;
+            background: rgba(59, 130, 246, 0.2);
+            border-color: #3b82f6;
             transform: translateY(-1px);
         }
 
         .timer-action-btn.subtract {
-            background: rgba(239, 68, 68, 0.15);
+            background: rgba(239, 68, 68, 0.1);
             color: #ef4444;
             border: 1px solid rgba(239, 68, 68, 0.3);
         }
 
         .timer-action-btn.subtract:hover {
-            background: rgba(239, 68, 68, 0.25);
+            background: rgba(239, 68, 68, 0.2);
             border-color: #ef4444;
             transform: translateY(-1px);
         }
 
         .timer-action-btn.reset {
-            background: rgba(245, 158, 11, 0.15);
+            background: rgba(245, 158, 11, 0.1);
             color: #f59e0b;
             border: 1px solid rgba(245, 158, 11, 0.3);
         }
 
         .timer-action-btn.reset:hover {
-            background: rgba(245, 158, 11, 0.25);
+            background: rgba(245, 158, 11, 0.2);
             border-color: #f59e0b;
             transform: translateY(-1px);
         }
 
         .timer-action-btn.primary {
-            background: rgba(99, 102, 241, 0.15);
-            color: #6366f1;
-            border: 1px solid rgba(99, 102, 241, 0.3);
+            background: rgba(59, 130, 246, 0.1);
+            color: #3b82f6;
+            border: 1px solid rgba(59, 130, 246, 0.3);
         }
 
         .timer-action-btn.primary:hover {
-            background: rgba(99, 102, 241, 0.25);
-            border-color: #6366f1;
+            background: rgba(59, 130, 246, 0.2);
+            border-color: #3b82f6;
             transform: translateY(-1px);
         }
 
         .timer-action-btn.warning {
-            background: rgba(245, 158, 11, 0.15);
+            background: rgba(245, 158, 11, 0.1);
             color: #f59e0b;
             border: 1px solid rgba(245, 158, 11, 0.3);
         }
 
         .timer-action-btn.warning:hover {
-            background: rgba(245, 158, 11, 0.25);
+            background: rgba(245, 158, 11, 0.2);
             border-color: #f59e0b;
             transform: translateY(-1px);
         }
 
         .timer-action-btn.large {
-            height: 28px;
-            min-width: 40px;
-            font-size: 11px;
+            padding: var(--spacing-sm) var(--spacing-md);
+            font-size: 0.8rem;
+            min-height: 44px;
         }
 
         .timer-action-btn:disabled {
-            opacity: 0.4;
+            opacity: 0.5;
             cursor: not-allowed;
             transform: none !important;
         }
 
-        /* ==================== ULTRA COMPACT MANUAL INPUTS ==================== */
+        /* ==================== MANUAL INPUT STYLES ==================== */
         .timer-manual-inputs {
-            display: flex;
-            align-items: center;
-            gap: 4px;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: var(--spacing-sm);
+            margin-bottom: var(--spacing-sm);
         }
 
         .manual-input-group {
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 2px;
         }
 
         .manual-input-group label {
-            font-size: 8px;
-            color: #94a3b8;
-            text-transform: uppercase;
-            letter-spacing: 0.3px;
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            margin-bottom: var(--spacing-xs);
+            font-weight: 500;
+            text-align: center;
         }
 
         .manual-input {
-            width: 32px;
-            height: 20px;
-            padding: 2px 4px;
-            border: 1px solid rgba(148, 163, 184, 0.2);
-            border-radius: 3px;
-            background: rgba(15, 23, 42, 0.8);
-            color: #ffffff;
-            font-size: 9px;
+            width: 100%;
+            padding: var(--spacing-xs) var(--spacing-sm);
+            background: var(--bg-glass);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            color: var(--text-primary);
+            font-size: 0.875rem;
             text-align: center;
-            font-family: 'Inter', sans-serif;
+            transition: all var(--transition-fast);
+            backdrop-filter: blur(10px);
         }
 
         .manual-input:focus {
             outline: none;
-            border-color: #6366f1;
-            background: rgba(15, 23, 42, 0.9);
+            border-color: var(--primary-color);
+            background: rgba(255, 255, 255, 0.1);
+            box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.2);
         }
 
-        /* ==================== RESPONSIVE DESIGN ==================== */
+        .manual-input::placeholder {
+            color: var(--text-muted);
+        }
+
+        .timer-action-buttons.manual {
+            grid-template-columns: repeat(2, 1fr);
+            gap: var(--spacing-sm);
+        }
+
+        .timer-action-buttons.manual .timer-action-btn {
+            padding: var(--spacing-xs) var(--spacing-sm);
+            font-size: 0.75rem;
+            min-height: 36px;
+        }
+
+        /* ==================== RESPONSIVE ==================== */
         @media (max-width: 768px) {
+            .widget-container {
+                padding: var(--spacing-sm);
+            }
+
+            #timer-display {
+                font-size: 4rem;
+            }
+
             .timer-action-bar {
-                bottom: 10px;
-                padding: 6px 8px;
-                gap: 6px;
-                min-width: 320px;
-            }
-
-            .timer-action-bar-sections {
-                gap: 8px;
-            }
-
-            .timer-action-section {
-                gap: 4px;
+                padding: var(--spacing-xs);
             }
 
             .timer-action-buttons {
-                gap: 3px;
+                grid-template-columns: repeat(5, 1fr);
             }
 
-            .timer-action-btn {
-                padding: 3px 6px;
-                font-size: 9px;
-                height: 22px;
-                min-width: 28px;
+            .timer-action-buttons.controls {
+                grid-template-columns: repeat(2, 1fr);
+                justify-items: center;
+                max-width: 250px;
+                margin: 0 auto;
             }
 
-            .timer-action-section-header {
-                font-size: 9px;
-                margin-right: 3px;
+            .timer-manual-inputs {
+                grid-template-columns: repeat(3, 1fr);
+                gap: var(--spacing-xs);
             }
 
             .manual-input {
-                width: 28px;
-                height: 18px;
-                font-size: 8px;
+                font-size: 0.75rem;
+                padding: var(--spacing-xs);
+            }
+
+            .manual-input-group label {
+                font-size: 0.7rem;
+            }
+
+            .timer-action-buttons.manual {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .timer-action-buttons.manual .timer-action-btn {
+                font-size: 0.65rem;
+                padding: var(--spacing-xs);
+                min-height: 32px;
+            }
+
+            .timer-action-btn {
+                font-size: 0.65rem;
+                padding: var(--spacing-xs);
+                min-height: 32px;
             }
         }
 
         @media (max-width: 480px) {
-            .timer-action-bar {
-                flex-direction: column;
-                gap: 6px;
-                padding: 8px;
-                min-width: 280px;
+            #timer-display {
+                font-size: 3rem;
             }
 
-            .timer-action-bar-sections {
-                flex-direction: column;
-                gap: 6px;
+            .config-btn-small {
+                width: 50px;
+                height: 50px;
+                font-size: 1.2rem;
             }
 
-            .timer-action-section {
-                justify-content: center;
+            .timer-action-buttons {
+                grid-template-columns: repeat(4, 1fr);
+            }
+
+            .timer-manual-inputs {
+                grid-template-columns: repeat(3, 1fr);
+                gap: var(--spacing-xs);
+            }
+
+            .manual-input {
+                font-size: 0.7rem;
+                padding: var(--spacing-xs);
+            }
+
+            .manual-input-group label {
+                font-size: 0.65rem;
+            }
+
+            .timer-action-buttons.manual {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .timer-action-buttons.manual .timer-action-btn {
+                font-size: 0.6rem;
+                padding: var(--spacing-xs);
+                min-height: 28px;
+            }
+
+            .timer-action-buttons.controls {
+                grid-template-columns: repeat(2, 1fr);
+                justify-items: center;
+                max-width: 200px;
+                margin: 0 auto;
+            }
+
+            .timer-action-btn {
+                font-size: 0.65rem;
+                padding: var(--spacing-xs);
+                min-height: 32px;
             }
         }
 
@@ -635,169 +744,6 @@ $token = $_GET['token'] ?? '';
             .alka-time-group {
                 padding: 8px 12px;
             }
-        }
-
-        /* ==================== STYLE MFA PREMIUM ==================== */
-        .premium-container {
-            position: relative;
-            background: #000000;
-            border-radius: 16px;
-            padding: 20px 40px;
-            min-width: 320px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: auto;
-            height: auto;
-            --premium-accent-color: #ff6b35;
-            --premium-text-color: #ffffff;
-            --premium-digits-color: #ff6b35;
-        }
-
-        .premium-logo-area {
-            position: absolute;
-            top: -20px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: var(--premium-accent-color);
-            padding: 4px 20px;
-            border-radius: 20px;
-            font-size: 0.8rem;
-            font-weight: 800;
-            color: #000;
-            letter-spacing: 0.1em;
-            text-transform: uppercase;
-        }
-
-        #premium-timer {
-            font-size: 3.5rem;
-            color: var(--premium-text-color);
-            text-align: center;
-            white-space: nowrap;
-            font-weight: 800;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 15px;
-        }
-
-        .premium-time-group {
-            display: flex;
-            align-items: baseline;
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 12px;
-            padding: 10px 15px;
-            border: 2px solid rgba(255, 107, 53, 0.3);
-            transition: all 0.3s ease;
-        }
-
-        .premium-time-group:hover {
-            background: rgba(255, 107, 53, 0.1);
-            border-color: var(--premium-accent-color);
-            transform: translateY(-2px);
-        }
-
-        .premium-digits {
-            font-weight: 900;
-            color: var(--premium-digits-color);
-            font-size: 1.2em;
-            letter-spacing: 0.05em;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
-        }
-
-        .premium-unit {
-            font-size: 0.5em;
-            color: rgba(255, 255, 255, 0.7);
-            margin-left: 8px;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.1em;
-        }
-
-        .premium-separator {
-            color: var(--premium-accent-color);
-            font-weight: 800;
-            font-size: 1.1em;
-            opacity: 0.8;
-            animation: premium-blink 2s ease-in-out infinite;
-        }
-
-        @keyframes premium-blink {
-            0%, 100% { opacity: 0.8; }
-            50% { opacity: 0.3; }
-        }
-
-        .premium-low-time .premium-time-group {
-            background: rgba(255, 0, 0, 0.1);
-            border-color: #ff0000;
-            animation: premium-urgent-shake 0.5s ease-in-out infinite;
-        }
-
-        .premium-low-time .premium-digits {
-            color: #ff0000;
-        }
-
-        @keyframes premium-urgent-shake {
-            0%, 100% { transform: translateX(0); }
-            25% { transform: translateX(-2px); }
-            75% { transform: translateX(2px); }
-        }
-
-        .premium-change-animation {
-            animation: premium-flip-in 0.4s ease-out;
-        }
-
-        @keyframes premium-flip-in {
-            0% { 
-                transform: scaleY(0);
-                opacity: 0;
-            }
-            50% { 
-                transform: scaleY(1.1);
-            }
-            100% { 
-                transform: scaleY(1);
-                opacity: 1;
-            }
-        }
-
-        .premium-corner-accent {
-            position: absolute;
-            width: 20px;
-            height: 20px;
-            border: 2px solid var(--premium-accent-color);
-        }
-
-        .premium-corner-accent.premium-top-left {
-            top: -1px;
-            left: -1px;
-            border-right: none;
-            border-bottom: none;
-            border-radius: 16px 0 0 0;
-        }
-
-        .premium-corner-accent.premium-top-right {
-            top: -1px;
-            right: -1px;
-            border-left: none;
-            border-bottom: none;
-            border-radius: 0 16px 0 0;
-        }
-
-        .premium-corner-accent.premium-bottom-left {
-            bottom: -1px;
-            left: -1px;
-            border-right: none;
-            border-top: none;
-            border-radius: 0 0 0 16px;
-        }
-
-        .premium-corner-accent.premium-bottom-right {
-            bottom: -1px;
-            right: -1px;
-            border-left: none;
-            border-top: none;
-            border-radius: 0 0 16px 0;
         }
 
         /* ==================== STYLE MFA PREMIUM ==================== */
@@ -1443,9 +1389,7 @@ $token = $_GET['token'] ?? '';
     if (styles.general) {
       const general = styles.general;
       if (general.transparent === true || general.transparent === 'true' || general.transparent === 1) {
-        css += 'body, html, .widget-container, .display, .alka-container, .premium-container { background: transparent !important; } ';
-        // Forcer la transparence pour MFA Premium
-        css += '.alka-container { background: transparent !important; } ';
+        css += 'body, html, .widget-container, .display { background: transparent !important; } ';
       } else if (general.background) {
         css += `body, html { background: ${general.background} !important; } `;
       }
@@ -2137,12 +2081,12 @@ $token = $_GET['token'] ?? '';
         const updateDigit = (id, value) => {
             const element = alkaContainer.querySelector(`#${id}`);
             if (element) {
-                const newValue = value.toString();
+                const newValue = value.toString().padStart(2, '0');
                 const oldValue = element.textContent;
                 
                 // Même logique que le timer normal : mettre à jour seulement si changé
-                if (oldValue !== newValue) {
-                    element.textContent = newValue;
+                if (oldValue !== newValue[0]) {
+                    element.textContent = newValue[0];
                     element.classList.add('alka-change-animation');
                     setTimeout(() => element.classList.remove('alka-change-animation'), 400);
                 }
@@ -2485,12 +2429,12 @@ $token = $_GET['token'] ?? '';
         const updateDigit = (id, value) => {
             const element = alkaContainer.querySelector(`#${id}`);
             if (element) {
-                const newValue = value.toString();
+                const newValue = value.toString().padStart(2, '0');
                 const oldValue = element.textContent;
                 
                 // Même logique que le timer normal : mettre à jour seulement si changé
-                if (oldValue !== newValue) {
-                    element.textContent = newValue;
+                if (oldValue !== newValue[0]) {
+                    element.textContent = newValue[0];
                     element.classList.add('alka-change-animation');
                     setTimeout(() => element.classList.remove('alka-change-animation'), 400);
                 }
@@ -2794,8 +2738,8 @@ $token = $_GET['token'] ?? '';
       const updateDigit = (id, value) => {
         const element = alkaContainer.querySelector(`#${id}`);
         if (element) {
-          const newValue = value.toString();
-          element.textContent = newValue;
+          const newValue = value.toString().padStart(2, '0');
+          element.textContent = newValue[0];
           console.log(`Updated ${id} to ${newValue[0]}`);
         } else {
           console.log(`Element ${id} not found`);

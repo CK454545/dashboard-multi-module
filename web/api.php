@@ -4,12 +4,6 @@ header('Access-Control-Allow-Origin: *');
 header('Access-Control-Allow-Methods: GET, POST, OPTIONS');
 header('Access-Control-Allow-Headers: Content-Type');
 
-// Configuration de la base de données MySQL
-$mysql_host = 'localhost';
-$mysql_dbname = 'myfullagency_connect';
-$mysql_username = 'myfullagency_connect';
-$mysql_password = 'myfullagency_connect';
-
 // Récupération des paramètres
 $token = $_GET['token'] ?? '';
 $module = $_GET['module'] ?? '';
@@ -22,14 +16,11 @@ if (empty($token)) {
     exit;
 }
 
-// Variables globales pour les connexions
-$db = null; // SQLite
-$pdo = null; // MySQL
+// Connexion SQLite uniquement
+$db = null;
 $user = null;
-$dbType = null; // 'sqlite' ou 'mysql'
 
-// D'abord, essayer avec SQLite (ancienne base)
-$sqlitePath = __DIR__ . '/../database/database.db'; // Chemin correct depuis web/
+$sqlitePath = __DIR__ . '/../database/database.db';
 if (file_exists($sqlitePath)) {
     try {
         $db = new SQLite3($sqlitePath);
@@ -40,41 +31,22 @@ if (file_exists($sqlitePath)) {
         
         if ($userRow) {
             $user = [
-                'id' => $token, // Utiliser le token comme ID pour SQLite
+                'id' => $token,
                 'discord_id' => $userRow['discord_id'],
-                'pseudo' => $userRow['discord_id'], // Utiliser discord_id comme pseudo
+                'pseudo' => $userRow['discord_id'],
                 'token' => $userRow['token']
             ];
-            $dbType = 'sqlite';
         }
     } catch (Exception $e) {
         error_log("Erreur SQLite: " . $e->getMessage());
+        echo json_encode(['success' => false, 'error' => 'Erreur de base de données']);
+        exit;
     }
+} else {
+    echo json_encode(['success' => false, 'error' => 'Base de données non trouvée']);
+    exit;
 }
 
-// Si pas trouvé dans SQLite, essayer MySQL
-if (!$user) {
-    try {
-        $pdo = new PDO("mysql:host=$mysql_host;dbname=$mysql_dbname;charset=utf8mb4", $mysql_username, $mysql_password);
-        $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-        
-        $stmt = $pdo->prepare("SELECT id, discord_id, pseudo FROM users WHERE token = ? AND is_active = 1");
-        $stmt->execute([$token]);
-        $user = $stmt->fetch(PDO::FETCH_ASSOC);
-        
-        if ($user) {
-            $dbType = 'mysql';
-            // Mettre à jour la dernière activité
-            $updateStmt = $pdo->prepare("UPDATE users SET last_activity = NOW() WHERE id = ?");
-            $updateStmt->execute([$user['id']]);
-        }
-        
-    } catch (PDOException $e) {
-        error_log("Erreur MySQL: " . $e->getMessage());
-    }
-}
-
-// Si aucun utilisateur trouvé
 if (!$user) {
     echo json_encode(['success' => false, 'error' => 'Token invalide']);
     exit;
@@ -133,7 +105,7 @@ function setValue($db, $token, $module, $key, $value) {
 }
 
 // Traitement selon le type de base de données
-if ($dbType === 'sqlite') {
+if ($db) { // Only process if SQLite is available
     // Utiliser l'ancien système pour SQLite
     switch($module) {
         case 'wins':
@@ -154,28 +126,15 @@ if ($dbType === 'sqlite') {
         case 'teams-style':
             handleTeamsStyleSQLite($db, $token, $action, $value);
             break;
+        case 'getStyles':
+            handleGetStylesSQLite($db, $token, $action, $value);
+            break;
         default:
             echo json_encode(['success' => false, 'error' => 'Module invalide']);
     }
     $db->close();
 } else {
-    // Utiliser le nouveau système pour MySQL
-    switch ($module) {
-        case 'wins':
-            handleWins($pdo, $user['id'], $action, $value);
-            break;
-        case 'timer':
-            handleTimer($pdo, $user['id'], $action, $value);
-            break;
-        case 'teams':
-            handleTeams($pdo, $user['id'], $action, $value);
-            break;
-        case 'config':
-            handleConfig($pdo, $user['id'], $action, $value);
-            break;
-        default:
-            echo json_encode(['success' => false, 'error' => 'Module invalide']);
-    }
+    echo json_encode(['success' => false, 'error' => 'Base de données non disponible']);
 }
 
 // ========== HANDLERS POUR SQLITE ==========
@@ -333,43 +292,65 @@ function handleTimerSQLite($db, $token, $action, $value) {
         case 'get':
             $seconds = getValue($db, $token, 'timer', 'seconds') ?? '0';
             $isRunning = getValue($db, $token, 'timer', 'isRunning') ?? 'false';
+            $isPaused = getValue($db, $token, 'timer', 'isPaused') ?? 'false';
+            $endTime = getValue($db, $token, 'timer', 'endTime') ?? null;
+            
+            // Si le timer est en cours et pas d'endTime, le calculer
+            if ($isRunning === 'true' && !$endTime) {
+                $endTime = time() + intval($seconds);
+                setValue($db, $token, 'timer', 'endTime', strval($endTime));
+            }
+            
             echo json_encode([
                 'success' => true,
                 'data' => [
-                    'seconds' => intval($seconds),
-                    'isRunning' => $isRunning === 'true'
+                    'duration' => intval($seconds),
+                    'endTime' => $endTime ? intval($endTime) : null,
+                    'isRunning' => $isRunning === 'true',
+                    'isPaused' => $isPaused === 'true'
                 ]
             ]);
             break;
             
         case 'start':
             setValue($db, $token, 'timer', 'isRunning', 'true');
+            setValue($db, $token, 'timer', 'isPaused', 'false');
+            
             if (!empty($value)) {
                 setValue($db, $token, 'timer', 'seconds', strval($value));
             }
+            
             $seconds = getValue($db, $token, 'timer', 'seconds') ?? '0';
+            $endTime = time() + intval($seconds);
+            setValue($db, $token, 'timer', 'endTime', strval($endTime));
+            
             echo json_encode([
                 'success' => true,
                 'state' => [
-                    'time' => intval($seconds),
+                    'duration' => intval($seconds),
+                    'endTime' => $endTime,
                     'isRunning' => true,
-                    'startTime' => time()
+                    'isPaused' => false
                 ]
             ]);
             break;
             
         case 'pause':
             setValue($db, $token, 'timer', 'isRunning', 'false');
+            setValue($db, $token, 'timer', 'isPaused', 'true');
+            
             if (!empty($value)) {
                 setValue($db, $token, 'timer', 'seconds', strval($value));
             }
+            
             $seconds = getValue($db, $token, 'timer', 'seconds') ?? '0';
             echo json_encode([
                 'success' => true,
                 'state' => [
-                    'time' => intval($seconds),
+                    'duration' => intval($seconds),
+                    'endTime' => null,
                     'isRunning' => false,
-                    'pausedTime' => intval($seconds)
+                    'isPaused' => true
                 ]
             ]);
             break;
@@ -377,12 +358,16 @@ function handleTimerSQLite($db, $token, $action, $value) {
         case 'reset':
             setValue($db, $token, 'timer', 'seconds', '0');
             setValue($db, $token, 'timer', 'isRunning', 'false');
+            setValue($db, $token, 'timer', 'isPaused', 'false');
+            setValue($db, $token, 'timer', 'endTime', '');
+            
             echo json_encode([
                 'success' => true,
                 'state' => [
-                    'time' => 0,
+                    'duration' => 0,
+                    'endTime' => null,
                     'isRunning' => false,
-                    'pausedTime' => 0
+                    'isPaused' => false
                 ]
             ]);
             break;
@@ -391,12 +376,24 @@ function handleTimerSQLite($db, $token, $action, $value) {
             $current = intval(getValue($db, $token, 'timer', 'seconds') ?? '0');
             $new = $current + intval($value);
             setValue($db, $token, 'timer', 'seconds', strval($new));
+            
+            // Si le timer est en cours, ajuster l'endTime
+            $isRunning = getValue($db, $token, 'timer', 'isRunning') === 'true';
+            if ($isRunning) {
+                $endTime = getValue($db, $token, 'timer', 'endTime');
+                if ($endTime) {
+                    $newEndTime = intval($endTime) + intval($value);
+                    setValue($db, $token, 'timer', 'endTime', strval($newEndTime));
+                }
+            }
+            
             echo json_encode([
                 'success' => true,
                 'state' => [
-                    'time' => $new,
-                    'isRunning' => getValue($db, $token, 'timer', 'isRunning') === 'true',
-                    'pausedTime' => $new
+                    'duration' => $new,
+                    'endTime' => $isRunning ? (getValue($db, $token, 'timer', 'endTime') ? intval(getValue($db, $token, 'timer', 'endTime')) : null) : null,
+                    'isRunning' => $isRunning,
+                    'isPaused' => getValue($db, $token, 'timer', 'isPaused') === 'true'
                 ]
             ]);
             break;
@@ -405,29 +402,52 @@ function handleTimerSQLite($db, $token, $action, $value) {
             $current = intval(getValue($db, $token, 'timer', 'seconds') ?? '0');
             $new = max(0, $current - intval($value));
             setValue($db, $token, 'timer', 'seconds', strval($new));
+            
+            // Si le timer est en cours, ajuster l'endTime
+            $isRunning = getValue($db, $token, 'timer', 'isRunning') === 'true';
+            if ($isRunning) {
+                $endTime = getValue($db, $token, 'timer', 'endTime');
+                if ($endTime) {
+                    $newEndTime = max(time(), intval($endTime) - intval($value));
+                    setValue($db, $token, 'timer', 'endTime', strval($newEndTime));
+                }
+            }
+            
             echo json_encode([
                 'success' => true,
                 'state' => [
-                    'time' => $new,
-                    'isRunning' => getValue($db, $token, 'timer', 'isRunning') === 'true',
-                    'pausedTime' => $new
+                    'duration' => $new,
+                    'endTime' => $isRunning ? (getValue($db, $token, 'timer', 'endTime') ? intval(getValue($db, $token, 'timer', 'endTime')) : null) : null,
+                    'isRunning' => $isRunning,
+                    'isPaused' => getValue($db, $token, 'timer', 'isPaused') === 'true'
                 ]
             ]);
             break;
             
         case 'set':
-            // Pour l'auto-save, on peut recevoir un objet JSON avec seconds et isRunning
+            // Pour l'auto-save, on peut recevoir un objet JSON avec duration, endTime, isRunning, isPaused
             $data = json_decode($value, true);
-            if ($data && isset($data['seconds'])) {
-                setValue($db, $token, 'timer', 'seconds', strval($data['seconds']));
+            if ($data) {
+                if (isset($data['duration'])) {
+                    setValue($db, $token, 'timer', 'seconds', strval($data['duration']));
+                }
+                if (isset($data['endTime'])) {
+                    setValue($db, $token, 'timer', 'endTime', $data['endTime'] ? strval($data['endTime']) : '');
+                }
                 if (isset($data['isRunning'])) {
                     setValue($db, $token, 'timer', 'isRunning', $data['isRunning'] ? 'true' : 'false');
                 }
+                if (isset($data['isPaused'])) {
+                    setValue($db, $token, 'timer', 'isPaused', $data['isPaused'] ? 'true' : 'false');
+                }
+                
                 echo json_encode([
                     'success' => true,
                     'data' => [
-                        'seconds' => intval($data['seconds']),
-                        'isRunning' => isset($data['isRunning']) ? $data['isRunning'] : (getValue($db, $token, 'timer', 'isRunning') === 'true')
+                        'duration' => isset($data['duration']) ? intval($data['duration']) : intval(getValue($db, $token, 'timer', 'seconds') ?? '0'),
+                        'endTime' => isset($data['endTime']) ? ($data['endTime'] ? intval($data['endTime']) : null) : (getValue($db, $token, 'timer', 'endTime') ? intval(getValue($db, $token, 'timer', 'endTime')) : null),
+                        'isRunning' => isset($data['isRunning']) ? $data['isRunning'] : (getValue($db, $token, 'timer', 'isRunning') === 'true'),
+                        'isPaused' => isset($data['isPaused']) ? $data['isPaused'] : (getValue($db, $token, 'timer', 'isPaused') === 'true')
                     ]
                 ]);
             } else {
@@ -654,12 +674,12 @@ function handleStyleSQLite($db, $token, $action, $value) {
 function handleTimerStyleSQLite($db, $token, $action, $value) {
     switch($action) {
         case 'get':
-            $styles = getValue($db, $token, 'timer-styles', 'config') ?? '{}';
+            $styles = getValue($db, $token, 'timer-style', 'config') ?? '{}';
             echo json_encode(['success' => true, 'data' => json_decode($styles, true)]);
             break;
             
         case 'save':
-            setValue($db, $token, 'timer-styles', 'config', $value);
+            setValue($db, $token, 'timer-style', 'config', $value);
             echo json_encode(['success' => true]);
             break;
             
@@ -1136,6 +1156,76 @@ function handleConfig($pdo, $userId, $action, $value) {
     } catch (Exception $e) {
         error_log("Erreur dans handleConfig: " . $e->getMessage());
         echo json_encode(['success' => false, 'error' => 'Erreur lors du traitement de la configuration']);
+    }
+}
+
+// ========== NOUVELLE FONCTION POUR RÉCUPÉRER LES STYLES VIA API ==========
+
+function handleGetStylesSQLite($db, $token, $action, $value) {
+    $moduleType = $_GET['type'] ?? '';
+    
+    if (!in_array($moduleType, ['wins', 'timer', 'teams'])) {
+        echo json_encode(['success' => false, 'error' => 'Type de module invalide']);
+        return;
+    }
+    
+    switch($action) {
+        case 'get':
+            $styles = getValue($db, $token, $moduleType . '-styles', 'config') ?? '{}';
+            $stylesData = json_decode($styles, true);
+            
+            // Ajouter un timestamp pour la synchronisation
+            $response = [
+                'success' => true,
+                'data' => $stylesData,
+                'timestamp' => time(),
+                'version' => '2.0'
+            ];
+            
+            echo json_encode($response);
+            break;
+            
+        default:
+            echo json_encode(['success' => false, 'error' => 'Action invalide']);
+    }
+}
+
+function handleGetStyles($pdo, $userId, $action, $value) {
+    $moduleType = $_GET['type'] ?? '';
+    
+    if (!in_array($moduleType, ['wins', 'timer', 'teams'])) {
+        echo json_encode(['success' => false, 'error' => 'Type de module invalide']);
+        return;
+    }
+    
+    switch($action) {
+        case 'get':
+            try {
+                $table = $moduleType . '_config';
+                $stmt = $pdo->prepare("SELECT config_data FROM $table WHERE user_id = ?");
+                $stmt->execute([$userId]);
+                $result = $stmt->fetch(PDO::FETCH_ASSOC);
+                
+                $stylesData = $result ? json_decode($result['config_data'], true) : getDefaultConfig($moduleType);
+                
+                // Ajouter un timestamp pour la synchronisation
+                $response = [
+                    'success' => true,
+                    'data' => $stylesData,
+                    'timestamp' => time(),
+                    'version' => '2.0'
+                ];
+                
+                echo json_encode($response);
+                
+            } catch (PDOException $e) {
+                error_log("Erreur lors de la récupération des styles: " . $e->getMessage());
+                echo json_encode(['success' => false, 'error' => 'Erreur lors de la récupération des styles']);
+            }
+            break;
+            
+        default:
+            echo json_encode(['success' => false, 'error' => 'Action invalide']);
     }
 }
 ?>

@@ -308,7 +308,242 @@ body {
     animation: pulse 2s ease-in-out infinite;
 }
 
-/* Responsive */
+/* ==================== ULTRA COMPACT CONTROL PANELS - STYLES COMMUNS ==================== */
+
+/* Panneau de contrôle principal */
+.ultra-compact-control-bar {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(15, 23, 42, 0.95);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(148, 163, 184, 0.1);
+    border-radius: 8px;
+    padding: 8px 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    z-index: 1000;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    min-width: 400px;
+    max-width: 90vw;
+}
+
+.ultra-compact-sections {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.ultra-compact-section {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.ultra-compact-section-header {
+    font-size: 10px;
+    font-weight: 600;
+    color: #94a3b8;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    white-space: nowrap;
+    margin-right: 4px;
+}
+
+.ultra-compact-buttons {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+/* Boutons ultra compacts */
+.ultra-compact-btn {
+    padding: 4px 8px;
+    border: none;
+    border-radius: 4px;
+    font-size: 10px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+    height: 24px;
+    min-width: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+    background: transparent;
+    color: #ffffff;
+}
+
+.ultra-compact-btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: currentColor;
+    opacity: 0;
+    transition: opacity 0.15s ease;
+    z-index: -1;
+}
+
+.ultra-compact-btn:hover::before {
+    opacity: 0.1;
+}
+
+/* Couleurs des boutons */
+.ultra-compact-btn.add {
+    background: rgba(16, 185, 129, 0.15);
+    color: #10b981;
+    border: 1px solid rgba(16, 185, 129, 0.3);
+}
+
+.ultra-compact-btn.add:hover {
+    background: rgba(16, 185, 129, 0.25);
+    border-color: #10b981;
+    transform: translateY(-1px);
+}
+
+.ultra-compact-btn.subtract {
+    background: rgba(239, 68, 68, 0.15);
+    color: #ef4444;
+    border: 1px solid rgba(239, 68, 68, 0.3);
+}
+
+.ultra-compact-btn.subtract:hover {
+    background: rgba(239, 68, 68, 0.25);
+    border-color: #ef4444;
+    transform: translateY(-1px);
+}
+
+.ultra-compact-btn.reset {
+    background: rgba(245, 158, 11, 0.15);
+    color: #f59e0b;
+    border: 1px solid rgba(245, 158, 11, 0.3);
+}
+
+.ultra-compact-btn.reset:hover {
+    background: rgba(245, 158, 11, 0.25);
+    border-color: #f59e0b;
+    transform: translateY(-1px);
+}
+
+.ultra-compact-btn.primary {
+    background: rgba(99, 102, 241, 0.15);
+    color: #6366f1;
+    border: 1px solid rgba(99, 102, 241, 0.3);
+}
+
+.ultra-compact-btn.primary:hover {
+    background: rgba(99, 102, 241, 0.25);
+    border-color: #6366f1;
+    transform: translateY(-1px);
+}
+
+.ultra-compact-btn.warning {
+    background: rgba(245, 158, 11, 0.15);
+    color: #f59e0b;
+    border: 1px solid rgba(245, 158, 11, 0.3);
+}
+
+.ultra-compact-btn.warning:hover {
+    background: rgba(245, 158, 11, 0.25);
+    border-color: #f59e0b;
+    transform: translateY(-1px);
+}
+
+.ultra-compact-btn.large {
+    height: 28px;
+    min-width: 40px;
+    font-size: 11px;
+}
+
+.ultra-compact-btn:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+    transform: none !important;
+}
+
+/* Toggle ultra compact */
+.ultra-compact-toggle {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: rgba(15, 23, 42, 0.95);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(148, 163, 184, 0.1);
+    color: #94a3b8;
+    font-size: 12px;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1001;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.ultra-compact-toggle:hover {
+    background: rgba(15, 23, 42, 0.98);
+    color: #ffffff;
+    transform: scale(1.05);
+}
+
+.ultra-compact-toggle.collapsed i {
+    transform: rotate(180deg);
+}
+
+/* Inputs ultra compacts */
+.ultra-compact-inputs {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.ultra-compact-input-group {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+}
+
+.ultra-compact-input-group label {
+    font-size: 8px;
+    color: #94a3b8;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+}
+
+.ultra-compact-input {
+    width: 32px;
+    height: 20px;
+    padding: 2px 4px;
+    border: 1px solid rgba(148, 163, 184, 0.2);
+    border-radius: 3px;
+    background: rgba(15, 23, 42, 0.8);
+    color: #ffffff;
+    font-size: 9px;
+    text-align: center;
+    font-family: 'Inter', sans-serif;
+}
+
+.ultra-compact-input:focus {
+    outline: none;
+    border-color: #6366f1;
+    background: rgba(15, 23, 42, 0.9);
+}
+
+/* Responsive design */
 @media (max-width: 768px) {
     .display h1 {
         font-size: 48px;
@@ -335,5 +570,70 @@ body {
     
     .dashboard h1 {
         font-size: 32px;
+    }
+}
+
+@media (max-width: 768px) {
+    .ultra-compact-control-bar {
+        bottom: 10px;
+        padding: 6px 8px;
+        gap: 6px;
+        min-width: 320px;
+    }
+
+    .ultra-compact-sections {
+        gap: 8px;
+    }
+
+    .ultra-compact-section {
+        gap: 4px;
+    }
+
+    .ultra-compact-buttons {
+        gap: 3px;
+    }
+
+    .ultra-compact-btn {
+        padding: 3px 6px;
+        font-size: 9px;
+        height: 22px;
+        min-width: 28px;
+    }
+
+    .ultra-compact-section-header {
+        font-size: 9px;
+        margin-right: 3px;
+    }
+
+    .ultra-compact-toggle {
+        top: 10px;
+        right: 10px;
+        width: 28px;
+        height: 28px;
+        font-size: 10px;
+    }
+
+    .ultra-compact-input {
+        width: 28px;
+        height: 18px;
+        font-size: 8px;
+    }
+}
+
+@media (max-width: 480px) {
+    .ultra-compact-control-bar {
+        flex-direction: column;
+        gap: 6px;
+        padding: 8px;
+        min-width: 280px;
+    }
+
+    .ultra-compact-sections {
+        flex-direction: column;
+        gap: 6px;
+    }
+
+    .ultra-compact-section {
+        justify-content: center;
     }
 }

@@ -581,6 +581,184 @@ $token = $_GET['token'] ?? '';
                 grid-template-columns: 1fr;
             }
         }
+
+        /* ==================== STYLE MFA PREMIUM ==================== */
+        .premium-container {
+            position: relative;
+            background: #000000;
+            border-radius: 16px;
+            padding: 20px 40px;
+            min-width: 320px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            height: 100%;
+            --premium-accent-color: #ff6b35;
+            --premium-text-color: #ffffff;
+            --premium-digits-color: #ff6b35;
+        }
+
+        .premium-logo-area {
+            position: absolute;
+            top: -20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--premium-accent-color);
+            padding: 4px 20px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 800;
+            color: #000;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+        }
+
+        #premium-preview-timer {
+            font-size: 3.5rem;
+            color: var(--premium-text-color);
+            text-align: center;
+            white-space: nowrap;
+            font-weight: 800;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+        }
+
+        .premium-time-group {
+            display: flex;
+            align-items: baseline;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            padding: 10px 15px;
+            border: 2px solid rgba(255, 107, 53, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        .premium-time-group:hover {
+            background: rgba(255, 107, 53, 0.1);
+            border-color: var(--premium-accent-color);
+            transform: translateY(-2px);
+        }
+
+        .premium-digits {
+            font-weight: 900;
+            color: var(--premium-digits-color);
+            font-size: 1.2em;
+            letter-spacing: 0.05em;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .premium-unit {
+            font-size: 0.5em;
+            color: rgba(255, 255, 255, 0.7);
+            margin-left: 8px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+        }
+
+        .premium-separator {
+            color: var(--premium-accent-color);
+            font-weight: 800;
+            font-size: 1.1em;
+            opacity: 0.8;
+            animation: premium-blink 2s ease-in-out infinite;
+        }
+
+        @keyframes premium-blink {
+            0%, 100% { opacity: 0.8; }
+            50% { opacity: 0.3; }
+        }
+
+        .premium-low-time .premium-time-group {
+            background: rgba(255, 0, 0, 0.1);
+            border-color: #ff0000;
+            animation: premium-urgent-shake 0.5s ease-in-out infinite;
+        }
+
+        .premium-low-time .premium-digits {
+            color: #ff0000;
+        }
+
+        @keyframes premium-urgent-shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-2px); }
+            75% { transform: translateX(2px); }
+        }
+
+        .premium-change-animation {
+            animation: premium-flip-in 0.4s ease-out;
+        }
+
+        @keyframes premium-flip-in {
+            0% { 
+                transform: scaleY(0);
+                opacity: 0;
+            }
+            50% { 
+                transform: scaleY(1.1);
+            }
+            100% { 
+                transform: scaleY(1);
+                opacity: 1;
+            }
+        }
+
+        .premium-corner-accent {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            border: 2px solid var(--premium-accent-color);
+        }
+
+        .premium-corner-accent.premium-top-left {
+            top: -1px;
+            left: -1px;
+            border-right: none;
+            border-bottom: none;
+            border-radius: 16px 0 0 0;
+        }
+
+        .premium-corner-accent.premium-top-right {
+            top: -1px;
+            right: -1px;
+            border-left: none;
+            border-bottom: none;
+            border-radius: 0 16px 0 0;
+        }
+
+        .premium-corner-accent.premium-bottom-left {
+            bottom: -1px;
+            left: -1px;
+            border-right: none;
+            border-top: none;
+            border-radius: 0 0 0 16px;
+        }
+
+        .premium-corner-accent.premium-bottom-right {
+            bottom: -1px;
+            right: -1px;
+            border-left: none;
+            border-top: none;
+            border-radius: 0 0 16px 0;
+        }
+
+        /* Responsive pour Alka */
+        @media (max-width: 768px) {
+            #alka-preview-timer {
+                font-size: 2.5rem;
+                gap: 10px;
+            }
+            .alka-container {
+                padding: 15px 25px;
+                min-width: 280px;
+            }
+            .alka-time-group {
+                padding: 8px 12px;
+            }
+        }
         
 
     </style>
@@ -594,7 +772,7 @@ $token = $_GET['token'] ?? '';
         </div>
 
         <!-- Preview -->
-        <div class="preview-container">
+        <div id="general-preview" class="preview-container">
             <div class="preview-title">Aperçu en temps réel</div>
             <div id="preview-timer">00:00:00</div>
         </div>
@@ -671,6 +849,166 @@ $token = $_GET['token'] ?? '';
                         <div class="checkbox-group">
                             <input type="checkbox" id="timer-showBackground" data-style="timer-showBackground">
                             <label for="timer-showBackground">Activer l'arrière-plan</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ==================== MFA PREMIUM ==================== -->
+            <div class="config-section" style="margin-top: var(--spacing-xl); background: linear-gradient(135deg, rgba(139, 0, 255, 0.1), rgba(0, 212, 255, 0.1)); border: 2px solid var(--primary-color);">
+                <h2 class="section-title" style="color: var(--primary-color);">
+                    <i class="fas fa-crown"></i> MFA PREMIUM
+                </h2>
+                <p style="color: var(--text-secondary); margin-bottom: var(--spacing-lg);">
+                    <i class="fas fa-star"></i> Style premium MFA - Compatible TikTok Live Studio
+                </p>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <div class="checkbox-group">
+                            <input type="checkbox" id="alka-enabled" data-style="alka-enabled">
+                            <label>Activer le style MFA PREMIUM</label>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="alka-text">Texte personnalisé</label>
+                        <input type="text" id="alka-text" data-style="alka-text" value="MFA - MY FULL AGENCY" placeholder="MFA - MY FULL AGENCY">
+                    </div>
+                </div>
+
+                <!-- Aperçu MFA PREMIUM -->
+                <div id="mfa-preview" class="preview-section" style="display: none;">
+                    <div class="preview-title">Aperçu MFA PREMIUM</div>
+                    <div class="preview-container">
+                        <div class="premium-container" style="position: relative; background: #000000; border-radius: 16px; padding: 20px 40px; min-width: 320px; display: flex; align-items: center; justify-content: center;">
+                            <div class="premium-logo-area" style="position: absolute; top: -20px; left: 50%; transform: translateX(-50%); background: #b30000; padding: 4px 20px; border-radius: 20px; font-size: 0.8rem; font-weight: 800; color: #000; letter-spacing: 0.1em; text-transform: uppercase; font-family: 'Luckiest Guy', cursive;">
+                                <span id="preview-premium-text">MFA - MY FULL AGENCY</span>
+                            </div>
+                            <div id="preview-premium-timer" style="font-size: 40px; color: #ffffff; text-align: center; white-space: nowrap; font-weight: 800; display: flex; align-items: center; justify-content: center; gap: 15px; width: 100%; font-family: 'Luckiest Guy', cursive;">
+                                <div class="premium-time-group" style="display: flex; align-items: baseline; background: rgba(255, 255, 255, 0.05); border-radius: 12px; padding: 10px 15px; border: 2px solid rgba(179, 0, 0, 0.3); transition: all 0.3s ease; min-width: 80px; justify-content: center;">
+                                    <span class="premium-digits" style="font-weight: 900; color: #ffffff; font-size: 1.2em; letter-spacing: 0.05em; text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3); display: flex; justify-content: center; min-width: 60px; font-family: 'Luckiest Guy', cursive;"><span>0</span><span>1</span></span>
+                                    <span class="premium-unit" style="font-size: 0.5em; color: #ffffff; margin-left: 8px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em; font-family: 'Luckiest Guy', cursive;">H</span>
+                                </div>
+                                <span class="premium-separator" style="color: #b30000; font-weight: 800; font-size: 1.1em; opacity: 0.8; animation: premium-blink 2s ease-in-out infinite; display: flex; align-items: center; justify-content: center; width: 20px; font-family: 'Luckiest Guy', cursive;">:</span>
+                                <div class="premium-time-group" style="display: flex; align-items: baseline; background: rgba(255, 255, 255, 0.05); border-radius: 12px; padding: 10px 15px; border: 2px solid rgba(179, 0, 0, 0.3); transition: all 0.3s ease; min-width: 80px; justify-content: center;">
+                                    <span class="premium-digits" style="font-weight: 900; color: #ffffff; font-size: 1.2em; letter-spacing: 0.05em; text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3); display: flex; justify-content: center; min-width: 60px; font-family: 'Luckiest Guy', cursive;"><span>0</span><span>0</span></span>
+                                    <span class="premium-unit" style="font-size: 0.5em; color: #ffffff; margin-left: 8px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em; font-family: 'Luckiest Guy', cursive;">M</span>
+                                </div>
+                                <span class="premium-separator" style="color: #b30000; font-weight: 800; font-size: 1.1em; opacity: 0.8; animation: premium-blink 2s ease-in-out infinite; display: flex; align-items: center; justify-content: center; width: 20px; font-family: 'Luckiest Guy', cursive;">:</span>
+                                <div class="premium-time-group" style="display: flex; align-items: baseline; background: rgba(255, 255, 255, 0.05); border-radius: 12px; padding: 10px 15px; border: 2px solid rgba(179, 0, 0, 0.3); transition: all 0.3s ease; min-width: 80px; justify-content: center;">
+                                    <span class="premium-digits" style="font-weight: 900; color: #ffffff; font-size: 1.2em; letter-spacing: 0.05em; text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3); display: flex; justify-content: center; min-width: 60px; font-family: 'Luckiest Guy', cursive;"><span>0</span><span>0</span></span>
+                                    <span class="premium-unit" style="font-size: 0.5em; color: #ffffff; margin-left: 8px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em; font-family: 'Luckiest Guy', cursive;">S</span>
+                                </div>
+                            </div>
+                            <div class="premium-corner-accent premium-top-left" style="position: absolute; width: 20px; height: 20px; border: 2px solid #b30000; top: -1px; left: -1px; border-right: none; border-bottom: none; border-radius: 16px 0 0 0;"></div>
+                            <div class="premium-corner-accent premium-top-right" style="position: absolute; width: 20px; height: 20px; border: 2px solid #b30000; top: -1px; right: -1px; border-left: none; border-bottom: none; border-radius: 0 16px 0 0;"></div>
+                            <div class="premium-corner-accent premium-bottom-left" style="position: absolute; width: 20px; height: 20px; border: 2px solid #b30000; bottom: -1px; left: -1px; border-right: none; border-top: none; border-radius: 0 0 0 16px;"></div>
+                            <div class="premium-corner-accent premium-bottom-right" style="position: absolute; width: 20px; height: 20px; border: 2px solid #b30000; bottom: -1px; right: -1px; border-left: none; border-top: none; border-radius: 0 0 16px 0;"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="alka-bgColor">Couleur de fond</label>
+                        <div class="color-input-group">
+                            <input type="color" id="alka-bgColor" data-style="alka-bgColor" value="#000000">
+                            <input type="text" class="color-text" data-style="alka-bgColor" value="#000000" placeholder="#000000">
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="alka-accentColor">Couleur d'accent</label>
+                        <div class="color-input-group">
+                            <input type="color" id="alka-accentColor" data-style="alka-accentColor" value="#b30000">
+                            <input type="text" class="color-text" data-style="alka-accentColor" value="#b30000" placeholder="#b30000">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="alka-textColor">Couleur du texte</label>
+                        <div class="color-input-group">
+                            <input type="color" id="alka-textColor" data-style="alka-textColor" value="#ffffff">
+                            <input type="text" class="color-text" data-style="alka-textColor" value="#ffffff" placeholder="#ffffff">
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="alka-digitsColor">Couleur des chiffres</label>
+                        <div class="color-input-group">
+                            <input type="color" id="alka-digitsColor" data-style="alka-digitsColor" value="#ffffff">
+                            <input type="text" class="color-text" data-style="alka-digitsColor" value="#ffffff" placeholder="#ffffff">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="alka-fontSize">Taille de la police</label>
+                        <div class="range-input-group">
+                            <input type="range" id="alka-fontSize" data-style="alka-fontSize" min="24" max="120" value="40">
+                            <input type="number" class="size-number" data-style="alka-fontSize" min="24" max="120" value="40">
+                            <span class="range-value" id="alka-fontSize-value">40px</span>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="alka-fontFamily">Police d'écriture</label>
+                        <select id="alka-fontFamily" data-style="alka-fontFamily">
+                            <option value="'Luckiest Guy', cursive">Luckiest Guy</option>
+                            <option value="Orbitron, monospace">Orbitron</option>
+                            <option value="'Press Start 2P', cursive">Press Start 2P</option>
+                            <option value="'Russo One', sans-serif">Russo One</option>
+                            <option value="'Audiowide', cursive">Audiowide</option>
+                            <option value="'Bungee', cursive">Bungee</option>
+                            <option value="'Black Ops One', cursive">Black Ops One</option>
+                            <option value="'Faster One', cursive">Faster One</option>
+                            <option value="Impact, sans-serif">Impact</option>
+                            <option value="Arial, Helvetica, sans-serif">Arial</option>
+                            <option value="Georgia, serif">Georgia</option>
+                            <option value="'Times New Roman', serif">Times New Roman</option>
+                            <option value="Verdana, sans-serif">Verdana</option>
+                            <option value="'Comic Sans MS', cursive">Comic Sans MS</option>
+                            <option value="'Courier New', monospace">Courier New</option>
+                            <option value="Helvetica, sans-serif">Helvetica</option>
+                            <option value="'Trebuchet MS', sans-serif">Trebuchet MS</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Options d'affichage</label>
+                        <div class="checkbox-group">
+                            <input type="checkbox" id="alka-showSeparators" data-style="alka-showSeparators" checked>
+                            <label for="alka-showSeparators">Afficher les séparateurs (:)</label>
+                        </div>
+                        <div class="checkbox-group">
+                            <input type="checkbox" id="alka-showUnits" data-style="alka-showUnits" checked>
+                            <label for="alka-showUnits">Afficher les unités (H/M/S)</label>
+                        </div>
+                        <div class="checkbox-group">
+                            <input type="checkbox" id="alka-showCorners" data-style="alka-showCorners" checked>
+                            <label for="alka-showCorners">Afficher les accents d'angle</label>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Animations</label>
+                        <div class="checkbox-group">
+                            <input type="checkbox" id="alka-blinkSeparators" data-style="alka-blinkSeparators" checked>
+                            <label for="alka-blinkSeparators">Clignotement des séparateurs</label>
+                        </div>
+                        <div class="checkbox-group">
+                            <input type="checkbox" id="alka-hoverEffects" data-style="alka-hoverEffects" checked>
+                            <label for="alka-hoverEffects">Effets au survol</label>
+                        </div>
+                        <div class="checkbox-group">
+                            <input type="checkbox" id="alka-urgentAnimation" data-style="alka-urgentAnimation" checked>
+                            <label for="alka-urgentAnimation">Animation d'urgence (≤1min)</label>
                         </div>
                     </div>
                 </div>
@@ -953,6 +1291,9 @@ $token = $_GET['token'] ?? '';
         let timerInterval = null;
         let seconds = 0;
         
+        // Initialiser le timer à 00:00:00
+        seconds = 0;
+        
 
 
         // Fonction pour le timer de prévisualisation
@@ -964,8 +1305,14 @@ $token = $_GET['token'] ?? '';
             document.getElementById('preview-timer').textContent = 
                 `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
             
+            // Mettre à jour aussi l'affichage Premium si activé
+            updatePremiumPreviewTimer();
+            
             seconds++;
         }
+        
+        // Initialiser le timer à 00:00:00
+        seconds = 0;
 
         // Démarrer le timer de prévisualisation
         timerInterval = setInterval(updatePreviewTimer, 1000);
@@ -991,6 +1338,23 @@ $token = $_GET['token'] ?? '';
                 },
                 options: {
                     'hide-controls': getInputValue('hide-controls', false)
+                },
+                // Nouvelle section MFA PREMIUM - Style Premium
+                alka: {
+                    enabled: getInputValue('alka-enabled', true),
+                    bgColor: getInputValue('alka-bgColor', '#000000'),
+                    accentColor: getInputValue('alka-accentColor', '#b30000'),
+                    textColor: getInputValue('alka-textColor', '#ffffff'),
+                    digitsColor: getInputValue('alka-digitsColor', '#ffffff'),
+                    fontSize: getInputValue('alka-fontSize', '40'),
+                    fontFamily: getInputValue('alka-fontFamily', 'Luckiest Guy, cursive'),
+                    text: getInputValue('alka-text', 'MFA - MY FULL AGENCY'),
+                    showSeparators: getInputValue('alka-showSeparators', true),
+                    showUnits: getInputValue('alka-showUnits', true),
+                    showCorners: getInputValue('alka-showCorners', true),
+                    blinkSeparators: getInputValue('alka-blinkSeparators', true),
+                    hoverEffects: getInputValue('alka-hoverEffects', true),
+                    urgentAnimation: getInputValue('alka-urgentAnimation', true)
                 },
                 meta: {
                     version: '2.0',
@@ -1028,8 +1392,8 @@ $token = $_GET['token'] ?? '';
         // Fonction pour appliquer les styles à l'aperçu
         function applyPreviewStyles(styles) {
             const previewTimer = document.getElementById('preview-timer');
+            if (!previewTimer) return;
             
-            // Styles Timer
             if (styles.timer) {
                 if (styles.timer.color) {
                     previewTimer.style.color = styles.timer.color;
@@ -1039,6 +1403,7 @@ $token = $_GET['token'] ?? '';
                 }
                 if (styles.timer.stroke) {
                     previewTimer.style.webkitTextStroke = `2px ${styles.timer.stroke}`;
+                    previewTimer.style.textStroke = `2px ${styles.timer.stroke}`;
                 }
                 if (styles.timer.shadow) {
                     previewTimer.style.textShadow = '3px 3px 6px rgba(0,0,0,0.8)';
@@ -1052,23 +1417,13 @@ $token = $_GET['token'] ?? '';
                 } else {
                     previewTimer.style.background = 'transparent';
                     previewTimer.style.padding = '0';
+                    previewTimer.style.borderRadius = '0';
                 }
             }
             
-            // Police
-            if (styles.general && styles.general['font-family']) {
-                previewTimer.style.fontFamily = styles.general['font-family'];
-            }
-            
-            // Arrière-plan
-            const container = document.querySelector('.preview-container');
             if (styles.general) {
-                if (styles.general.transparent) {
-                    container.style.background = 'transparent';
-                    container.style.border = '2px dashed rgba(255, 255, 255, 0.3)';
-                } else if (styles.general.background) {
-                    container.style.background = styles.general.background;
-                    container.style.border = '1px solid var(--border-color)';
+                if (styles.general['font-family']) {
+                    previewTimer.style.fontFamily = styles.general['font-family'];
                 }
             }
         }
@@ -1083,8 +1438,10 @@ $token = $_GET['token'] ?? '';
             
             autoSaveTimeout = setTimeout(async () => {
                 try {
+                    console.log('Saving styles:', styles); // Debug
                     const response = await fetch(`/api.php?token=${token}&module=timer-style&action=save&value=${encodeURIComponent(JSON.stringify(styles))}`);
                     const result = await response.json();
+                    console.log('Save result:', result); // Debug
                     
                     if (result.success) {
                         notifyAllTimerPages(styles);
@@ -1093,6 +1450,7 @@ $token = $_GET['token'] ?? '';
                         showAutoSaveError();
                     }
                 } catch (error) {
+                    console.error('Save error:', error);
                     showAutoSaveError();
                 }
             }, 50);
@@ -1160,38 +1518,19 @@ $token = $_GET['token'] ?? '';
 
         // Fonction pour sauvegarder manuellement
         async function saveStyles() {
-            const styles = collectStyles();
-            const saveBtn = document.getElementById('save-btn');
-            
-            saveBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sauvegarde...';
-            saveBtn.disabled = true;
-            
             try {
+                const styles = collectStyles();
                 const response = await fetch(`/api.php?token=${token}&module=timer-style&action=save&value=${encodeURIComponent(JSON.stringify(styles))}`);
                 const result = await response.json();
                 
                 if (result.success) {
-                    saveBtn.innerHTML = '<i class="fas fa-check"></i> Sauvegardé !';
-                    notifyAllTimerPages(styles);
-                    
-                    // Afficher notification
-                    const notification = document.createElement('div');
-                    notification.className = 'save-notification';
-                    notification.innerHTML = '<i class="fas fa-check-circle"></i> Styles sauvegardés avec succès !';
-                    document.body.appendChild(notification);
-                    
-                    setTimeout(() => {
-                        notification.remove();
-                        saveBtn.innerHTML = '<i class="fas fa-save"></i> Sauvegarder';
-                        saveBtn.disabled = false;
-                    }, 2000);
+                    showNotification('Styles sauvegardés avec succès !', 'success');
                 } else {
-                    throw new Error(result.error || 'Erreur lors de la sauvegarde');
+                    showNotification('Erreur lors de la sauvegarde', 'error');
                 }
             } catch (error) {
-                saveBtn.innerHTML = '<i class="fas fa-exclamation-triangle"></i> Erreur';
-                saveBtn.disabled = false;
-                showAutoSaveError();
+                console.error('Erreur lors de la sauvegarde:', error);
+                showNotification('Erreur lors de la sauvegarde', 'error');
             }
         }
 
@@ -1273,6 +1612,24 @@ $token = $_GET['token'] ?? '';
                 setInputValue('hide-controls', styles.options['hide-controls']);
             }
             
+            // Charger les options Alka Agency MFA PREMIUM
+            if (styles.alka) {
+                setInputValue('alka-enabled', styles.alka.enabled);
+                setInputValue('alka-bgColor', styles.alka.bgColor);
+                setInputValue('alka-accentColor', styles.alka.accentColor);
+                setInputValue('alka-textColor', styles.alka.textColor);
+                setInputValue('alka-digitsColor', styles.alka.digitsColor);
+                setInputValue('alka-fontSize', styles.alka.fontSize);
+                setInputValue('alka-fontFamily', styles.alka.fontFamily);
+                setInputValue('alka-text', styles.alka.text);
+                setInputValue('alka-showSeparators', styles.alka.showSeparators);
+                setInputValue('alka-showUnits', styles.alka.showUnits);
+                setInputValue('alka-showCorners', styles.alka.showCorners);
+                setInputValue('alka-blinkSeparators', styles.alka.blinkSeparators);
+                setInputValue('alka-hoverEffects', styles.alka.hoverEffects);
+                setInputValue('alka-urgentAnimation', styles.alka.urgentAnimation);
+            }
+            
             updateRangeValues();
         }
 
@@ -1302,6 +1659,16 @@ $token = $_GET['token'] ?? '';
             document.getElementById('timer-size-value').textContent = document.getElementById('timer-size').value + 'px';
             document.getElementById('text-margin-value').textContent = document.getElementById('text-margin').value + 'px';
             document.getElementById('vertical-offset-value').textContent = document.getElementById('vertical-offset').value + 'px';
+            
+            // Mettre à jour les valeurs Alka Agency
+            const alkaContainerSize = document.getElementById('alka-containerSize');
+            const alkaFontSize = document.getElementById('alka-fontSize');
+            if (alkaContainerSize) {
+                document.getElementById('alka-containerSize-value').textContent = alkaContainerSize.value + 'px';
+            }
+            if (alkaFontSize) {
+                document.getElementById('alka-fontSize-value').textContent = alkaFontSize.value + 'px';
+            }
         }
 
         // Gestion des onglets
@@ -1394,40 +1761,228 @@ $token = $_GET['token'] ?? '';
 
         // Initialisation
         document.addEventListener('DOMContentLoaded', () => {
+            // Initialiser les onglets
             initTabs();
+            
+            // Initialiser la synchronisation des inputs
             initInputSync();
             
-            // Charger les styles
-            loadStyles().then(() => {
-                // Forcer l'envoi initial des styles après un court délai
-                setTimeout(() => {
-                    const initialStyles = collectStyles();
-                    notifyAllTimerPages(initialStyles);
-                }, 50);
+            // Forcer le rechargement complet des styles
+            forceReloadStyles();
+            
+            // Event listeners pour les champs MFA PREMIUM
+            document.getElementById('alka-enabled').addEventListener('change', updateMFAPreview);
+            document.getElementById('alka-text').addEventListener('input', updateMFAPreviewValues);
+            document.getElementById('alka-bgColor').addEventListener('input', updateMFAPreviewValues);
+            document.getElementById('alka-accentColor').addEventListener('input', updateMFAPreviewValues);
+            document.getElementById('alka-textColor').addEventListener('input', updateMFAPreviewValues);
+            document.getElementById('alka-digitsColor').addEventListener('input', updateMFAPreviewValues);
+            document.getElementById('alka-fontSize').addEventListener('input', updateMFAPreviewValues);
+            document.getElementById('alka-fontFamily').addEventListener('change', updateMFAPreviewValues);
+            
+            // Event listeners pour tous les champs
+            document.querySelectorAll('[data-style]').forEach(input => {
+                input.addEventListener('input', handleStyleChange);
+                input.addEventListener('change', handleStyleChange);
             });
             
-            // Écouter les changements
-            document.querySelectorAll('[data-style], .color-text, .size-number, input[type="checkbox"], #font-family, #text-position').forEach(input => {
-                const handleChange = () => {
-                    const styles = collectStyles();
-                    applyPreviewStyles(styles);
-                    notifyAllTimerPages(styles);
-                    autoSaveStyles(styles);
-                };
-                
-                if (input.tagName === 'SELECT') {
-                    input.addEventListener('change', handleChange);
-                } else if (input.type === 'checkbox') {
-                    input.addEventListener('change', handleChange);
-                } else {
-                    input.addEventListener('input', handleChange);
-                }
-            });
-            
-            // Boutons
+            // Event listeners pour les boutons
             document.getElementById('save-btn').addEventListener('click', saveStyles);
             document.getElementById('reset-btn').addEventListener('click', resetStyles);
         });
+
+        // Fonction pour mettre à jour l'aperçu MFA PREMIUM
+        function updateMFAPreview() {
+            const mfaEnabled = document.getElementById('alka-enabled').checked;
+            const mfaPreview = document.getElementById('mfa-preview');
+            const generalPreview = document.getElementById('general-preview');
+            
+            if (mfaEnabled) {
+                // Afficher l'aperçu MFA PREMIUM
+                if (mfaPreview) mfaPreview.style.display = 'block';
+                // Masquer l'aperçu général
+                if (generalPreview) generalPreview.style.display = 'none';
+                
+                // Mettre à jour l'aperçu MFA PREMIUM avec les valeurs actuelles
+                updateMFAPreviewValues();
+            } else {
+                // Masquer l'aperçu MFA PREMIUM
+                if (mfaPreview) mfaPreview.style.display = 'none';
+                // Afficher l'aperçu général
+                if (generalPreview) generalPreview.style.display = 'block';
+            }
+        }
+        
+        // Fonction pour mettre à jour les valeurs de l'aperçu MFA PREMIUM
+        function updateMFAPreviewValues() {
+            const previewText = document.getElementById('preview-premium-text');
+            const previewTimer = document.getElementById('preview-premium-timer');
+            
+            if (previewText) {
+                const textValue = document.getElementById('alka-text').value;
+                previewText.textContent = textValue;
+            }
+            
+            if (previewTimer) {
+                // Mettre à jour les couleurs
+                const bgColor = document.getElementById('alka-bgColor').value;
+                const accentColor = document.getElementById('alka-accentColor').value;
+                const textColor = document.getElementById('alka-textColor').value;
+                const digitsColor = document.getElementById('alka-digitsColor').value;
+                const fontSize = document.getElementById('alka-fontSize').value;
+                const fontFamily = document.getElementById('alka-fontFamily').value;
+                
+                // Appliquer les styles
+                const container = previewTimer.closest('.premium-container');
+                if (container) {
+                    container.style.background = bgColor;
+                }
+                
+                const logoArea = container.querySelector('.premium-logo-area');
+                if (logoArea) {
+                    logoArea.style.background = accentColor;
+                }
+                
+                previewTimer.style.color = textColor;
+                previewTimer.style.fontSize = fontSize + 'px';
+                previewTimer.style.fontFamily = fontFamily;
+                
+                const digits = previewTimer.querySelectorAll('.premium-digits');
+                digits.forEach(digit => {
+                    digit.style.color = digitsColor;
+                });
+                
+                const units = previewTimer.querySelectorAll('.premium-unit');
+                units.forEach(unit => {
+                    unit.style.color = textColor;
+                });
+                
+                const separators = previewTimer.querySelectorAll('.premium-separator');
+                separators.forEach(separator => {
+                    separator.style.color = accentColor;
+                });
+                
+                const corners = container.querySelectorAll('.premium-corner-accent');
+                corners.forEach(corner => {
+                    corner.style.borderColor = accentColor;
+                });
+            }
+        }
+
+        // Event listeners pour les champs MFA PREMIUM
+        document.getElementById('alka-enabled').addEventListener('change', updateMFAPreview);
+        document.getElementById('alka-text').addEventListener('input', updateMFAPreviewValues);
+        document.getElementById('alka-bgColor').addEventListener('input', updateMFAPreviewValues);
+        document.getElementById('alka-accentColor').addEventListener('input', updateMFAPreviewValues);
+        document.getElementById('alka-textColor').addEventListener('input', updateMFAPreviewValues);
+        document.getElementById('alka-digitsColor').addEventListener('input', updateMFAPreviewValues);
+        document.getElementById('alka-fontSize').addEventListener('input', updateMFAPreviewValues);
+        document.getElementById('alka-fontFamily').addEventListener('change', updateMFAPreviewValues);
+        
+        // Initialiser l'affichage des aperçus
+        updateMFAPreview();
+
+        // Fonction pour forcer le rechargement complet des styles
+        async function forceReloadStyles() {
+            try {
+                // Nettoyer d'abord les valeurs par défaut
+                clearDefaultValues();
+                
+                // Vider le cache
+                const response = await fetch(`/api.php?token=${token}&module=timer-style&action=get`, { 
+                    cache: 'no-store',
+                    headers: {
+                        'Cache-Control': 'no-cache, no-store, must-revalidate',
+                        'Pragma': 'no-cache',
+                        'Expires': '0'
+                    }
+                });
+                const result = await response.json();
+                
+                if (result.success && result.data) {
+                    const styles = result.data;
+                    
+                    // Recharger tous les champs
+                    if (styles.timer || styles.general || styles.options) {
+                        loadGroupedStyles(styles);
+                    }
+                    
+                    // Mettre à jour l'aperçu
+                    applyPreviewStyles(styles);
+                    
+                    // Forcer la mise à jour de l'aperçu MFA PREMIUM
+                    setTimeout(() => {
+                        updateMFAPreview();
+                        updateMFAPreviewValues();
+                    }, 100);
+                    
+                    console.log('Styles rechargés avec succès:', styles);
+                }
+            } catch (error) {
+                console.error('Erreur lors du rechargement des styles:', error);
+            }
+        }
+
+        // Fonction pour nettoyer les valeurs par défaut
+        function clearDefaultValues() {
+            // Réinitialiser tous les champs à leurs valeurs par défaut
+            const defaultValues = {
+                'timer-color': '#ffffff',
+                'timer-size': '96',
+                'timer-stroke': '#000000',
+                'timer-background': '#000000',
+                'alka-enabled': false,
+                'alka-bgColor': '#000000',
+                'alka-accentColor': '#b30000',
+                'alka-textColor': '#ffffff',
+                'alka-digitsColor': '#ffffff',
+                'alka-fontSize': '40',
+                'alka-fontFamily': 'Luckiest Guy, cursive',
+                'alka-text': 'MFA - MY FULL AGENCY'
+            };
+            
+            Object.entries(defaultValues).forEach(([id, value]) => {
+                const element = document.getElementById(id);
+                if (element) {
+                    if (element.type === 'checkbox') {
+                        element.checked = value === true;
+                    } else {
+                        element.value = value;
+                    }
+                }
+            });
+        }
+
+        // Fonction pour gérer les changements de style
+        function handleStyleChange() {
+            const styles = collectStyles();
+            applyPreviewStyles(styles);
+            updateMFAPreview();
+            autoSaveStyles(styles);
+        }
+
+        // Test des onglets
+        function testTabs() {
+            console.log('Test des onglets...');
+            const tabBtns = document.querySelectorAll('.tab-btn');
+            const tabContents = document.querySelectorAll('.tab-content');
+            
+            console.log('Boutons d\'onglets trouvés:', tabBtns.length);
+            console.log('Contenus d\'onglets trouvés:', tabContents.length);
+            
+            tabBtns.forEach((btn, index) => {
+                console.log(`Onglet ${index + 1}:`, btn.dataset.tab, btn.classList.contains('active'));
+            });
+            
+            tabContents.forEach((content, index) => {
+                console.log(`Contenu ${index + 1}:`, content.id, content.classList.contains('active'));
+            });
+        }
+        
+        // Appeler le test au chargement
+        document.addEventListener('DOMContentLoaded', () => {
+            setTimeout(testTabs, 1000);
+        });
     </script>
-</body>
-</html>
+  </body>
+  </html>

@@ -288,6 +288,54 @@ $token = $_GET['token'] ?? '';
             font-size: 1rem;
         }
 
+        /* ==================== WEBSITE TAB & NEW BADGE ==================== */
+        .website-tab {
+            position: relative;
+        }
+
+        .new-badge {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background: linear-gradient(135deg, #ff006e, #ff4081);
+            color: white;
+            font-size: 0.7rem;
+            font-weight: 700;
+            padding: 4px 8px;
+            border-radius: 12px;
+            animation: pulse-glow 2s ease-in-out infinite;
+            box-shadow: 0 0 20px rgba(255, 0, 110, 0.5);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        @keyframes pulse-glow {
+            0%, 100% {
+                transform: scale(1);
+                box-shadow: 0 0 20px rgba(255, 0, 110, 0.5);
+            }
+            50% {
+                transform: scale(1.1);
+                box-shadow: 0 0 30px rgba(255, 0, 110, 0.8);
+            }
+        }
+
+        .website-tab:hover .new-badge {
+            animation: bounce 0.6s ease-in-out;
+        }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% {
+                transform: translateY(0) scale(1);
+            }
+            40% {
+                transform: translateY(-5px) scale(1.1);
+            }
+            60% {
+                transform: translateY(-3px) scale(1.05);
+            }
+        }
+
         /* ==================== MODULES SECTION ==================== */
         .modules-section {
             margin-bottom: 3rem;
@@ -731,6 +779,11 @@ $token = $_GET['token'] ?? '';
                 <i class="fas fa-tachometer-alt"></i>
                 Dashboard
             </a>
+            <a href="agency.php?token=<?=$token?>" class="nav-tab website-tab">
+                <i class="fas fa-globe"></i>
+                Site Web
+                <span class="new-badge">Nouveau</span>
+            </a>
             <a href="#" class="nav-tab" onclick="openModal('rules'); return false;">
                 <i class="fas fa-scroll"></i>
                 Règlement
@@ -966,14 +1019,12 @@ $token = $_GET['token'] ?? '';
 
             // Gestion des erreurs vidéo
             introVideo.addEventListener('error', function() {
-                console.warn('Erreur de chargement vidéo, affichage direct du dashboard');
                 showDashboard();
             });
 
             // Si la vidéo ne se charge pas après 3 secondes
             setTimeout(() => {
                 if (introVideo.readyState === 0) {
-                    console.warn('Vidéo non chargée après 3s, affichage direct du dashboard');
                     showDashboard();
                 }
             }, 3000);

@@ -1482,7 +1482,6 @@ $token = $_GET['token'] ?? '';
                 
                 if (result.success) {
                     notifyAllTeamsPages(styles);
-                    console.log('✅ Styles réinitialisés sauvegardés dans la base de données');
                 } else {
                     console.error('❌ Erreur lors de la sauvegarde des styles réinitialisés:', result.error);
                 }

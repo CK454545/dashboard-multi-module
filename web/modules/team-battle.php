@@ -346,6 +346,44 @@ $token = $_GET['token'] ?? '';
             margin-bottom: var(--spacing-xs);
         }
 
+        .team-action-bar-controls {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-xs);
+        }
+
+        .team-toggle-btn {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            background: rgba(59, 130, 246, 0.1);
+            border: 1px solid #3b82f6;
+            color: #3b82f6;
+            font-size: 0.7rem;
+            cursor: pointer;
+            transition: all var(--transition-fast);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+        }
+
+        .team-toggle-btn:hover {
+            background: #3b82f6;
+            color: white;
+            transform: scale(1.05);
+        }
+
+        .team-toggle-btn.collapsed i {
+            transform: rotate(180deg);
+        }
+
+        .team-action-bar-sections {
+            display: flex;
+            flex-direction: column;
+            gap: var(--spacing-sm);
+        }
+
         .team-action-bar-title {
             font-size: 0.75rem;
             font-weight: 600;
@@ -414,100 +452,7 @@ $token = $_GET['token'] ?? '';
             grid-template-columns: repeat(2, 1fr);
         }
 
-        .team-action-btn {
-            padding: var(--spacing-xs) var(--spacing-xs);
-            border: none;
-            border-radius: var(--radius-md);
-            font-size: 0.7rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all var(--transition-fast);
-            text-transform: uppercase;
-            letter-spacing: 0.3px;
-            min-height: 36px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .team-action-btn::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: currentColor;
-            opacity: 0;
-            transition: opacity var(--transition-fast);
-            z-index: -1;
-        }
-
-        .team-action-btn:hover::before {
-            opacity: 0.1;
-        }
-
-        .team-action-btn.add {
-            background: rgba(16, 185, 129, 0.1);
-            color: #10b981;
-            border: 1px solid rgba(16, 185, 129, 0.3);
-        }
-
-        .team-action-btn.add:hover {
-            background: rgba(16, 185, 129, 0.2);
-            border-color: #10b981;
-            transform: translateY(-1px);
-        }
-
-        .team-action-btn.subtract {
-            background: rgba(239, 68, 68, 0.1);
-            color: #ef4444;
-            border: 1px solid rgba(239, 68, 68, 0.3);
-        }
-
-        .team-action-btn.subtract:hover {
-            background: rgba(239, 68, 68, 0.2);
-            border-color: #ef4444;
-            transform: translateY(-1px);
-        }
-
-        .team-action-btn.reset {
-            background: rgba(245, 158, 11, 0.1);
-            color: #f59e0b;
-            border: 1px solid rgba(245, 158, 11, 0.3);
-        }
-
-        .team-action-btn.reset:hover {
-            background: rgba(245, 158, 11, 0.2);
-            border-color: #f59e0b;
-            transform: translateY(-1px);
-        }
-
-        .team-action-btn.primary {
-            background: rgba(99, 102, 241, 0.1);
-            color: #6366f1;
-            border: 1px solid rgba(99, 102, 241, 0.3);
-        }
-
-        .team-action-btn.primary:hover {
-            background: rgba(99, 102, 241, 0.2);
-            border-color: #6366f1;
-            transform: translateY(-1px);
-        }
-
-        .team-action-btn.large {
-            padding: var(--spacing-md) var(--spacing-sm);
-            font-size: 0.875rem;
-            min-height: 52px;
-        }
-
-        .team-action-btn:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-            transform: none !important;
-        }
+        /* Anciens styles supprimés - remplacés par le nouveau design ultra compact */
 
         /* ==================== CONFIG BUTTON INTEGRATED ==================== */
         .config-btn-integrated {
@@ -553,6 +498,156 @@ $token = $_GET['token'] ?? '';
         /* ==================== TEXT EFFECTS ANIMATIONS - DÉSACTIVÉES ==================== */
         /* Animations désactivées pour éviter les distractions */
 
+        /* ==================== ULTRA COMPACT CONTROL PANELS ==================== */
+        .team-action-bar {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(15, 23, 42, 0.95);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(148, 163, 184, 0.1);
+            border-radius: 8px;
+            padding: 8px 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            z-index: 1000;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            min-width: 400px;
+            max-width: 90vw;
+        }
+
+        .team-action-bar-sections {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .team-action-section {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .team-action-section-header {
+            font-size: 10px;
+            font-weight: 600;
+            color: #94a3b8;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            white-space: nowrap;
+            margin-right: 4px;
+        }
+
+        .team-action-buttons {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        /* ==================== ULTRA COMPACT BUTTONS ==================== */
+        .team-action-btn {
+            padding: 4px 8px;
+            border: none;
+            border-radius: 4px;
+            font-size: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.15s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+            height: 24px;
+            min-width: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+            background: transparent;
+            color: #ffffff;
+        }
+
+        .team-action-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: currentColor;
+            opacity: 0;
+            transition: opacity 0.15s ease;
+            z-index: -1;
+        }
+
+        .team-action-btn:hover::before {
+            opacity: 0.1;
+        }
+
+        .team-action-btn.add {
+            background: rgba(16, 185, 129, 0.15);
+            color: #10b981;
+            border: 1px solid rgba(16, 185, 129, 0.3);
+        }
+
+        .team-action-btn.add:hover {
+            background: rgba(16, 185, 129, 0.25);
+            border-color: #10b981;
+            transform: translateY(-1px);
+        }
+
+        .team-action-btn.subtract {
+            background: rgba(239, 68, 68, 0.15);
+            color: #ef4444;
+            border: 1px solid rgba(239, 68, 68, 0.3);
+        }
+
+        .team-action-btn.subtract:hover {
+            background: rgba(239, 68, 68, 0.25);
+            border-color: #ef4444;
+            transform: translateY(-1px);
+        }
+
+        .team-action-btn.reset {
+            background: rgba(245, 158, 11, 0.15);
+            color: #f59e0b;
+            border: 1px solid rgba(245, 158, 11, 0.3);
+        }
+
+        .team-action-btn.reset:hover {
+            background: rgba(245, 158, 11, 0.25);
+            border-color: #f59e0b;
+            transform: translateY(-1px);
+        }
+
+        .team-action-btn.primary {
+            background: rgba(99, 102, 241, 0.15);
+            color: #6366f1;
+            border: 1px solid rgba(99, 102, 241, 0.3);
+        }
+
+        .team-action-btn.primary:hover {
+            background: rgba(99, 102, 241, 0.25);
+            border-color: #6366f1;
+            transform: translateY(-1px);
+        }
+
+        .team-action-btn.large {
+            height: 28px;
+            min-width: 40px;
+            font-size: 11px;
+        }
+
+        .team-action-btn:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+
+        /* Bouton toggle supprimé - panneau toujours visible */
+
         /* ==================== RESPONSIVE DESIGN ==================== */
         @media (max-width: 1024px) {
             .widget-container {
@@ -588,19 +683,37 @@ $token = $_GET['token'] ?? '';
             }
             
             .team-action-bar {
-                padding: var(--spacing-xs);
+                bottom: 10px;
+                padding: 6px 8px;
+                gap: 6px;
+                min-width: 320px;
             }
-            
+
+            .team-action-bar-sections {
+                gap: 8px;
+            }
+
+            .team-action-section {
+                gap: 4px;
+            }
+
             .team-action-buttons {
-                grid-template-columns: repeat(4, 1fr);
-                gap: var(--spacing-xs);
+                gap: 3px;
             }
 
             .team-action-btn {
-                font-size: 0.65rem;
-                padding: var(--spacing-xs);
-                min-height: 32px;
+                padding: 3px 6px;
+                font-size: 9px;
+                height: 22px;
+                min-width: 28px;
             }
+
+            .team-action-section-header {
+                font-size: 9px;
+                margin-right: 3px;
+            }
+
+            /* Bouton toggle supprimé - panneau toujours visible */
         }
 
         @media (max-width: 480px) {
@@ -653,15 +766,17 @@ $token = $_GET['token'] ?? '';
         
         <!-- Si paramètre control=true, afficher les contrôles -->
         <?php if($control): ?>
-        <div class="team-action-bar">
+        <div class="team-action-bar" id="team-action-bar">
             <div class="team-action-bar-header">
                 <div class="team-action-bar-title">
                     <i class="fas fa-users"></i>
                     Module Team VS Team
                 </div>
-                <a href="/modules/teams-config.php?token=<?=$token?>" class="team-action-bar-config">
-                    <i class="fas fa-cog"></i>
-                </a>
+                <div class="team-action-bar-controls">
+                    <a href="/modules/teams-config.php?token=<?=$token?>" class="team-action-bar-config">
+                        <i class="fas fa-cog"></i>
+                    </a>
+                </div>
             </div>
             
             <div class="team-action-bar-sections">
@@ -731,6 +846,9 @@ $token = $_GET['token'] ?? '';
             timestamp: 0 
         };
         
+        // Flag pour éviter les mises à jour concurrentes
+        let isUpdatingDisplay = false;
+        
         // Fonction pour mettre à jour l'affichage
         function updateDisplay(data) {
             if (data.data) {
@@ -746,65 +864,233 @@ $token = $_GET['token'] ?? '';
         
         // Fonction pour mettre à jour l'affichage des équipes
         function updateTeamsDisplay() {
-            // Équipe verte
-            const greenName = document.getElementById('green-name');
-            const greenScore = document.getElementById('green-score');
-            if (greenName && currentData.green) {
-                greenName.textContent = currentData.green.name || 'ÉQUIPE VERTE';
-            }
-            if (greenScore && currentData.green) {
-                greenScore.textContent = currentData.green.score || 0;
-            }
+            if (isUpdatingDisplay) return;
+            isUpdatingDisplay = true;
             
-            // Équipe rouge
-            const redName = document.getElementById('red-name');
-            const redScore = document.getElementById('red-score');
-            if (redName && currentData.red) {
-                redName.textContent = currentData.red.name || 'ÉQUIPE ROUGE';
-            }
-            if (redScore && currentData.red) {
-                redScore.textContent = currentData.red.score || 0;
+            try {
+                // Vérifier s'il y a des noms personnalisés dans les styles
+                const hasCustomNames = currentStyles.green?.name || currentStyles.red?.name;
+                
+                // Équipe verte
+                const greenScore = document.getElementById('green-score');
+                if (greenScore && currentData.green) {
+                    greenScore.textContent = currentData.green.score || 0;
+                }
+                
+                // Ne mettre à jour les noms que s'il n'y a pas de noms personnalisés
+                if (!hasCustomNames) {
+                    const greenName = document.getElementById('green-name');
+                    if (greenName && currentData.green) {
+                        greenName.textContent = currentData.green.name || 'ÉQUIPE VERTE';
+                    }
+                }
+                
+                // Équipe rouge
+                const redScore = document.getElementById('red-score');
+                if (redScore && currentData.red) {
+                    redScore.textContent = currentData.red.score || 0;
+                }
+                
+                // Ne mettre à jour les noms que s'il n'y a pas de noms personnalisés
+                if (!hasCustomNames) {
+                    const redName = document.getElementById('red-name');
+                    if (redName && currentData.red) {
+                        redName.textContent = currentData.red.name || 'ÉQUIPE ROUGE';
+                    }
+                }
+            } finally {
+                // Libérer le flag après un délai pour éviter les conflits
+                setTimeout(() => {
+                    isUpdatingDisplay = false;
+                }, 50);
             }
         }
         
         // Variables globales pour les styles
         let currentStyles = {};
+        let stylesCheckInterval = null;
+        let lastStylesCheck = 0;
+        const STYLES_CHECK_INTERVAL = 3000; // 3 secondes pour éviter les conflits
         
         // Fonction pour charger les styles
         async function loadStyles() {
             try {
-                // Utiliser l'URL complète depuis la configuration
-                const baseUrl = window.location.origin;
-                const response = await fetch(`${baseUrl}/api.php?token=${token}&module=teams-style&action=get`);
-                const result = await response.json();
-                if (result.success && result.data) {
+                // NOUVELLE MÉTHODE : Récupérer les styles via API au lieu de localStorage
+                const response = await fetch(`/api.php?token=${token}&module=teams-style&action=get`);
+                const data = await response.json();
+                
+                if (data.success && data.data) {
+                    currentStyles = data.data;
+                    applyStyles(currentStyles);
                     
-                    // Sauvegarder les styles de base (sans écraser les styles temps réel)
-                    const baseStyles = result.data;
-                    
-                    // Vérifier s'il y a des styles temps réel actifs
-                    const realtimeStyles = localStorage.getItem('realtimeTeamsStyles');
-                    if (realtimeStyles && Object.keys(JSON.parse(realtimeStyles)).length > 0) {
-                        currentStyles = JSON.parse(realtimeStyles);
-                        // Ne pas appliquer les styles de base, utiliser les temps réel
-                        applyStyles(currentStyles);
-                    } else {
-                        currentStyles = baseStyles;
-                        applyStyles(baseStyles);
-                    }
-                    
-                    // Forcer la mise à jour des noms d'équipes après l'application des styles
-                    // Seulement si on n'est pas en mode temps réel
-                    if (!isApplyingRealtimeStyles) {
-                        setTimeout(() => {
-                            applyTeamNames(baseStyles);
-                        }, 50);
-                    }
+                    // Sauvegarder en localStorage comme fallback
+                    localStorage.setItem('teamsStylesFallback', JSON.stringify(data.data));
+                    localStorage.setItem('teamsStylesTimestamp', data.timestamp || Date.now());
                 } else {
+                    // Fallback : essayer localStorage
+                    const fallbackStyles = localStorage.getItem('teamsStylesFallback');
+                    if (fallbackStyles) {
+                        currentStyles = JSON.parse(fallbackStyles);
+                        applyStyles(currentStyles);
+                    }
                 }
             } catch (error) {
+                console.error('Erreur lors du chargement des styles:', error);
+                // Fallback : essayer localStorage
+                const fallbackStyles = localStorage.getItem('teamsStylesFallback');
+                if (fallbackStyles) {
+                    currentStyles = JSON.parse(fallbackStyles);
+                    applyStyles(currentStyles);
+                }
             }
         }
+
+        // NOUVELLE FONCTION : Afficher les erreurs de manière visible
+        function showErrorNotification(message) {
+            const notification = document.createElement('div');
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                left: 50%;
+                transform: translateX(-50%);
+                background: linear-gradient(135deg, #ef4444, #dc2626);
+                color: white;
+                padding: 1rem 2rem;
+                border-radius: 12px;
+                font-weight: 600;
+                z-index: 10000;
+                animation: slideInTop 0.3s ease-out;
+                box-shadow: 0 8px 25px rgba(239, 68, 68, 0.4);
+            `;
+            notification.innerHTML = `<i class="fas fa-exclamation-triangle"></i> ${message}`;
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.remove();
+            }, 5000);
+        }
+
+        // NOUVELLE FONCTION : Détection de non-rendu et retry automatique
+        let renderCheckInterval = null;
+        let renderCheckAttempts = 0;
+        const MAX_RENDER_ATTEMPTS = 3;
+
+        function startRenderCheck() {
+            renderCheckInterval = setInterval(() => {
+                const greenScore = document.getElementById('green-score');
+                const redScore = document.getElementById('red-score');
+                if (!greenScore || !redScore || greenScore.textContent === '' || redScore.textContent === '') {
+                    renderCheckAttempts++;
+                    
+                    if (renderCheckAttempts >= MAX_RENDER_ATTEMPTS) {
+                        clearInterval(renderCheckInterval);
+                        window.location.reload();
+                    } else {
+                        // Forcer la mise à jour de l'affichage
+                        updateTeamsDisplay();
+                    }
+                } else {
+                    // Rendu OK, arrêter la vérification
+                    clearInterval(renderCheckInterval);
+                    renderCheckAttempts = 0;
+                }
+            }, 2000); // Vérifier toutes les 2 secondes
+        }
+
+
+
+        // NOUVELLE FONCTION : Initialisation robuste
+        function initializeRobustly() {
+            // Démarrer la vérification de rendu
+            startRenderCheck();
+            
+            // Charger les données avec retry
+            apiCall('get').catch(error => {
+                console.error('Erreur lors de l\'initialisation:', error);
+                showErrorNotification('Erreur d\'initialisation');
+                
+                // Retry après 3 secondes
+                setTimeout(() => {
+                    apiCall('get');
+                }, 3000);
+            });
+            
+            // Charger les styles avec retry
+            loadStyles().catch(error => {
+                console.error('Erreur lors du chargement des styles:', error);
+                
+                // Retry après 2 secondes
+                setTimeout(() => {
+                    loadStyles();
+                }, 2000);
+            });
+            
+            // Système de toggle supprimé - panneau toujours visible
+        }
+
+        // Système de toggle supprimé - panneau toujours visible
+
+
+
+        // Fonction pour démarrer le polling optimisé
+        function startOptimizedPolling() {
+            // Polling déjà géré par la fonction apiCall avec setInterval
+            // Pas besoin de fonction séparée
+        }
+
+        // Fonction pour démarrer la vérification optimisée des styles
+        function startOptimizedStylesCheck() {
+            // Démarrer la vérification des styles
+            if (stylesCheckInterval) {
+                clearInterval(stylesCheckInterval);
+            }
+            
+            stylesCheckInterval = setInterval(async () => {
+                try {
+                    const response = await fetch(`/api.php?token=${token}&module=teams-style&action=get`);
+                    const data = await response.json();
+                    
+                    if (data.success && data.data) {
+                        const currentTime = Date.now();
+                        const timeSinceLastCheck = currentTime - lastStylesCheck;
+                        
+                        // Ne mettre à jour que si les styles ont changé ou après 10 secondes
+                        if (JSON.stringify(data.data) !== JSON.stringify(currentStyles) ||
+                            timeSinceLastCheck > 10000) {
+                            
+                            applyStyles(data.data);
+                            lastStylesCheck = currentTime;
+                        }
+                    }
+                } catch (error) {
+                    // Erreur silencieuse pour la vérification des styles
+                }
+            }, STYLES_CHECK_INTERVAL);
+        }
+
+        // Auto-refresh simplifié (sans restrictions)
+        setInterval(() => {
+            // Auto-refresh toutes les 2000ms pour éviter les conflits
+            apiCall('get');
+        }, 2000); // Augmenté à 2000ms pour réduire les conflits
+
+        // Charger les données initiales
+        apiCall('get');
+        
+        // Initialisation propre avec gestion du conflit styles sauvegardés vs temps réel
+        setTimeout(() => {
+            loadStyles();
+        }, 100); // Optimisé à 100ms
+        
+        // Forcer un rechargement des styles après 500ms
+        setTimeout(() => {
+            loadStyles();
+        }, 500);
+
+        // Initialisation propre
+        document.addEventListener('DOMContentLoaded', () => {
+            initializeRobustly();
+        });
         
         // Fonction d'application des styles
         function applyStyles(styles) {
@@ -815,11 +1101,8 @@ $token = $_GET['token'] ?? '';
             
             // Validation des styles
             if (!styles || typeof styles !== 'object') {
-                console.warn('Styles invalides reçus:', styles);
                 return;
             }
-            
-            // console.log('🎨 Application des styles groupés:', styles);
             
             let css = '';
             
@@ -984,7 +1267,7 @@ $token = $_GET['token'] ?? '';
             // Appliquer les noms d'équipes séparément pour éviter les conflits
             applyTeamNames(styles);
             
-            // console.log('✅ Styles appliqués avec succès (structure groupée)');
+            
         }
         
         // Génération du CSS de positionnement
@@ -1040,10 +1323,15 @@ $token = $_GET['token'] ?? '';
             window.isUpdatingTeamNames = true;
             
             try {
+                // Prioriser les noms personnalisés sur les noms par défaut
                 if (styles.green && styles.green.name) {
                     const greenNameElement = document.getElementById('green-name');
                     if (greenNameElement && greenNameElement.textContent !== styles.green.name) {
                         greenNameElement.textContent = styles.green.name;
+                        // Forcer la mise à jour du DOM
+                        greenNameElement.style.display = 'none';
+                        greenNameElement.offsetHeight; // Force reflow
+                        greenNameElement.style.display = '';
                     }
                 }
                 
@@ -1051,13 +1339,25 @@ $token = $_GET['token'] ?? '';
                     const redNameElement = document.getElementById('red-name');
                     if (redNameElement && redNameElement.textContent !== styles.red.name) {
                         redNameElement.textContent = styles.red.name;
+                        // Forcer la mise à jour du DOM
+                        redNameElement.style.display = 'none';
+                        redNameElement.offsetHeight; // Force reflow
+                        redNameElement.style.display = '';
                     }
+                }
+                
+                // Synchroniser avec les données actuelles pour éviter les conflits
+                if (styles.green && styles.green.name) {
+                    currentData.green.name = styles.green.name;
+                }
+                if (styles.red && styles.red.name) {
+                    currentData.red.name = styles.red.name;
                 }
             } finally {
                 // Libérer le flag après un délai plus long pour éviter les conflits
                 setTimeout(() => {
                     window.isUpdatingTeamNames = false;
-                }, 200);
+                }, 300); // Augmenté à 300ms pour éviter les conflits
             }
         }
         
@@ -1098,24 +1398,42 @@ $token = $_GET['token'] ?? '';
             }
         }
         
-        // Auto-refresh simplifié (sans restrictions)
-        setInterval(() => {
-            // Auto-refresh toutes les 1000ms pour éviter les conflits
-            apiCall('get');
-        }, 1000); // Augmenté à 1000ms pour réduire les conflits
+        // Système de polling optimisé pour éviter les conflits
+        let pollingInterval = null;
+        const POLLING_INTERVAL = 2000; // 2 secondes pour réduire les conflits
+
+        function startOptimizedPolling() {
+            if (pollingInterval) {
+                clearInterval(pollingInterval);
+            }
+            
+            pollingInterval = setInterval(async () => {
+                try {
+                    const response = await fetch(`/api.php?token=${token}&module=${module}&action=get`);
+                    const data = await response.json();
+                    
+                    if (data.success && data.data) {
+                        const currentTime = Date.now();
+                        const timeSinceLastUpdate = currentTime - lastDataUpdate;
+                        
+                        // Ne mettre à jour que si les données ont changé ou après 5 secondes
+                        if (JSON.stringify(data.data) !== JSON.stringify(currentData) ||
+                            timeSinceLastUpdate > 5000) {
+                            
+                            updateDisplay(data);
+                            lastDataUpdate = currentTime;
+                        }
+                    }
+                } catch (error) {
+                    // Erreur silencieuse pour le polling
+                }
+            }, POLLING_INTERVAL);
+        }
+
+        // Démarrer le polling optimisé
+        startOptimizedPolling();
         
-        // Charger les données initiales
-        apiCall('get');
-        
-        // Initialisation propre avec gestion du conflit styles sauvegardés vs temps réel
-        setTimeout(() => {
-            loadStyles();
-        }, 100); // Optimisé à 100ms
-        
-        // Forcer un rechargement des styles après 500ms
-        setTimeout(() => {
-            loadStyles();
-        }, 500);
+
         
         // Charger les styles temps réel persistés avec priorité
         try {
@@ -1219,36 +1537,7 @@ $token = $_GET['token'] ?? '';
             };
         }
         
-        // Vérifier localStorage (version 2.0 super réactive et propre)
-        setInterval(() => {
-            // Ne pas vérifier si on est en train d'appliquer des styles temps réel
-            if (isApplyingRealtimeStyles) return;
-            
-            const stylesTimestamp = localStorage.getItem('teamsStylesTimestamp');
-            const lastTimestamp = window.lastTeamsStylesTimestamp || 0;
-            
-            // Vérifier le signal de force update avec réactivité améliorée
-            const forceUpdate = localStorage.getItem('forceTeamsStyleUpdate');
-            if (forceUpdate && forceUpdate !== window.lastForceTeamsUpdate) {
-                console.log('🚀 Force update détecté, application immédiate');
-                window.lastForceTeamsUpdate = forceUpdate;
-                const styles = JSON.parse(localStorage.getItem('realtimeTeamsStyles') || '{}');
-                
-                if (Object.keys(styles).length > 0) {
-                    applyRealtimeStyles(styles);
-                }
-                return;
-            }
-            
-            if (stylesTimestamp && parseInt(stylesTimestamp) > lastTimestamp) {
-                const styles = JSON.parse(localStorage.getItem('realtimeTeamsStyles') || '{}');
-                
-                if (Object.keys(styles).length > 0) {
-                    applyRealtimeStyles(styles);
-                    window.lastTeamsStylesTimestamp = parseInt(stylesTimestamp);
-                }
-            }
-        }, 250); // Augmenté à 250ms pour éviter les conflits
+
         
         <?php if($control): ?>
         // Gestion des boutons
