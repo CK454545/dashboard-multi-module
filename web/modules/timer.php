@@ -219,6 +219,8 @@ $token = $_GET['token'] ?? '';
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
             min-width: 400px;
             max-width: 90vw;
+            flex-wrap: wrap;
+            justify-content: center;
         }
 
         .timer-action-bar-sections {
@@ -226,12 +228,14 @@ $token = $_GET['token'] ?? '';
             align-items: center;
             gap: 12px;
             flex-wrap: wrap;
+            justify-content: center;
         }
 
         .timer-action-section {
             display: flex;
             align-items: center;
             gap: 6px;
+            flex-wrap: wrap;
         }
 
         .timer-action-section-header {
@@ -248,6 +252,7 @@ $token = $_GET['token'] ?? '';
             display: flex;
             align-items: center;
             gap: 4px;
+            flex-wrap: wrap;
         }
 
         /* ==================== ULTRA COMPACT BUTTONS ==================== */
@@ -366,6 +371,7 @@ $token = $_GET['token'] ?? '';
             display: flex;
             align-items: center;
             gap: 4px;
+            flex-wrap: wrap;
         }
 
         .manual-input-group {
@@ -402,24 +408,40 @@ $token = $_GET['token'] ?? '';
         }
 
         /* ==================== RESPONSIVE DESIGN ==================== */
+        @media (max-width: 1024px) {
+            .timer-action-bar {
+                min-width: 350px;
+                padding: 6px 10px;
+            }
+            
+            .timer-action-bar-sections {
+                gap: 10px;
+            }
+        }
+
         @media (max-width: 768px) {
             .timer-action-bar {
                 bottom: 10px;
                 padding: 6px 8px;
                 gap: 6px;
                 min-width: 320px;
+                max-width: 95vw;
             }
 
             .timer-action-bar-sections {
                 gap: 8px;
+                flex-direction: column;
             }
 
             .timer-action-section {
                 gap: 4px;
+                justify-content: center;
             }
 
             .timer-action-buttons {
                 gap: 3px;
+                justify-content: center;
+                flex-wrap: wrap;
             }
 
             .timer-action-btn {
@@ -443,19 +465,71 @@ $token = $_GET['token'] ?? '';
 
         @media (max-width: 480px) {
             .timer-action-bar {
-                flex-direction: column;
-                gap: 6px;
-                padding: 8px;
                 min-width: 280px;
+                padding: 4px 6px;
+                bottom: 5px;
             }
-
+            
             .timer-action-bar-sections {
-                flex-direction: column;
                 gap: 6px;
             }
-
+            
             .timer-action-section {
+                gap: 3px;
+            }
+            
+            .timer-action-buttons {
+                gap: 2px;
                 justify-content: center;
+            }
+            
+            .timer-action-btn {
+                padding: 2px 4px;
+                font-size: 8px;
+                height: 20px;
+                min-width: 24px;
+            }
+            
+            .timer-action-section-header {
+                font-size: 8px;
+                margin-right: 2px;
+            }
+            
+            .timer-action-btn.large {
+                height: 24px;
+                min-width: 36px;
+                font-size: 10px;
+            }
+            
+            .manual-input {
+                width: 24px;
+                height: 16px;
+                font-size: 7px;
+            }
+        }
+
+        @media (max-width: 360px) {
+            .timer-action-bar {
+                min-width: 260px;
+                padding: 3px 4px;
+            }
+            
+            .timer-action-btn {
+                padding: 1px 3px;
+                font-size: 7px;
+                height: 18px;
+                min-width: 20px;
+            }
+            
+            .timer-action-section-header {
+                font-size: 7px;
+                margin-right: 1px;
+            }
+            
+            .manual-input {
+                width: 20px;
+                height: 14px;
+                font-size: 6px;
             }
         }
 
@@ -466,6 +540,7 @@ $token = $_GET['token'] ?? '';
             border-radius: 16px;
             padding: 20px 40px;
             min-width: 320px;
+            max-width: 90vw;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -622,508 +697,121 @@ $token = $_GET['token'] ?? '';
             border-radius: 0 0 16px 0;
         }
 
-        /* Responsive pour Alka */
-        @media (max-width: 768px) {
-            #alka-timer {
-                font-size: 2.5rem;
-                gap: 10px;
-            }
-            .alka-container {
-                padding: 15px 25px;
+        /* ==================== RESPONSIVE DESIGN POUR MFA PREMIUM ==================== */
+        @media (max-width: 1024px) {
+            .premium-container {
                 min-width: 280px;
+                padding: 15px 30px;
             }
-            .alka-time-group {
+            
+            #premium-timer {
+                font-size: 3rem;
+                gap: 12px;
+            }
+            
+            .premium-time-group {
                 padding: 8px 12px;
             }
         }
 
-        /* ==================== STYLE MFA PREMIUM ==================== */
-        .premium-container {
-            position: relative;
-            background: #000000;
-            border-radius: 16px;
-            padding: 20px 40px;
-            min-width: 320px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: auto;
-            height: auto;
-            --premium-accent-color: #ff6b35;
-            --premium-text-color: #ffffff;
-            --premium-digits-color: #ff6b35;
-        }
-
-        .premium-logo-area {
-            position: absolute;
-            top: -20px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: var(--premium-accent-color);
-            padding: 4px 20px;
-            border-radius: 20px;
-            font-size: 0.8rem;
-            font-weight: 800;
-            color: #000;
-            letter-spacing: 0.1em;
-            text-transform: uppercase;
-        }
-
-        #premium-timer {
-            font-size: 3.5rem;
-            color: var(--premium-text-color);
-            text-align: center;
-            white-space: nowrap;
-            font-weight: 800;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 15px;
-        }
-
-        .premium-time-group {
-            display: flex;
-            align-items: baseline;
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 12px;
-            padding: 10px 15px;
-            border: 2px solid rgba(255, 107, 53, 0.3);
-            transition: all 0.3s ease;
-        }
-
-        .premium-time-group:hover {
-            background: rgba(255, 107, 53, 0.1);
-            border-color: var(--premium-accent-color);
-            transform: translateY(-2px);
-        }
-
-        .premium-digits {
-            font-weight: 900;
-            color: var(--premium-digits-color);
-            font-size: 1.2em;
-            letter-spacing: 0.05em;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
-        }
-
-        .premium-unit {
-            font-size: 0.5em;
-            color: rgba(255, 255, 255, 0.7);
-            margin-left: 8px;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.1em;
-        }
-
-        .premium-separator {
-            color: var(--premium-accent-color);
-            font-weight: 800;
-            font-size: 1.1em;
-            opacity: 0.8;
-            animation: premium-blink 2s ease-in-out infinite;
-        }
-
-        @keyframes premium-blink {
-            0%, 100% { opacity: 0.8; }
-            50% { opacity: 0.3; }
-        }
-
-        .premium-low-time .premium-time-group {
-            background: rgba(255, 0, 0, 0.1);
-            border-color: #ff0000;
-            animation: premium-urgent-shake 0.5s ease-in-out infinite;
-        }
-
-        .premium-low-time .premium-digits {
-            color: #ff0000;
-        }
-
-        @keyframes premium-urgent-shake {
-            0%, 100% { transform: translateX(0); }
-            25% { transform: translateX(-2px); }
-            75% { transform: translateX(2px); }
-        }
-
-        .premium-change-animation {
-            animation: premium-flip-in 0.4s ease-out;
-        }
-
-        @keyframes premium-flip-in {
-            0% { 
-                transform: scaleY(0);
-                opacity: 0;
+        @media (max-width: 768px) {
+            .premium-container {
+                min-width: 260px;
+                padding: 12px 20px;
+                max-width: 95vw;
             }
-            50% { 
-                transform: scaleY(1.1);
+            
+            #premium-timer {
+                font-size: 2.5rem;
+                gap: 10px;
             }
-            100% { 
-                transform: scaleY(1);
-                opacity: 1;
+            
+            .premium-time-group {
+                padding: 6px 10px;
+            }
+            
+            .premium-digits {
+                font-size: 1em;
+            }
+            
+            .premium-unit {
+                font-size: 0.4em;
+                margin-left: 6px;
+            }
+            
+            .premium-separator {
+                font-size: 1em;
             }
         }
 
-        .premium-corner-accent {
-            position: absolute;
-            width: 20px;
-            height: 20px;
-            border: 2px solid var(--premium-accent-color);
-        }
-
-        .premium-corner-accent.premium-top-left {
-            top: -1px;
-            left: -1px;
-            border-right: none;
-            border-bottom: none;
-            border-radius: 16px 0 0 0;
-        }
-
-        .premium-corner-accent.premium-top-right {
-            top: -1px;
-            right: -1px;
-            border-left: none;
-            border-bottom: none;
-            border-radius: 0 16px 0 0;
-        }
-
-        .premium-corner-accent.premium-bottom-left {
-            bottom: -1px;
-            left: -1px;
-            border-right: none;
-            border-top: none;
-            border-radius: 0 0 0 16px;
-        }
-
-        .premium-corner-accent.premium-bottom-right {
-            bottom: -1px;
-            right: -1px;
-            border-left: none;
-            border-top: none;
-            border-radius: 0 0 16px 0;
-        }
-
-        /* ==================== STYLE MFA PREMIUM ==================== */
-        .premium-container {
-            position: relative;
-            background: #000000;
-            border-radius: 16px;
-            padding: 20px 40px;
-            min-width: 320px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: auto;
-            height: auto;
-            --premium-accent-color: #ff6b35;
-            --premium-text-color: #ffffff;
-            --premium-digits-color: #ff6b35;
-        }
-
-        .premium-logo-area {
-            position: absolute;
-            top: -20px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: var(--premium-accent-color);
-            padding: 4px 20px;
-            border-radius: 20px;
-            font-size: 0.8rem;
-            font-weight: 800;
-            color: #000;
-            letter-spacing: 0.1em;
-            text-transform: uppercase;
-        }
-
-        #premium-timer {
-            font-size: 3.5rem;
-            color: var(--premium-text-color);
-            text-align: center;
-            white-space: nowrap;
-            font-weight: 800;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 15px;
-        }
-
-        .premium-time-group {
-            display: flex;
-            align-items: baseline;
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 12px;
-            padding: 10px 15px;
-            border: 2px solid rgba(255, 107, 53, 0.3);
-            transition: all 0.3s ease;
-        }
-
-        .premium-time-group:hover {
-            background: rgba(255, 107, 53, 0.1);
-            border-color: var(--premium-accent-color);
-            transform: translateY(-2px);
-        }
-
-        .premium-digits {
-            font-weight: 900;
-            color: var(--premium-digits-color);
-            font-size: 1.2em;
-            letter-spacing: 0.05em;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
-        }
-
-        .premium-unit {
-            font-size: 0.5em;
-            color: rgba(255, 255, 255, 0.7);
-            margin-left: 8px;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.1em;
-        }
-
-        .premium-separator {
-            color: var(--premium-accent-color);
-            font-weight: 800;
-            font-size: 1.1em;
-            opacity: 0.8;
-            animation: premium-blink 2s ease-in-out infinite;
-        }
-
-        @keyframes premium-blink {
-            0%, 100% { opacity: 0.8; }
-            50% { opacity: 0.3; }
-        }
-
-        .premium-low-time .premium-time-group {
-            background: rgba(255, 0, 0, 0.1);
-            border-color: #ff0000;
-            animation: premium-urgent-shake 0.5s ease-in-out infinite;
-        }
-
-        .premium-low-time .premium-digits {
-            color: #ff0000;
-        }
-
-        @keyframes premium-urgent-shake {
-            0%, 100% { transform: translateX(0); }
-            25% { transform: translateX(-2px); }
-            75% { transform: translateX(2px); }
-        }
-
-        .premium-change-animation {
-            animation: premium-flip-in 0.4s ease-out;
-        }
-
-        @keyframes premium-flip-in {
-            0% { 
-                transform: scaleY(0);
-                opacity: 0;
+        @media (max-width: 480px) {
+            .premium-container {
+                min-width: 240px;
+                padding: 10px 15px;
+                max-width: 98vw;
             }
-            50% { 
-                transform: scaleY(1.1);
+            
+            #premium-timer {
+                font-size: 2rem;
+                gap: 8px;
             }
-            100% { 
-                transform: scaleY(1);
-                opacity: 1;
+            
+            .premium-time-group {
+                padding: 5px 8px;
+            }
+            
+            .premium-digits {
+                font-size: 0.9em;
+            }
+            
+            .premium-unit {
+                font-size: 0.35em;
+                margin-left: 4px;
+            }
+            
+            .premium-separator {
+                font-size: 0.9em;
+            }
+            
+            .premium-logo-area {
+                font-size: 0.7rem;
+                padding: 3px 15px;
             }
         }
 
-        .premium-corner-accent {
-            position: absolute;
-            width: 20px;
-            height: 20px;
-            border: 2px solid var(--premium-accent-color);
-        }
-
-        .premium-corner-accent.premium-top-left {
-            top: -1px;
-            left: -1px;
-            border-right: none;
-            border-bottom: none;
-            border-radius: 16px 0 0 0;
-        }
-
-        .premium-corner-accent.premium-top-right {
-            top: -1px;
-            right: -1px;
-            border-left: none;
-            border-bottom: none;
-            border-radius: 0 16px 0 0;
-        }
-
-        .premium-corner-accent.premium-bottom-left {
-            bottom: -1px;
-            left: -1px;
-            border-right: none;
-            border-top: none;
-            border-radius: 0 0 0 16px;
-        }
-
-        .premium-corner-accent.premium-bottom-right {
-            bottom: -1px;
-            right: -1px;
-            border-left: none;
-            border-top: none;
-            border-radius: 0 0 16px 0;
-        }
-
-        /* ==================== STYLE MFA PREMIUM ==================== */
-        .premium-container {
-            position: relative;
-            background: #000000;
-            border-radius: 16px;
-            padding: 20px 40px;
-            min-width: 320px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: auto;
-            height: auto;
-            --premium-accent-color: #ff6b35;
-            --premium-text-color: #ffffff;
-            --premium-digits-color: #ff6b35;
-        }
-
-        .premium-logo-area {
-            position: absolute;
-            top: -20px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: var(--premium-accent-color);
-            padding: 4px 20px;
-            border-radius: 20px;
-            font-size: 0.8rem;
-            font-weight: 800;
-            color: #000;
-            letter-spacing: 0.1em;
-            text-transform: uppercase;
-        }
-
-        #premium-timer {
-            font-size: 3.5rem;
-            color: var(--premium-text-color);
-            text-align: center;
-            white-space: nowrap;
-            font-weight: 800;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 15px;
-        }
-
-        .premium-time-group {
-            display: flex;
-            align-items: baseline;
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 12px;
-            padding: 10px 15px;
-            border: 2px solid rgba(255, 107, 53, 0.3);
-            transition: all 0.3s ease;
-        }
-
-        .premium-time-group:hover {
-            background: rgba(255, 107, 53, 0.1);
-            border-color: var(--premium-accent-color);
-            transform: translateY(-2px);
-        }
-
-        .premium-digits {
-            font-weight: 900;
-            color: var(--premium-digits-color);
-            font-size: 1.2em;
-            letter-spacing: 0.05em;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
-        }
-
-        .premium-unit {
-            font-size: 0.5em;
-            color: rgba(255, 255, 255, 0.7);
-            margin-left: 8px;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.1em;
-        }
-
-        .premium-separator {
-            color: var(--premium-accent-color);
-            font-weight: 800;
-            font-size: 1.1em;
-            opacity: 0.8;
-            animation: premium-blink 2s ease-in-out infinite;
-        }
-
-        @keyframes premium-blink {
-            0%, 100% { opacity: 0.8; }
-            50% { opacity: 0.3; }
-        }
-
-        .premium-low-time .premium-time-group {
-            background: rgba(255, 0, 0, 0.1);
-            border-color: #ff0000;
-            animation: premium-urgent-shake 0.5s ease-in-out infinite;
-        }
-
-        .premium-low-time .premium-digits {
-            color: #ff0000;
-        }
-
-        @keyframes premium-urgent-shake {
-            0%, 100% { transform: translateX(0); }
-            25% { transform: translateX(-2px); }
-            75% { transform: translateX(2px); }
-        }
-
-        .premium-change-animation {
-            animation: premium-flip-in 0.4s ease-out;
-        }
-
-        @keyframes premium-flip-in {
-            0% { 
-                transform: scaleY(0);
-                opacity: 0;
+        @media (max-width: 360px) {
+            .premium-container {
+                min-width: 220px;
+                padding: 8px 12px;
+                max-width: 99vw;
             }
-            50% { 
-                transform: scaleY(1.1);
+            
+            #premium-timer {
+                font-size: 1.8rem;
+                gap: 6px;
             }
-            100% { 
-                transform: scaleY(1);
-                opacity: 1;
+            
+            .premium-time-group {
+                padding: 4px 6px;
             }
-        }
-
-        .premium-corner-accent {
-            position: absolute;
-            width: 20px;
-            height: 20px;
-            border: 2px solid var(--premium-accent-color);
-        }
-
-        .premium-corner-accent.premium-top-left {
-            top: -1px;
-            left: -1px;
-            border-right: none;
-            border-bottom: none;
-            border-radius: 16px 0 0 0;
-        }
-
-        .premium-corner-accent.premium-top-right {
-            top: -1px;
-            right: -1px;
-            border-left: none;
-            border-bottom: none;
-            border-radius: 0 16px 0 0;
-        }
-
-        .premium-corner-accent.premium-bottom-left {
-            bottom: -1px;
-            left: -1px;
-            border-right: none;
-            border-top: none;
-            border-radius: 0 0 0 16px;
-        }
-
-        .premium-corner-accent.premium-bottom-right {
-            bottom: -1px;
-            right: -1px;
-            border-left: none;
-            border-top: none;
-            border-radius: 0 0 16px 0;
+            
+            .premium-digits {
+                font-size: 0.8em;
+            }
+            
+            .premium-unit {
+                font-size: 0.3em;
+                margin-left: 3px;
+            }
+            
+            .premium-separator {
+                font-size: 0.8em;
+            }
+            
+            .premium-logo-area {
+                font-size: 0.6rem;
+                padding: 2px 12px;
+            }
         }
     </style>
 </head>
@@ -2813,6 +2501,139 @@ $token = $_GET['token'] ?? '';
   
   // Le style MFA Premium est maintenant géré directement dans updateDisplay() et forceDisplay()
   // Pas besoin d'initialisation séparée - tout est synchronisé automatiquement
+
+  // Fonction de diagnostic spécifique pour TikTok Live Studio
+  async function diagnoseTikTokLive() {
+    console.group('🔍 TikTok Live Studio Diagnostic');
+    
+    // 1. Vérifier l'environnement
+    console.log('Environment:', {
+      userAgent: navigator.userAgent,
+      platform: navigator.platform,
+      language: navigator.language,
+      cookieEnabled: navigator.cookieEnabled,
+      onLine: navigator.onLine
+    });
+    
+    // 2. Vérifier les éléments DOM
+    console.log('DOM Elements:', {
+      timerDisplay: !!document.getElementById('timer-display'),
+      alkaContainer: !!document.getElementById('alka-timer-container'),
+      actionBar: !!document.querySelector('.timer-action-bar'),
+      control: <?= $control ? 'true' : 'false' ?>
+    });
+    
+    // 3. Tester l'API
+    try {
+      console.log('Testing API endpoints...');
+      
+      // Test API timer
+      const timerResponse = await fetch(`/api.php?token=${encodeURIComponent(token)}&module=timer&action=get`, { 
+        cache: 'no-store',
+        headers: {
+          'Accept': 'application/json',
+          'X-Requested-With': 'XMLHttpRequest'
+        }
+      });
+      
+      console.log('Timer API Status:', timerResponse.status);
+      console.log('Timer API Headers:', Object.fromEntries(timerResponse.headers.entries()));
+      
+      const timerData = await timerResponse.json();
+      console.log('Timer API Response:', timerData);
+      
+      // Test API styles
+      const stylesResponse = await fetch(`/api.php?token=${encodeURIComponent(token)}&module=timer-style&action=get`, { 
+        cache: 'no-store',
+        headers: {
+          'Accept': 'application/json',
+          'X-Requested-With': 'XMLHttpRequest'
+        }
+      });
+      
+      console.log('Styles API Status:', stylesResponse.status);
+      const stylesData = await stylesResponse.json();
+      console.log('Styles API Response:', stylesData);
+      
+    } catch (err) {
+      console.error('API Test Error:', err);
+    }
+    
+    // 4. Vérifier l'état du timer
+    console.log('Timer State:', timerState);
+    console.log('Interval Status:', !!interval);
+    
+    // 5. Test de performance
+    const startTime = performance.now();
+    updateDisplay();
+    const endTime = performance.now();
+    console.log('Display Update Performance:', `${(endTime - startTime).toFixed(2)}ms`);
+    
+    // 6. Vérifier les styles appliqués
+    const dynamicStyles = document.getElementById('dynamic-styles');
+    if (dynamicStyles) {
+      console.log('Applied CSS Length:', dynamicStyles.innerHTML.length);
+      console.log('Applied CSS Preview:', dynamicStyles.innerHTML.substring(0, 200) + '...');
+    }
+    
+    // 7. Test de compatibilité TikTok
+    console.log('TikTok Compatibility:', {
+      fetchSupported: typeof fetch !== 'undefined',
+      setIntervalSupported: typeof setInterval !== 'undefined',
+      localStorageSupported: typeof localStorage !== 'undefined',
+      broadcastChannelSupported: typeof BroadcastChannel !== 'undefined'
+    });
+    
+    console.groupEnd();
+  }
+  
+  // Exposer la fonction de diagnostic
+  window.diagnoseTikTokLive = diagnoseTikTokLive;
+  
+  // Fonction pour forcer la compatibilité TikTok
+  function forceTikTokCompatibility() {
+    console.log('🔧 Forcing TikTok Live Studio compatibility...');
+    
+    // 1. Forcer les headers CORS
+    const originalFetch = window.fetch;
+    window.fetch = function(url, options = {}) {
+      const newOptions = {
+        ...options,
+        headers: {
+          'Accept': 'application/json',
+          'X-Requested-With': 'XMLHttpRequest',
+          ...options.headers
+        },
+        cache: 'no-store'
+      };
+      return originalFetch(url, newOptions);
+    };
+    
+    // 2. Améliorer la gestion des erreurs
+    window.addEventListener('error', (event) => {
+      console.error('Global error caught:', event.error);
+    });
+    
+    // 3. Forcer l'affichage initial
+    setTimeout(() => {
+      forceDisplay();
+      console.log('Forced initial display');
+    }, 100);
+    
+    // 4. Polling de sécurité pour TikTok
+    setInterval(() => {
+      const timerDisplay = document.getElementById('timer-display');
+      if (timerDisplay && !timerDisplay.textContent) {
+        console.log('Timer display empty, forcing update...');
+        forceDisplay();
+      }
+    }, 5000);
+    
+    console.log('TikTok compatibility mode activated');
+  }
+  
+  // Activer la compatibilité TikTok automatiquement
+  forceTikTokCompatibility();
 </script>
 </body>
 </html> 

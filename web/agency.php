@@ -30,8 +30,8 @@ $token = $_GET['token'] ?? '';
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
             background: #0a0e1b;
             color: #ffffff;
-            height: 100vh;
-            overflow: hidden;
+            min-height: 100vh; /* Mobile tweak: changed from height to min-height for better mobile scrolling */
+            overflow-x: hidden; /* Mobile tweak: prevent horizontal scroll */
             position: relative;
         }
 
@@ -122,12 +122,13 @@ $token = $_GET['token'] ?? '';
 
         /* ==================== HERO SECTION ==================== */
         .hero-section {
-            height: 100vh;
+            min-height: 100vh; /* Mobile tweak: changed from height to min-height */
             display: flex;
             align-items: center;
             position: relative;
             z-index: 1;
             overflow: hidden;
+            padding: 2rem 0; /* Mobile tweak: added padding for better spacing */
         }
 
         .hero-container {
@@ -165,55 +166,89 @@ $token = $_GET['token'] ?? '';
             }
         }
 
-        .coming-soon-badge {
+        /* Mobile tweak: Development notification instead of logo */
+        .dev-notification {
             display: inline-flex;
             align-items: center;
-            gap: 0.5rem;
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            padding: 0.75rem 1.5rem;
+            gap: 0.75rem;
+            background: linear-gradient(135deg, rgba(255, 0, 110, 0.2), rgba(139, 0, 255, 0.2));
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 0, 110, 0.3);
+            padding: 1rem 1.5rem;
             border-radius: 50px;
             margin-bottom: 2rem;
-            animation: pulseGlow 2s ease-in-out infinite;
             position: relative;
             overflow: hidden;
+            min-width: 280px;
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 32px rgba(255, 0, 110, 0.2);
         }
 
-        .coming-soon-badge::before {
+        .dev-notification::before {
             content: '';
             position: absolute;
             top: 0;
             left: -100%;
             width: 100%;
             height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
             animation: shimmer 3s infinite;
+        }
+
+        .dev-notification:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 40px rgba(255, 0, 110, 0.3);
+            border-color: rgba(255, 0, 110, 0.5);
+        }
+
+        .dev-icon {
+            font-size: 1.2rem;
+            animation: devPulse 2s ease-in-out infinite;
+            color: #ff006e;
+        }
+
+        @keyframes devPulse {
+            0%, 100% { 
+                transform: scale(1);
+                color: #ff006e;
+            }
+            50% { 
+                transform: scale(1.1);
+                color: #00d4ff;
+            }
+        }
+
+        .dev-text {
+            font-weight: 600;
+            font-size: 0.9rem;
+            color: #ffffff;
+            text-shadow: 0 0 10px rgba(255, 0, 110, 0.5);
+        }
+
+        .dev-badge {
+            background: linear-gradient(135deg, #ff006e, #8b00ff);
+            color: white;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            animation: badgeGlow 2s ease-in-out infinite;
+        }
+
+        @keyframes badgeGlow {
+            0%, 100% { 
+                box-shadow: 0 0 10px rgba(255, 0, 110, 0.3);
+            }
+            50% { 
+                box-shadow: 0 0 20px rgba(255, 0, 110, 0.6);
+            }
         }
 
         @keyframes shimmer {
             0% { left: -100%; }
             100% { left: 100%; }
-        }
-
-        @keyframes pulseGlow {
-            0%, 100% {
-                box-shadow: 0 0 20px rgba(255, 0, 110, 0.3);
-                transform: scale(1);
-            }
-            50% {
-                box-shadow: 0 0 40px rgba(255, 0, 110, 0.6);
-                transform: scale(1.02);
-            }
-        }
-
-        .coming-soon-badge .rocket {
-            animation: rocketBounce 1.5s ease-in-out infinite;
-        }
-
-        @keyframes rocketBounce {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-3px); }
         }
 
         .hero-title {
@@ -223,6 +258,7 @@ $token = $_GET['token'] ?? '';
             line-height: 0.9;
             margin-bottom: 1rem;
             letter-spacing: -0.02em;
+            word-wrap: break-word; /* Mobile tweak: prevent text overflow */
         }
 
         .hero-title .gradient-text {
@@ -245,6 +281,7 @@ $token = $_GET['token'] ?? '';
             margin-bottom: 1.5rem;
             line-height: 1.4;
             font-weight: 300;
+            word-wrap: break-word; /* Mobile tweak: prevent text overflow */
         }
 
         .hero-subtitle .highlight {
@@ -258,6 +295,7 @@ $token = $_GET['token'] ?? '';
             margin-bottom: 2rem;
             line-height: 1.6;
             max-width: 500px;
+            word-wrap: break-word; /* Mobile tweak: prevent text overflow */
         }
 
         .cta-button {
@@ -275,6 +313,8 @@ $token = $_GET['token'] ?? '';
             position: relative;
             overflow: hidden;
             box-shadow: 0 10px 30px rgba(255, 0, 110, 0.3);
+            min-height: 44px; /* Mobile tweak: ensure touch target is large enough */
+            justify-content: center; /* Mobile tweak: center content */
         }
 
         .cta-button::before {
@@ -297,14 +337,14 @@ $token = $_GET['token'] ?? '';
             box-shadow: 0 20px 40px rgba(255, 0, 110, 0.4);
         }
 
-                 .cta-button .discord-icon {
-             transition: transform 0.3s ease;
-             font-size: 1.2rem;
-         }
- 
-         .cta-button:hover .discord-icon {
-             transform: translateX(5px) scale(1.1);
-         }
+        .cta-button .discord-icon {
+            transition: transform 0.3s ease;
+            font-size: 1.2rem;
+        }
+
+        .cta-button:hover .discord-icon {
+            transform: translateX(5px) scale(1.1);
+        }
 
         /* ==================== MOCKUP TÉLÉPHONE ==================== */
         .phone-container {
@@ -505,8 +545,6 @@ $token = $_GET['token'] ?? '';
             object-fit: cover;
             border-radius: 32px;
         }
-
-
 
         .play-button {
             position: relative;
@@ -714,6 +752,10 @@ $token = $_GET['token'] ?? '';
             font-weight: 500;
             transition: all 0.3s ease;
             z-index: 100;
+            min-height: 44px; /* Mobile tweak: ensure touch target is large enough */
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
         }
 
         .nav-back:hover {
@@ -721,11 +763,13 @@ $token = $_GET['token'] ?? '';
             transform: translateY(-2px);
         }
 
-        /* ==================== RESPONSIVE ==================== */
+        /* ==================== RESPONSIVE OPTIMIZED ==================== */
+        
+        /* Mobile tweak: Enhanced tablet breakpoint */
         @media (max-width: 1024px) {
             .hero-grid {
                 grid-template-columns: 1fr;
-                gap: 1.5rem;
+                gap: 2rem;
                 text-align: center;
             }
 
@@ -745,32 +789,59 @@ $token = $_GET['token'] ?? '';
             .hero-description {
                 font-size: 0.9rem;
                 margin-bottom: 1.5rem;
+                max-width: 100%; /* Mobile tweak: allow full width on tablet */
             }
         }
 
+        /* Mobile tweak: Enhanced mobile breakpoint */
         @media (max-width: 768px) {
+            .hero-section {
+                padding: 1rem 0; /* Mobile tweak: reduced padding */
+                min-height: 100vh;
+            }
+
             .hero-container {
                 padding: 0 1rem;
+                height: auto; /* Mobile tweak: allow natural height */
             }
 
             .hero-grid {
-                gap: 1rem;
+                gap: 1.5rem;
+                grid-template-columns: 1fr; /* Mobile tweak: single column layout */
+                align-items: center;
+                justify-items: center;
             }
 
             .phone-mockup {
                 width: 180px;
                 height: 360px;
+                margin: 0 auto; /* Mobile tweak: center the phone */
             }
 
-            .coming-soon-badge {
-                padding: 0.5rem 1rem;
-                font-size: 0.8rem;
+            .dev-notification {
+                padding: 0.75rem 1rem;
                 margin-bottom: 1.5rem;
+                min-width: 240px; /* Mobile tweak: smaller min-width */
+                flex-direction: column; /* Mobile tweak: stack elements */
+                gap: 0.5rem;
+                text-align: center;
+            }
+
+            .dev-text {
+                font-size: 0.8rem;
+                text-align: center; /* Mobile tweak: center text */
+            }
+
+            .dev-badge {
+                font-size: 0.6rem;
+                padding: 0.2rem 0.6rem;
             }
 
             .cta-button {
                 padding: 0.75rem 1.5rem;
                 font-size: 0.9rem;
+                width: auto; /* Mobile tweak: auto width */
+                min-width: 200px; /* Mobile tweak: minimum width for touch */
             }
 
             .nav-back {
@@ -778,27 +849,51 @@ $token = $_GET['token'] ?? '';
                 left: 1rem;
                 padding: 0.5rem 1rem;
                 font-size: 0.9rem;
+                min-height: 44px; /* Mobile tweak: ensure touch target */
             }
             
             .hero-title {
                 font-size: clamp(2rem, 4vw, 3rem);
                 margin-bottom: 0.75rem;
+                text-align: center; /* Mobile tweak: center title */
             }
             
             .hero-subtitle {
                 font-size: clamp(0.8rem, 1.5vw, 1.1rem);
                 margin-bottom: 1rem;
+                text-align: center; /* Mobile tweak: center subtitle */
             }
             
             .hero-description {
                 font-size: 0.85rem;
                 margin-bottom: 1.5rem;
+                text-align: center; /* Mobile tweak: center description */
+                max-width: 100%; /* Mobile tweak: full width */
+            }
+
+            /* Mobile tweak: Disable complex animations on mobile for performance */
+            .particle {
+                animation: none;
+                opacity: 0.3;
+            }
+
+            .floating-elements {
+                display: none; /* Mobile tweak: hide floating elements on mobile */
             }
         }
 
+        /* Mobile tweak: Enhanced small mobile breakpoint */
         @media (max-width: 480px) {
+            .hero-section {
+                padding: 0.5rem 0; /* Mobile tweak: minimal padding */
+            }
+
+            .hero-container {
+                padding: 0 0.75rem; /* Mobile tweak: reduced padding */
+            }
+
             .hero-grid {
-                gap: 0.75rem;
+                gap: 1rem;
             }
 
             .phone-mockup {
@@ -809,27 +904,129 @@ $token = $_GET['token'] ?? '';
             .hero-title {
                 font-size: clamp(1.8rem, 3.5vw, 2.5rem);
                 margin-bottom: 0.5rem;
+                line-height: 1.1; /* Mobile tweak: tighter line height */
             }
 
             .hero-subtitle {
                 font-size: clamp(0.75rem, 1.3vw, 1rem);
                 margin-bottom: 0.75rem;
+                line-height: 1.3; /* Mobile tweak: better line height */
             }
             
             .hero-description {
                 font-size: 0.8rem;
                 margin-bottom: 1rem;
+                line-height: 1.4; /* Mobile tweak: better readability */
             }
             
-            .coming-soon-badge {
-                padding: 0.4rem 0.8rem;
-                font-size: 0.75rem;
+            .dev-notification {
+                padding: 0.5rem 0.8rem;
                 margin-bottom: 1rem;
+                min-width: 200px; /* Mobile tweak: even smaller for very small screens */
+                flex-direction: column; /* Mobile tweak: stack elements */
+                gap: 0.4rem;
+                text-align: center;
+            }
+
+            .dev-text {
+                font-size: 0.75rem;
+                text-align: center; /* Mobile tweak: center text */
+            }
+
+            .dev-badge {
+                font-size: 0.55rem;
+                padding: 0.15rem 0.5rem;
             }
             
             .cta-button {
                 padding: 0.6rem 1.2rem;
                 font-size: 0.85rem;
+                width: 100%; /* Mobile tweak: full width button */
+                max-width: 280px; /* Mobile tweak: max width for better UX */
+            }
+
+            .nav-back {
+                top: 0.75rem;
+                left: 0.75rem;
+                padding: 0.4rem 0.8rem;
+                font-size: 0.8rem;
+            }
+
+            /* Mobile tweak: Optimize phone mockup for very small screens */
+            .phone-notch {
+                width: 80px;
+                height: 25px;
+            }
+
+            .tiktok-header {
+                top: 15px;
+                padding: 0 15px;
+            }
+
+            .tiktok-logo {
+                font-size: 1rem;
+            }
+
+            .live-indicator {
+                padding: 3px 8px;
+                font-size: 0.7rem;
+            }
+
+            .interaction-bar {
+                right: 10px;
+                bottom: 100px;
+                gap: 10px;
+            }
+
+            .interaction-icon {
+                width: 35px;
+                height: 35px;
+                font-size: 1rem;
+            }
+
+            .interaction-count {
+                font-size: 0.6rem;
+            }
+
+            .viewer-count {
+                bottom: 15px;
+                left: 15px;
+                padding: 6px 10px;
+                font-size: 0.7rem;
+            }
+        }
+
+        /* Mobile tweak: Ultra small screens (iPhone SE, etc.) */
+        @media (max-width: 375px) {
+            .hero-container {
+                padding: 0 0.5rem;
+            }
+
+            .hero-title {
+                font-size: clamp(1.6rem, 3vw, 2rem);
+            }
+
+            .hero-subtitle {
+                font-size: clamp(0.7rem, 1.2vw, 0.9rem);
+            }
+
+            .hero-description {
+                font-size: 0.75rem;
+            }
+
+            .phone-mockup {
+                width: 140px;
+                height: 280px;
+            }
+
+            .cta-button {
+                padding: 0.5rem 1rem;
+                font-size: 0.8rem;
+            }
+
+            .nav-back {
+                padding: 0.3rem 0.6rem;
+                font-size: 0.75rem;
             }
         }
 
@@ -893,9 +1090,11 @@ $token = $_GET['token'] ?? '';
             <div class="hero-grid">
                 <!-- Contenu gauche -->
                 <div class="hero-content">
-                    <div class="coming-soon-badge fade-in-delay-1">
-                        <span class="rocket">🚀</span>
-                        <span>En développement • Lancement imminent</span>
+                    <!-- Mobile tweak: Development notification instead of logo -->
+                    <div class="dev-notification fade-in-delay-1">
+                        <div class="dev-icon">🚧</div>
+                        <div class="dev-text">Site en cours de développement</div>
+                        <div class="dev-badge">DEV</div>
                     </div>
 
                     <h1 class="hero-title fade-in-delay-2">
@@ -988,17 +1187,19 @@ $token = $_GET['token'] ?? '';
     <script>
         // ==================== ANIMATIONS INTERACTIVES ====================
         
-        // Effet parallax sur les particules
-        document.addEventListener('mousemove', (e) => {
-            const particles = document.querySelectorAll('.particle');
-            const x = e.clientX / window.innerWidth;
-            const y = e.clientY / window.innerHeight;
-            
-            particles.forEach((particle, index) => {
-                const speed = (index + 1) * 0.3;
-                particle.style.transform = `translate(${x * speed}px, ${y * speed}px)`;
+        // Mobile tweak: Parallax effect only on desktop devices
+        if (window.innerWidth > 768) {
+            document.addEventListener('mousemove', (e) => {
+                const particles = document.querySelectorAll('.particle');
+                const x = e.clientX / window.innerWidth;
+                const y = e.clientY / window.innerHeight;
+                
+                particles.forEach((particle, index) => {
+                    const speed = (index + 1) * 0.3;
+                    particle.style.transform = `translate(${x * speed}px, ${y * speed}px)`;
+                });
             });
-        });
+        }
 
         // Animation du compteur de viewers
         function updateViewerCount() {
@@ -1031,90 +1232,92 @@ $token = $_GET['token'] ?? '';
             });
         }
 
-        // Effet de suivi de la souris sur le téléphone
-        const phoneMockup = document.querySelector('.phone-mockup');
-        let isHovering = false;
+        // Mobile tweak: Enhanced mouse effects only on desktop
+        if (window.innerWidth > 768) {
+            const phoneMockup = document.querySelector('.phone-mockup');
+            let isHovering = false;
 
-        // Suivi de la souris sur le téléphone avec effet 3D ultra-réaliste
-        document.addEventListener('mousemove', (e) => {
-            const rect = phoneMockup.getBoundingClientRect();
-            const mouseX = e.clientX;
-            const mouseY = e.clientY;
-            
-            // Vérifier si la souris est dans la zone du téléphone (zone étendue)
-            const isInPhoneArea = mouseX >= rect.left - 150 && 
-                                mouseX <= rect.right + 150 && 
-                                mouseY >= rect.top - 150 && 
-                                mouseY <= rect.bottom + 150;
-            
-            if (isInPhoneArea) {
-                if (!isHovering) {
-                    isHovering = true;
-                    phoneMockup.style.animation = 'none';
+            // Suivi de la souris sur le téléphone avec effet 3D ultra-réaliste
+            document.addEventListener('mousemove', (e) => {
+                const rect = phoneMockup.getBoundingClientRect();
+                const mouseX = e.clientX;
+                const mouseY = e.clientY;
+                
+                // Vérifier si la souris est dans la zone du téléphone (zone étendue)
+                const isInPhoneArea = mouseX >= rect.left - 150 && 
+                                    mouseX <= rect.right + 150 && 
+                                    mouseY >= rect.top - 150 && 
+                                    mouseY <= rect.bottom + 150;
+                
+                if (isInPhoneArea) {
+                    if (!isHovering) {
+                        isHovering = true;
+                        phoneMockup.style.animation = 'none';
+                    }
+                    
+                    // Calculer le centre du téléphone
+                    const centerX = rect.left + rect.width / 2;
+                    const centerY = rect.top + rect.height / 2;
+                    
+                    // Calculer la distance depuis le centre
+                    const deltaX = mouseX - centerX;
+                    const deltaY = mouseY - centerY;
+                    
+                    // Calculer les rotations avec effet de profondeur ultra-réaliste
+                    const maxRotation = 35;
+                    const maxDepth = 120;
+                    const rotationY = (deltaX / (rect.width / 2)) * maxRotation;
+                    const rotationX = (deltaY / (rect.height / 2)) * maxRotation;
+                    const depthZ = Math.sqrt(deltaX * deltaX + deltaY * deltaY) / Math.sqrt(rect.width * rect.width + rect.height * rect.height) * maxDepth;
+                    
+                    // Calculer l'intensité de l'effet basée sur la distance
+                    const distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
+                    const maxDistance = Math.sqrt(rect.width * rect.width + rect.height * rect.height) / 2;
+                    const intensity = Math.max(0, 1 - distance / maxDistance);
+                    
+                    // Appliquer la transformation 3D ultra-réaliste
+                    phoneMockup.style.transform = `
+                        translateY(${-25 * intensity}px) 
+                        rotateY(${rotationY}deg) 
+                        rotateX(${-rotationX}deg)
+                        translateZ(${depthZ}px)
+                        perspective(1200px)
+                        scale(${1 + intensity * 0.05})
+                    `;
+                    
+                    // Effet d'ombre dynamique ultra-réaliste
+                    const shadowIntensity = 0.4 + (intensity * 0.6);
+                    const shadowBlur = 20 + depthZ * 0.8;
+                    phoneMockup.style.boxShadow = `
+                        0 0 0 2px rgba(255, 255, 255, 0.1),
+                        0 ${20 + depthZ * 0.8}px ${40 + depthZ * 0.8}px rgba(0, 0, 0, ${0.6 + shadowIntensity}),
+                        0 ${40 + depthZ * 1.2}px ${80 + depthZ * 1.2}px rgba(0, 0, 0, ${0.4 + shadowIntensity * 0.7}),
+                        0 ${60 + depthZ * 1.8}px ${120 + depthZ * 1.8}px rgba(0, 0, 0, ${0.3 + shadowIntensity * 0.5}),
+                        0 ${80 + depthZ * 2.2}px ${160 + depthZ * 2.2}px rgba(0, 0, 0, ${0.2 + shadowIntensity * 0.3}),
+                        0 ${100 + depthZ * 2.8}px ${200 + depthZ * 2.8}px rgba(0, 0, 0, ${0.15 + shadowIntensity * 0.2})
+                    `;
+                    
+                    // Effet de glow dynamique ultra-réaliste
+                    const glowIntensity = 30 + depthZ * 1.2;
+                    const glowOpacity = 0.15 + intensity * 0.3;
+                    phoneMockup.style.filter = `
+                        drop-shadow(0 0 ${glowIntensity}px rgba(255, 0, 110, ${glowOpacity}))
+                        drop-shadow(0 0 ${glowIntensity * 0.7}px rgba(139, 0, 255, ${glowOpacity * 0.6}))
+                        drop-shadow(0 0 ${glowIntensity * 0.5}px rgba(0, 212, 255, ${glowOpacity * 0.4}))
+                    `;
+                    
+                } else {
+                    if (isHovering) {
+                        isHovering = false;
+                        // Retour à l'animation normale
+                        phoneMockup.style.animation = 'phoneFloat 6s ease-in-out infinite';
+                        phoneMockup.style.transform = 'translateY(0) rotateY(0deg) rotateX(0deg) translateZ(0px) scale(1)';
+                        phoneMockup.style.boxShadow = '';
+                        phoneMockup.style.filter = 'drop-shadow(0 0 30px rgba(255, 0, 110, 0.1))';
+                    }
                 }
-                
-                // Calculer le centre du téléphone
-                const centerX = rect.left + rect.width / 2;
-                const centerY = rect.top + rect.height / 2;
-                
-                // Calculer la distance depuis le centre
-                const deltaX = mouseX - centerX;
-                const deltaY = mouseY - centerY;
-                
-                // Calculer les rotations avec effet de profondeur ultra-réaliste
-                const maxRotation = 35;
-                const maxDepth = 120;
-                const rotationY = (deltaX / (rect.width / 2)) * maxRotation;
-                const rotationX = (deltaY / (rect.height / 2)) * maxRotation;
-                const depthZ = Math.sqrt(deltaX * deltaX + deltaY * deltaY) / Math.sqrt(rect.width * rect.width + rect.height * rect.height) * maxDepth;
-                
-                // Calculer l'intensité de l'effet basée sur la distance
-                const distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
-                const maxDistance = Math.sqrt(rect.width * rect.width + rect.height * rect.height) / 2;
-                const intensity = Math.max(0, 1 - distance / maxDistance);
-                
-                // Appliquer la transformation 3D ultra-réaliste
-                phoneMockup.style.transform = `
-                    translateY(${-25 * intensity}px) 
-                    rotateY(${rotationY}deg) 
-                    rotateX(${-rotationX}deg)
-                    translateZ(${depthZ}px)
-                    perspective(1200px)
-                    scale(${1 + intensity * 0.05})
-                `;
-                
-                // Effet d'ombre dynamique ultra-réaliste
-                const shadowIntensity = 0.4 + (intensity * 0.6);
-                const shadowBlur = 20 + depthZ * 0.8;
-                phoneMockup.style.boxShadow = `
-                    0 0 0 2px rgba(255, 255, 255, 0.1),
-                    0 ${20 + depthZ * 0.8}px ${40 + depthZ * 0.8}px rgba(0, 0, 0, ${0.6 + shadowIntensity}),
-                    0 ${40 + depthZ * 1.2}px ${80 + depthZ * 1.2}px rgba(0, 0, 0, ${0.4 + shadowIntensity * 0.7}),
-                    0 ${60 + depthZ * 1.8}px ${120 + depthZ * 1.8}px rgba(0, 0, 0, ${0.3 + shadowIntensity * 0.5}),
-                    0 ${80 + depthZ * 2.2}px ${160 + depthZ * 2.2}px rgba(0, 0, 0, ${0.2 + shadowIntensity * 0.3}),
-                    0 ${100 + depthZ * 2.8}px ${200 + depthZ * 2.8}px rgba(0, 0, 0, ${0.15 + shadowIntensity * 0.2})
-                `;
-                
-                // Effet de glow dynamique ultra-réaliste
-                const glowIntensity = 30 + depthZ * 1.2;
-                const glowOpacity = 0.15 + intensity * 0.3;
-                phoneMockup.style.filter = `
-                    drop-shadow(0 0 ${glowIntensity}px rgba(255, 0, 110, ${glowOpacity}))
-                    drop-shadow(0 0 ${glowIntensity * 0.7}px rgba(139, 0, 255, ${glowOpacity * 0.6}))
-                    drop-shadow(0 0 ${glowIntensity * 0.5}px rgba(0, 212, 255, ${glowOpacity * 0.4}))
-                `;
-                
-            } else {
-                if (isHovering) {
-                    isHovering = false;
-                    // Retour à l'animation normale
-                    phoneMockup.style.animation = 'phoneFloat 6s ease-in-out infinite';
-                    phoneMockup.style.transform = 'translateY(0) rotateY(0deg) rotateX(0deg) translateZ(0px) scale(1)';
-                    phoneMockup.style.boxShadow = '';
-                    phoneMockup.style.filter = 'drop-shadow(0 0 30px rgba(255, 0, 110, 0.1))';
-                }
-            }
-        });
+            });
+        }
 
                  // Animation du bouton CTA
          document.querySelector('.cta-button').addEventListener('mouseenter', function() {
@@ -1149,6 +1352,22 @@ $token = $_GET['token'] ?? '';
         document.addEventListener('DOMContentLoaded', function() {
             updateViewerCount();
             animateInteractions();
+            
+            // Mobile tweak: Development notification hover effect
+            const devNotification = document.querySelector('.dev-notification');
+            if (devNotification) {
+                devNotification.addEventListener('mouseenter', function() {
+                    this.style.transform = 'translateY(-2px)';
+                    this.style.boxShadow = '0 12px 40px rgba(255, 0, 110, 0.3)';
+                    this.style.borderColor = 'rgba(255, 0, 110, 0.5)';
+                });
+                
+                devNotification.addEventListener('mouseleave', function() {
+                    this.style.transform = 'translateY(0)';
+                    this.style.boxShadow = '0 8px 32px rgba(255, 0, 110, 0.2)';
+                    this.style.borderColor = 'rgba(255, 0, 110, 0.3)';
+                });
+            }
             
             // Gestion de la vidéo dans le téléphone
             const video = document.querySelector('.video-container video');
@@ -1200,7 +1419,7 @@ $token = $_GET['token'] ?? '';
 
         // ==================== PERFORMANCE OPTIMIZATION ====================
         
-        // Throttle pour les événements de souris
+        // Mobile tweak: Enhanced performance optimization for mobile devices
         function throttle(func, limit) {
             let inThrottle;
             return function() {
@@ -1214,28 +1433,65 @@ $token = $_GET['token'] ?? '';
             }
         }
 
-        // Appliquer le throttle aux événements de souris
-        const throttledMouseMove = throttle((e) => {
-            const particles = document.querySelectorAll('.particle');
-            const x = e.clientX / window.innerWidth;
-            const y = e.clientY / window.innerHeight;
-            
-            particles.forEach((particle, index) => {
-                const speed = (index + 1) * 0.3;
-                particle.style.transform = `translate(${x * speed}px, ${y * speed}px)`;
-            });
-        }, 16); // ~60fps
+        // Mobile tweak: Only apply mouse effects on desktop devices
+        if (window.innerWidth > 768) {
+            const throttledMouseMove = throttle((e) => {
+                const particles = document.querySelectorAll('.particle');
+                const x = e.clientX / window.innerWidth;
+                const y = e.clientY / window.innerHeight;
+                
+                particles.forEach((particle, index) => {
+                    const speed = (index + 1) * 0.3;
+                    particle.style.transform = `translate(${x * speed}px, ${y * speed}px)`;
+                });
+            }, 16); // ~60fps
 
-        document.removeEventListener('mousemove', throttledMouseMove);
-        document.addEventListener('mousemove', throttledMouseMove);
+            document.addEventListener('mousemove', throttledMouseMove);
+        }
 
-        // Désactiver les animations complexes sur mobile pour la performance
+        // Mobile tweak: Disable complex animations on mobile for better performance
         if (window.innerWidth <= 768) {
             const particles = document.querySelectorAll('.particle');
             particles.forEach(particle => {
                 particle.style.animation = 'none';
+                particle.style.opacity = '0.3';
             });
+
+            // Mobile tweak: Disable phone hover effects on mobile
+            const phoneMockup = document.querySelector('.phone-mockup');
+            if (phoneMockup) {
+                phoneMockup.style.animation = 'phoneFloat 6s ease-in-out infinite';
+                phoneMockup.style.transform = 'translateY(0) rotateY(0deg) rotateX(0deg) translateZ(0px) scale(1)';
+            }
+        }
+
+        // Mobile tweak: Optimize touch interactions
+        if ('ontouchstart' in window) {
+            // Mobile tweak: Add touch-friendly interactions
+            const ctaButton = document.querySelector('.cta-button');
+            if (ctaButton) {
+                ctaButton.addEventListener('touchstart', function() {
+                    this.style.transform = 'scale(0.98)';
+                });
+                
+                ctaButton.addEventListener('touchend', function() {
+                    this.style.transform = 'scale(1)';
+                });
+            }
+
+            // Mobile tweak: Optimize navigation button for touch
+            const navBack = document.querySelector('.nav-back');
+            if (navBack) {
+                navBack.addEventListener('touchstart', function() {
+                    this.style.transform = 'scale(0.95)';
+                });
+                
+                navBack.addEventListener('touchend', function() {
+                    this.style.transform = 'scale(1)';
+                });
+            }
         }
     </script>
 </body>
+</html> 
 </html> 

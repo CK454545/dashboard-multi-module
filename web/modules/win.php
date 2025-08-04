@@ -635,6 +635,8 @@ $token = $_GET['token'] ?? '';
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
             min-width: 400px;
             max-width: 90vw;
+            flex-wrap: wrap;
+            justify-content: center;
         }
 
         .win-action-bar-sections {
@@ -642,12 +644,14 @@ $token = $_GET['token'] ?? '';
             align-items: center;
             gap: 12px;
             flex-wrap: wrap;
+            justify-content: center;
         }
 
         .win-action-section {
             display: flex;
             align-items: center;
             gap: 6px;
+            flex-wrap: wrap;
         }
 
         .win-action-section-header {
@@ -664,6 +668,7 @@ $token = $_GET['token'] ?? '';
             display: flex;
             align-items: center;
             gap: 4px;
+            flex-wrap: wrap;
         }
 
         /* ==================== ULTRA COMPACT BUTTONS ==================== */
@@ -798,24 +803,40 @@ $token = $_GET['token'] ?? '';
         }
 
         /* ==================== RESPONSIVE DESIGN ==================== */
+        @media (max-width: 1024px) {
+            .win-action-bar {
+                min-width: 350px;
+                padding: 6px 10px;
+            }
+            
+            .win-action-bar-sections {
+                gap: 10px;
+            }
+        }
+
         @media (max-width: 768px) {
             .win-action-bar {
                 bottom: 10px;
                 padding: 6px 8px;
                 gap: 6px;
                 min-width: 320px;
+                max-width: 95vw;
             }
 
             .win-action-bar-sections {
                 gap: 8px;
+                flex-direction: column;
             }
 
             .win-action-section {
                 gap: 4px;
+                justify-content: center;
             }
 
             .win-action-buttons {
                 gap: 3px;
+                justify-content: center;
+                flex-wrap: wrap;
             }
 
             .win-action-btn {
@@ -833,19 +854,53 @@ $token = $_GET['token'] ?? '';
 
         @media (max-width: 480px) {
             .win-action-bar {
-                flex-direction: column;
-                gap: 6px;
-                padding: 8px;
                 min-width: 280px;
+                padding: 4px 6px;
+                bottom: 5px;
             }
-
+            
             .win-action-bar-sections {
-                flex-direction: column;
                 gap: 6px;
             }
-
+            
             .win-action-section {
+                gap: 3px;
+            }
+            
+            .win-action-buttons {
+                gap: 2px;
                 justify-content: center;
+            }
+            
+            .win-action-btn {
+                padding: 2px 4px;
+                font-size: 8px;
+                height: 20px;
+                min-width: 24px;
+            }
+            
+            .win-action-section-header {
+                font-size: 8px;
+                margin-right: 2px;
+            }
+        }
+
+        @media (max-width: 360px) {
+            .win-action-bar {
+                min-width: 260px;
+                padding: 3px 4px;
+            }
+            
+            .win-action-btn {
+                padding: 1px 3px;
+                font-size: 7px;
+                height: 18px;
+                min-width: 20px;
+            }
+            
+            .win-action-section-header {
+                font-size: 7px;
+                margin-right: 1px;
             }
         }
     </style>

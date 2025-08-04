@@ -782,7 +782,6 @@ $token = $_GET['token'] ?? '';
             <a href="agency.php?token=<?=$token?>" class="nav-tab website-tab">
                 <i class="fas fa-globe"></i>
                 Site Web
-                <span class="new-badge">Nouveau</span>
             </a>
             <a href="#" class="nav-tab" onclick="openModal('rules'); return false;">
                 <i class="fas fa-scroll"></i>
