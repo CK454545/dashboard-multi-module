@@ -481,10 +481,10 @@ update_from_github() {
     fi
     
     # ÉTAPE 2: VÉRIFIER LES MISES À JOUR
-    git fetch origin main
+    git fetch origin mise-a-jour
     
     LOCAL=$(git rev-parse HEAD)
-    REMOTE=$(git rev-parse origin/main)
+    REMOTE=$(git rev-parse origin/mise-a-jour)
     
     if [ "$LOCAL" != "$REMOTE" ]; then
         print_message "📥 Nouvelles mises à jour disponibles!" "$YELLOW"
@@ -507,7 +507,7 @@ update_from_github() {
         git stash push -m "Auto-stash before update (excluding database)"
         
         # Pull les changements
-        git pull origin main
+        git pull origin mise-a-jour
         
         # ÉTAPE 4: RESTAURATION CRITIQUE DES DONNÉES
         print_message "🔄 Restauration des données critiques..." "$YELLOW"
