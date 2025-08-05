@@ -537,15 +537,13 @@ $token = $_GET['token'] ?? '';
         .premium-container {
             position: relative;
             background: #000000;
-            border-radius: 16px;
-            padding: 20px 40px;
-            min-width: 320px;
-            max-width: 90vw;
-            display: flex;
+            border-radius: 15px;
+            padding: 1vh 2vw;
+            max-width: fit-content;
+            display: inline-flex;
             align-items: center;
             justify-content: center;
-            width: auto;
-            height: auto;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
             --premium-accent-color: #ff6b35;
             --premium-text-color: #ffffff;
             --premium-digits-color: #ff6b35;
@@ -553,21 +551,22 @@ $token = $_GET['token'] ?? '';
 
         .premium-logo-area {
             position: absolute;
-            top: -20px;
+            top: -15px;
             left: 50%;
             transform: translateX(-50%);
             background: var(--premium-accent-color);
-            padding: 4px 20px;
-            border-radius: 20px;
-            font-size: 0.8rem;
+            padding: 2px 12px;
+            border-radius: 15px;
+            font-size: 0.65rem;
             font-weight: 800;
             color: #000;
-            letter-spacing: 0.1em;
+            letter-spacing: 0.05em;
             text-transform: uppercase;
+            white-space: nowrap;
         }
 
         #premium-timer {
-            font-size: 3.5rem;
+            font-size: 3.2vw;
             color: var(--premium-text-color);
             text-align: center;
             white-space: nowrap;
@@ -575,46 +574,49 @@ $token = $_GET['token'] ?? '';
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 15px;
+            gap: 0.5ch;
+            letter-spacing: 0.04em;
         }
 
         .premium-time-group {
-            display: flex;
+            display: inline-flex;
             align-items: baseline;
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 12px;
-            padding: 10px 15px;
-            border: 2px solid rgba(255, 107, 53, 0.3);
-            transition: all 0.3s ease;
         }
 
         .premium-time-group:hover {
-            background: rgba(255, 107, 53, 0.1);
-            border-color: var(--premium-accent-color);
-            transform: translateY(-2px);
+            transform: none;
         }
 
         .premium-digits {
+            display: inline-block;
+            width: 1.8ch;
+            text-align: center;
             font-weight: 900;
             color: var(--premium-digits-color);
-            font-size: 1.2em;
-            letter-spacing: 0.05em;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+            font-size: 1em;
+            letter-spacing: 0;
         }
 
         .premium-unit {
-            font-size: 0.5em;
-            color: rgba(255, 255, 255, 0.7);
-            margin-left: 8px;
+            display: inline-block;
+            width: auto;
+            text-align: center;
+            padding-left: 0.5ch;
+            padding-right: 0.5ch;
+            font-size: 0.7em;
+            color: rgba(255, 255, 255, 0.9);
             font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.1em;
+            text-transform: lowercase;
+            letter-spacing: 0;
         }
 
         .premium-separator {
+            display: inline-block;
+            width: 1ch;
+            text-align: center;
             color: var(--premium-accent-color);
             font-weight: 800;
-            font-size: 1.1em;
+            font-size: 1em;
             opacity: 0.8;
             animation: premium-blink 2s ease-in-out infinite;
         }
@@ -624,193 +626,56 @@ $token = $_GET['token'] ?? '';
             50% { opacity: 0.3; }
         }
 
-        .premium-low-time .premium-time-group {
-            background: rgba(255, 0, 0, 0.1);
-            border-color: #ff0000;
-            animation: premium-urgent-shake 0.5s ease-in-out infinite;
+        .premium-low-time #premium-timer {
+            color: #ff0000 !important;
+            animation: premium-blink-urgent 1s infinite;
         }
 
         .premium-low-time .premium-digits {
-            color: #ff0000;
+            color: #ff0000 !important;
         }
 
-        @keyframes premium-urgent-shake {
-            0%, 100% { transform: translateX(0); }
-            25% { transform: translateX(-2px); }
-            75% { transform: translateX(2px); }
+        @keyframes premium-blink-urgent {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.6; }
         }
 
         .premium-change-animation {
-            animation: premium-flip-in 0.4s ease-out;
+            animation: premium-change 0.4s ease-out;
         }
 
-        @keyframes premium-flip-in {
-            0% { 
-                transform: scaleY(0);
-                opacity: 0;
-            }
-            50% { 
-                transform: scaleY(1.1);
-            }
-            100% { 
-                transform: scaleY(1);
-                opacity: 1;
-            }
-        }
-
-        .premium-corner-accent {
-            position: absolute;
-            width: 20px;
-            height: 20px;
-            border: 2px solid var(--premium-accent-color);
-        }
-
-        .premium-corner-accent.premium-top-left {
-            top: -1px;
-            left: -1px;
-            border-right: none;
-            border-bottom: none;
-            border-radius: 16px 0 0 0;
-        }
-
-        .premium-corner-accent.premium-top-right {
-            top: -1px;
-            right: -1px;
-            border-left: none;
-            border-bottom: none;
-            border-radius: 0 16px 0 0;
-        }
-
-        .premium-corner-accent.premium-bottom-left {
-            bottom: -1px;
-            left: -1px;
-            border-right: none;
-            border-top: none;
-            border-radius: 0 0 0 16px;
-        }
-
-        .premium-corner-accent.premium-bottom-right {
-            bottom: -1px;
-            right: -1px;
-            border-left: none;
-            border-top: none;
-            border-radius: 0 0 16px 0;
+        @keyframes premium-change {
+            0% { transform: scale(1); filter: brightness(2); }
+            50% { transform: scale(1.07); filter: brightness(1.4); }
+            100% { transform: scale(1); filter: brightness(1); }
         }
 
         /* ==================== RESPONSIVE DESIGN POUR MFA PREMIUM ==================== */
-        @media (max-width: 1024px) {
-            .premium-container {
-                min-width: 280px;
-                padding: 15px 30px;
-            }
-            
-            #premium-timer {
-                font-size: 3rem;
-                gap: 12px;
-            }
-            
-            .premium-time-group {
-                padding: 8px 12px;
-            }
-        }
-
         @media (max-width: 768px) {
-            .premium-container {
-                min-width: 260px;
-                padding: 12px 20px;
-                max-width: 95vw;
-            }
-            
             #premium-timer {
-                font-size: 2.5rem;
-                gap: 10px;
+                font-size: 5vw;
             }
             
-            .premium-time-group {
-                padding: 6px 10px;
-            }
-            
-            .premium-digits {
-                font-size: 1em;
-            }
-            
-            .premium-unit {
-                font-size: 0.4em;
-                margin-left: 6px;
-            }
-            
-            .premium-separator {
-                font-size: 1em;
+            .premium-logo-area {
+                font-size: 0.6rem;
+                padding: 2px 10px;
+                top: -12px;
             }
         }
 
         @media (max-width: 480px) {
             .premium-container {
-                min-width: 240px;
-                padding: 10px 15px;
-                max-width: 98vw;
+                padding: 0.8vh 1.5vw;
             }
             
             #premium-timer {
-                font-size: 2rem;
-                gap: 8px;
-            }
-            
-            .premium-time-group {
-                padding: 5px 8px;
-            }
-            
-            .premium-digits {
-                font-size: 0.9em;
-            }
-            
-            .premium-unit {
-                font-size: 0.35em;
-                margin-left: 4px;
-            }
-            
-            .premium-separator {
-                font-size: 0.9em;
+                font-size: 6vw;
             }
             
             .premium-logo-area {
-                font-size: 0.7rem;
-                padding: 3px 15px;
-            }
-        }
-
-        @media (max-width: 360px) {
-            .premium-container {
-                min-width: 220px;
-                padding: 8px 12px;
-                max-width: 99vw;
-            }
-            
-            #premium-timer {
-                font-size: 1.8rem;
-                gap: 6px;
-            }
-            
-            .premium-time-group {
-                padding: 4px 6px;
-            }
-            
-            .premium-digits {
-                font-size: 0.8em;
-            }
-            
-            .premium-unit {
-                font-size: 0.3em;
-                margin-left: 3px;
-            }
-            
-            .premium-separator {
-                font-size: 0.8em;
-            }
-            
-            .premium-logo-area {
-                font-size: 0.6rem;
-                padding: 2px 12px;
+                font-size: 0.55rem;
+                padding: 1px 8px;
+                top: -10px;
             }
         }
     </style>
@@ -1198,23 +1063,19 @@ $token = $_GET['token'] ?? '';
           <div id="alka-timer">
             <div class="alka-time-group">
               <span class="alka-digits"><span id="alka-h1">0</span><span id="alka-h2">0</span></span>
-              <span class="alka-unit">H</span>
+              <span class="alka-unit">h</span>
             </div>
             <span class="alka-separator">:</span>
             <div class="alka-time-group">
               <span class="alka-digits"><span id="alka-m1">0</span><span id="alka-m2">0</span></span>
-              <span class="alka-unit">M</span>
+              <span class="alka-unit">m</span>
             </div>
             <span class="alka-separator">:</span>
             <div class="alka-time-group">
               <span class="alka-digits"><span id="alka-s1">0</span><span id="alka-s2">0</span></span>
-              <span class="alka-unit">S</span>
+              <span class="alka-unit">s</span>
             </div>
           </div>
-          <div class="alka-corner-accent alka-top-left"></div>
-          <div class="alka-corner-accent alka-top-right"></div>
-          <div class="alka-corner-accent alka-bottom-left"></div>
-          <div class="alka-corner-accent alka-bottom-right"></div>
         `;
         
         // Insérer après le timer-display
@@ -1236,14 +1097,13 @@ $token = $_GET['token'] ?? '';
         .alka-container {
           position: relative;
           background: ${alkaBgColor} !important;
-          border-radius: 16px !important;
-          padding: 20px 40px !important;
-          min-width: ${alkaContainerSize}px !important;
-          display: flex !important;
+          border-radius: 15px !important;
+          padding: 1vh 2vw !important;
+          max-width: fit-content !important;
+          display: inline-flex !important;
           align-items: center !important;
           justify-content: center !important;
-          width: 100% !important;
-          height: 100% !important;
+          box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4) !important;
           --alka-accent-color: ${alkaAccentColor} !important;
           --alka-text-color: ${alkaTextColor} !important;
           --alka-digits-color: ${alkaDigitsColor} !important;
@@ -1251,21 +1111,22 @@ $token = $_GET['token'] ?? '';
         
         .alka-logo-area {
           position: absolute !important;
-          top: -20px !important;
+          top: -15px !important;
           left: 50% !important;
           transform: translateX(-50%) !important;
           background: ${alkaAccentColor} !important;
-          padding: 4px 20px !important;
-          border-radius: 20px !important;
-          font-size: 0.8rem !important;
+          padding: 2px 12px !important;
+          border-radius: 15px !important;
+          font-size: 0.65rem !important;
           font-weight: 800 !important;
           color: #000 !important;
-          letter-spacing: 0.1em !important;
+          letter-spacing: 0.05em !important;
           text-transform: uppercase !important;
+          white-space: nowrap !important;
         }
         
         #alka-timer {
-          font-size: ${alkaFontSize}px !important;
+          font-size: 3.2vw !important;
           color: ${alkaTextColor} !important;
           text-align: center !important;
           white-space: nowrap !important;
@@ -1273,46 +1134,49 @@ $token = $_GET['token'] ?? '';
           display: flex !important;
           align-items: center !important;
           justify-content: center !important;
-          gap: 15px !important;
+          gap: 0.5ch !important;
+          letter-spacing: 0.04em !important;
         }
         
         .alka-time-group {
-          display: flex !important;
+          display: inline-flex !important;
           align-items: baseline !important;
-          background: rgba(255, 255, 255, 0.05) !important;
-          border-radius: 12px !important;
-          padding: 10px 15px !important;
-          border: 2px solid rgba(255, 107, 53, 0.3) !important;
-          transition: all 0.3s ease !important;
         }
         
         .alka-time-group:hover {
-          background: rgba(255, 107, 53, 0.1) !important;
-          border-color: ${alkaAccentColor} !important;
-          transform: translateY(-2px) !important;
+          transform: none !important;
         }
         
         .alka-digits {
+          display: inline-block !important;
+          width: 1.8ch !important;
+          text-align: center !important;
           font-weight: 900 !important;
           color: ${alkaDigitsColor} !important;
-          font-size: 1.2em !important;
-          letter-spacing: 0.05em !important;
-          text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3) !important;
+          font-size: 1em !important;
+          letter-spacing: 0 !important;
         }
         
         .alka-unit {
-          font-size: 0.5em !important;
-          color: rgba(255, 255, 255, 0.7) !important;
-          margin-left: 8px !important;
+          display: inline-block !important;
+          width: auto !important;
+          text-align: center !important;
+          padding-left: 0.5ch !important;
+          padding-right: 0.5ch !important;
+          font-size: 0.7em !important;
+          color: rgba(255, 255, 255, 0.9) !important;
           font-weight: 600 !important;
-          text-transform: uppercase !important;
-          letter-spacing: 0.1em !important;
+          text-transform: lowercase !important;
+          letter-spacing: 0 !important;
         }
         
         .alka-separator {
+          display: inline-block !important;
+          width: 1ch !important;
+          text-align: center !important;
           color: ${alkaAccentColor} !important;
           font-weight: 800 !important;
-          font-size: 1.1em !important;
+          font-size: 1em !important;
           opacity: 0.8 !important;
           animation: alka-blink 2s ease-in-out infinite !important;
         }
@@ -1332,315 +1196,56 @@ $token = $_GET['token'] ?? '';
           color: #ff0000 !important;
         }
         
-        @keyframes alka-urgent-shake {
-          0%, 100% { transform: translateX(0); }
-          25% { transform: translateX(-2px); }
-          75% { transform: translateX(2px); }
-        }
-        
-        .alka-change-animation {
-          animation: alka-flip-in 0.4s ease-out !important;
-        }
-        
-        @keyframes alka-flip-in {
-          0% { 
-            transform: scaleY(0);
-            opacity: 0;
-          }
-          50% { 
-            transform: scaleY(1.1);
-          }
-          100% { 
-            transform: scaleY(1);
-            opacity: 1;
-          }
-        }
-        
-        .alka-corner-accent {
-          position: absolute !important;
-          width: 20px !important;
-          height: 20px !important;
-          border: 2px solid ${alkaAccentColor} !important;
-        }
-        
-        .alka-corner-accent.alka-top-left {
-          top: -1px !important;
-          left: -1px !important;
-          border-right: none !important;
-          border-bottom: none !important;
-          border-radius: 16px 0 0 0 !important;
-        }
-        
-        .alka-corner-accent.alka-top-right {
-          top: -1px !important;
-          right: -1px !important;
-          border-left: none !important;
-          border-bottom: none !important;
-          border-radius: 0 16px 0 0 !important;
-        }
-        
-        .alka-corner-accent.alka-bottom-left {
-          bottom: -1px !important;
-          left: -1px !important;
-          border-right: none !important;
-          border-top: none !important;
-          border-radius: 0 0 0 16px !important;
-        }
-        
-        .alka-corner-accent.alka-bottom-right {
-          bottom: -1px !important;
-          right: -1px !important;
-          border-left: none !important;
-          border-top: none !important;
-          border-radius: 0 0 16px 0 !important;
-        }
-      `;
-      
-      // Options d'affichage
-      if (!styles.alka.showSeparators) {
-        css += '.alka-separator { display: none !important; } ';
-      }
-      if (!styles.alka.showUnits) {
-        css += '.alka-unit { display: none !important; } ';
-      }
-      if (!styles.alka.showCorners) {
-        css += '.alka-corner-accent { display: none !important; } ';
-      }
-      if (!styles.alka.blinkSeparators) {
-        css += '.alka-separator { animation: none !important; } ';
-      }
-      if (!styles.alka.hoverEffects) {
-        css += '.alka-time-group { transition: none !important; } ';
-      }
-      if (!styles.alka.urgentAnimation) {
-        css += '.alka-low-time .alka-time-group { animation: none !important; } ';
-      }
-      
-      // Mettre à jour le texte
-      const alkaText = document.getElementById('alka-text');
-      if (alkaText) {
-        alkaText.textContent = styles.alka.text || 'Fin du timer = fin de live';
-      }
-      
-    } else {
-      // Si MFA PREMIUM n'est pas activé, masquer le conteneur et montrer l'affichage normal
-      css += '#alka-timer-container { display: none !important; } ';
-      css += '#timer-display { display: block !important; } ';
-    }
-
-    // 4. Style MFA PREMIUM (Alka Agency)
-    if (styles.alka && (styles.alka.enabled === true || styles.alka.enabled === 'true' || styles.alka.enabled === 1)) {
-      // Masquer l'affichage normal
-      css += '#timer-display { display: none !important; } ';
-      
-      // Créer la structure HTML pour MFA PREMIUM
-      let alkaContainer = document.getElementById('alka-timer-container');
-      if (!alkaContainer) {
-        alkaContainer = document.createElement('div');
-        alkaContainer.id = 'alka-timer-container';
-        alkaContainer.className = 'alka-container';
-        alkaContainer.innerHTML = `
-          <div class="alka-logo-area">
-            <span id="alka-text">${styles.alka.text || 'Fin du timer = fin de live'}</span>
-          </div>
-          <div id="alka-timer">
-            <div class="alka-time-group">
-              <span class="alka-digits"><span id="alka-h1">0</span><span id="alka-h2">0</span></span>
-              <span class="alka-unit">H</span>
-            </div>
-            <span class="alka-separator">:</span>
-            <div class="alka-time-group">
-              <span class="alka-digits"><span id="alka-m1">0</span><span id="alka-m2">0</span></span>
-              <span class="alka-unit">M</span>
-            </div>
-            <span class="alka-separator">:</span>
-            <div class="alka-time-group">
-              <span class="alka-digits"><span id="alka-s1">0</span><span id="alka-s2">0</span></span>
-              <span class="alka-unit">S</span>
-            </div>
-          </div>
-          <div class="alka-corner-accent alka-top-left"></div>
-          <div class="alka-corner-accent alka-top-right"></div>
-          <div class="alka-corner-accent alka-bottom-left"></div>
-          <div class="alka-corner-accent alka-bottom-right"></div>
-        `;
-        
-        // Insérer après le timer-display
-        const timerDisplay = document.getElementById('timer-display');
-        if (timerDisplay && timerDisplay.parentNode) {
-          timerDisplay.parentNode.insertBefore(alkaContainer, timerDisplay.nextSibling);
-        }
-      }
-      
-      // Appliquer les styles CSS pour MFA PREMIUM
-      const alkaBgColor = styles.alka.bgColor || '#000000';
-      const alkaAccentColor = styles.alka.accentColor || '#ff6b35';
-      const alkaTextColor = styles.alka.textColor || '#ffffff';
-      const alkaDigitsColor = styles.alka.digitsColor || '#ff6b35';
-      const alkaContainerSize = styles.alka.containerSize || '320';
-      const alkaFontSize = styles.alka.fontSize || '56';
-      
-      css += `
-        .alka-container {
-          position: relative;
-          background: ${alkaBgColor} !important;
-          border-radius: 16px !important;
-          padding: 20px 40px !important;
-          min-width: ${alkaContainerSize}px !important;
-          display: flex !important;
-          align-items: center !important;
-          justify-content: center !important;
-          width: 100% !important;
-          height: 100% !important;
-          --alka-accent-color: ${alkaAccentColor} !important;
-          --alka-text-color: ${alkaTextColor} !important;
-          --alka-digits-color: ${alkaDigitsColor} !important;
-        }
-        
-        .alka-logo-area {
-          position: absolute !important;
-          top: -20px !important;
-          left: 50% !important;
-          transform: translateX(-50%) !important;
-          background: ${alkaAccentColor} !important;
-          padding: 4px 20px !important;
-          border-radius: 20px !important;
-          font-size: 0.8rem !important;
-          font-weight: 800 !important;
-          color: #000 !important;
-          letter-spacing: 0.1em !important;
-          text-transform: uppercase !important;
-        }
-        
-        #alka-timer {
-          font-size: ${alkaFontSize}px !important;
-          color: ${alkaTextColor} !important;
-          text-align: center !important;
-          white-space: nowrap !important;
-          font-weight: 800 !important;
-          display: flex !important;
-          align-items: center !important;
-          justify-content: center !important;
-          gap: 15px !important;
-        }
-        
-        .alka-time-group {
-          display: flex !important;
-          align-items: baseline !important;
-          background: rgba(255, 255, 255, 0.05) !important;
-          border-radius: 12px !important;
-          padding: 10px 15px !important;
-          border: 2px solid rgba(255, 107, 53, 0.3) !important;
-          transition: all 0.3s ease !important;
-        }
-        
-        .alka-time-group:hover {
-          background: rgba(255, 107, 53, 0.1) !important;
-          border-color: ${alkaAccentColor} !important;
-          transform: translateY(-2px) !important;
-        }
-        
-        .alka-digits {
-          font-weight: 900 !important;
-          color: ${alkaDigitsColor} !important;
-          font-size: 1.2em !important;
-          letter-spacing: 0.05em !important;
-          text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3) !important;
-        }
-        
-        .alka-unit {
-          font-size: 0.5em !important;
-          color: rgba(255, 255, 255, 0.7) !important;
-          margin-left: 8px !important;
-          font-weight: 600 !important;
-          text-transform: uppercase !important;
-          letter-spacing: 0.1em !important;
-        }
-        
-        .alka-separator {
-          color: ${alkaAccentColor} !important;
-          font-weight: 800 !important;
-          font-size: 1.1em !important;
-          opacity: 0.8 !important;
-          animation: alka-blink 2s ease-in-out infinite !important;
-        }
-        
-        @keyframes alka-blink {
-          0%, 100% { opacity: 0.8; }
-          50% { opacity: 0.3; }
-        }
-        
-        .alka-low-time .alka-time-group {
-          background: rgba(255, 0, 0, 0.1) !important;
-          border-color: #ff0000 !important;
-          animation: alka-urgent-shake 0.5s ease-in-out infinite !important;
+        .alka-low-time #alka-timer {
+          color: #ff0000 !important;
+          animation: alka-blink-urgent 1s infinite !important;
         }
         
         .alka-low-time .alka-digits {
           color: #ff0000 !important;
         }
         
-        @keyframes alka-urgent-shake {
-          0%, 100% { transform: translateX(0); }
-          25% { transform: translateX(-2px); }
-          75% { transform: translateX(2px); }
+        @keyframes alka-blink-urgent {
+          0%, 100% { opacity: 1; }
+          50% { opacity: 0.6; }
         }
         
         .alka-change-animation {
-          animation: alka-flip-in 0.4s ease-out !important;
+          animation: alka-change 0.4s ease-out !important;
         }
         
-        @keyframes alka-flip-in {
-          0% { 
-            transform: scaleY(0);
-            opacity: 0;
+        @keyframes alka-change {
+          0% { transform: scale(1); filter: brightness(2); }
+          50% { transform: scale(1.07); filter: brightness(1.4); }
+          100% { transform: scale(1); filter: brightness(1); }
+        }
+        
+        @media (max-width: 768px) {
+          #alka-timer {
+            font-size: 5vw !important;
           }
-          50% { 
-            transform: scaleY(1.1);
+          
+          .alka-logo-area {
+            font-size: 0.6rem !important;
+            padding: 2px 10px !important;
+            top: -12px !important;
           }
-          100% { 
-            transform: scaleY(1);
-            opacity: 1;
+        }
+        
+        @media (max-width: 480px) {
+          .alka-container {
+            padding: 0.8vh 1.5vw !important;
           }
-        }
-        
-        .alka-corner-accent {
-          position: absolute !important;
-          width: 20px !important;
-          height: 20px !important;
-          border: 2px solid ${alkaAccentColor} !important;
-        }
-        
-        .alka-corner-accent.alka-top-left {
-          top: -1px !important;
-          left: -1px !important;
-          border-right: none !important;
-          border-bottom: none !important;
-          border-radius: 16px 0 0 0 !important;
-        }
-        
-        .alka-corner-accent.alka-top-right {
-          top: -1px !important;
-          right: -1px !important;
-          border-left: none !important;
-          border-bottom: none !important;
-          border-radius: 0 16px 0 0 !important;
-        }
-        
-        .alka-corner-accent.alka-bottom-left {
-          bottom: -1px !important;
-          left: -1px !important;
-          border-right: none !important;
-          border-top: none !important;
-          border-radius: 0 0 0 16px !important;
-        }
-        
-        .alka-corner-accent.alka-bottom-right {
-          bottom: -1px !important;
-          right: -1px !important;
-          border-left: none !important;
-          border-top: none !important;
-          border-radius: 0 0 16px 0 !important;
+          
+          #alka-timer {
+            font-size: 6vw !important;
+          }
+          
+          .alka-logo-area {
+            font-size: 0.55rem !important;
+            padding: 1px 8px !important;
+            top: -10px !important;
+          }
         }
       `;
       
@@ -1651,17 +1256,11 @@ $token = $_GET['token'] ?? '';
       if (!styles.alka.showUnits) {
         css += '.alka-unit { display: none !important; } ';
       }
-      if (!styles.alka.showCorners) {
-        css += '.alka-corner-accent { display: none !important; } ';
-      }
       if (!styles.alka.blinkSeparators) {
         css += '.alka-separator { animation: none !important; } ';
       }
-      if (!styles.alka.hoverEffects) {
-        css += '.alka-time-group { transition: none !important; } ';
-      }
       if (!styles.alka.urgentAnimation) {
-        css += '.alka-low-time .alka-time-group { animation: none !important; } ';
+        css += '.alka-low-time #alka-timer { animation: none !important; } ';
       }
       
       // Mettre à jour le texte
