@@ -881,30 +881,26 @@ $token = $_GET['token'] ?? '';
                 <div id="mfa-preview" class="preview-section" style="display: none;">
                     <div class="preview-title">Aperçu MFA PREMIUM</div>
                     <div class="preview-container">
-                        <div class="premium-container" style="position: relative; background: #000000; border-radius: 16px; padding: 20px 40px; min-width: 320px; display: flex; align-items: center; justify-content: center;">
-                            <div class="premium-logo-area" style="position: absolute; top: -20px; left: 50%; transform: translateX(-50%); background: #b30000; padding: 4px 20px; border-radius: 20px; font-size: 0.8rem; font-weight: 800; color: #000; letter-spacing: 0.1em; text-transform: uppercase; font-family: 'Luckiest Guy', cursive;">
+                        <div class="premium-container" style="position: relative; background: #000000; border-radius: 15px; padding: 1vh 2vw; max-width: fit-content; display: inline-flex; align-items: center; justify-content: center; box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);">
+                            <div class="premium-logo-area" style="position: absolute; top: -15px; left: 50%; transform: translateX(-50%); background: #b30000; padding: 2px 12px; border-radius: 15px; font-size: 0.65rem; font-weight: 800; color: #000; letter-spacing: 0.05em; text-transform: uppercase; white-space: nowrap; z-index: 10;">
                                 <span id="preview-premium-text">MFA - MY FULL AGENCY</span>
                             </div>
-                            <div id="preview-premium-timer" style="font-size: 40px; color: #ffffff; text-align: center; white-space: nowrap; font-weight: 800; display: flex; align-items: center; justify-content: center; gap: 15px; width: 100%; font-family: 'Luckiest Guy', cursive;">
-                                <div class="premium-time-group" style="display: flex; align-items: baseline; background: rgba(255, 255, 255, 0.05); border-radius: 12px; padding: 10px 15px; border: 2px solid rgba(179, 0, 0, 0.3); transition: all 0.3s ease; min-width: 80px; justify-content: center;">
-                                    <span class="premium-digits" style="font-weight: 900; color: #ffffff; font-size: 1.2em; letter-spacing: 0.05em; text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3); display: flex; justify-content: center; min-width: 60px; font-family: 'Luckiest Guy', cursive;"><span>0</span><span>1</span></span>
-                                    <span class="premium-unit" style="font-size: 0.5em; color: #ffffff; margin-left: 8px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em; font-family: 'Luckiest Guy', cursive;">H</span>
+                            <div id="preview-premium-timer" style="font-size: 3.2vw; color: #ffffff; text-align: center; white-space: nowrap; font-weight: 800; display: flex; align-items: center; justify-content: center; gap: 0.5ch; letter-spacing: 0.04em;">
+                                <div class="premium-time-group" style="display: inline-flex; align-items: baseline;">
+                                    <span class="premium-digits" style="display: inline-block; width: 1.8ch; text-align: center; font-weight: 900; color: #ffffff; font-size: 1em; letter-spacing: 0;"><span>0</span><span>1</span></span>
+                                    <span class="premium-unit" style="display: inline-block; width: auto; text-align: center; padding-left: 0.5ch; padding-right: 0.5ch; font-size: 0.7em; color: rgba(255, 255, 255, 0.9); font-weight: 600; text-transform: lowercase; letter-spacing: 0;">h</span>
                                 </div>
-                                <span class="premium-separator" style="color: #b30000; font-weight: 800; font-size: 1.1em; opacity: 0.8; animation: premium-blink 2s ease-in-out infinite; display: flex; align-items: center; justify-content: center; width: 20px; font-family: 'Luckiest Guy', cursive;">:</span>
-                                <div class="premium-time-group" style="display: flex; align-items: baseline; background: rgba(255, 255, 255, 0.05); border-radius: 12px; padding: 10px 15px; border: 2px solid rgba(179, 0, 0, 0.3); transition: all 0.3s ease; min-width: 80px; justify-content: center;">
-                                    <span class="premium-digits" style="font-weight: 900; color: #ffffff; font-size: 1.2em; letter-spacing: 0.05em; text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3); display: flex; justify-content: center; min-width: 60px; font-family: 'Luckiest Guy', cursive;"><span>0</span><span>0</span></span>
-                                    <span class="premium-unit" style="font-size: 0.5em; color: #ffffff; margin-left: 8px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em; font-family: 'Luckiest Guy', cursive;">M</span>
+                                <span class="premium-separator" style="display: inline-block; width: 1ch; text-align: center; color: #b30000; font-weight: 800; font-size: 1em; opacity: 0.8; animation: premium-blink 2s ease-in-out infinite;">:</span>
+                                <div class="premium-time-group" style="display: inline-flex; align-items: baseline;">
+                                    <span class="premium-digits" style="display: inline-block; width: 1.8ch; text-align: center; font-weight: 900; color: #ffffff; font-size: 1em; letter-spacing: 0;"><span>0</span><span>0</span></span>
+                                    <span class="premium-unit" style="display: inline-block; width: auto; text-align: center; padding-left: 0.5ch; padding-right: 0.5ch; font-size: 0.7em; color: rgba(255, 255, 255, 0.9); font-weight: 600; text-transform: lowercase; letter-spacing: 0;">m</span>
                                 </div>
-                                <span class="premium-separator" style="color: #b30000; font-weight: 800; font-size: 1.1em; opacity: 0.8; animation: premium-blink 2s ease-in-out infinite; display: flex; align-items: center; justify-content: center; width: 20px; font-family: 'Luckiest Guy', cursive;">:</span>
-                                <div class="premium-time-group" style="display: flex; align-items: baseline; background: rgba(255, 255, 255, 0.05); border-radius: 12px; padding: 10px 15px; border: 2px solid rgba(179, 0, 0, 0.3); transition: all 0.3s ease; min-width: 80px; justify-content: center;">
-                                    <span class="premium-digits" style="font-weight: 900; color: #ffffff; font-size: 1.2em; letter-spacing: 0.05em; text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3); display: flex; justify-content: center; min-width: 60px; font-family: 'Luckiest Guy', cursive;"><span>0</span><span>0</span></span>
-                                    <span class="premium-unit" style="font-size: 0.5em; color: #ffffff; margin-left: 8px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em; font-family: 'Luckiest Guy', cursive;">S</span>
+                                <span class="premium-separator" style="display: inline-block; width: 1ch; text-align: center; color: #b30000; font-weight: 800; font-size: 1em; opacity: 0.8; animation: premium-blink 2s ease-in-out infinite;">:</span>
+                                <div class="premium-time-group" style="display: inline-flex; align-items: baseline;">
+                                    <span class="premium-digits" style="display: inline-block; width: 1.8ch; text-align: center; font-weight: 900; color: #ffffff; font-size: 1em; letter-spacing: 0;"><span>0</span><span>0</span></span>
+                                    <span class="premium-unit" style="display: inline-block; width: auto; text-align: center; padding-left: 0.5ch; padding-right: 0.5ch; font-size: 0.7em; color: rgba(255, 255, 255, 0.9); font-weight: 600; text-transform: lowercase; letter-spacing: 0;">s</span>
                                 </div>
                             </div>
-                            <div class="premium-corner-accent premium-top-left" style="position: absolute; width: 20px; height: 20px; border: 2px solid #b30000; top: -1px; left: -1px; border-right: none; border-bottom: none; border-radius: 16px 0 0 0;"></div>
-                            <div class="premium-corner-accent premium-top-right" style="position: absolute; width: 20px; height: 20px; border: 2px solid #b30000; top: -1px; right: -1px; border-left: none; border-bottom: none; border-radius: 0 16px 0 0;"></div>
-                            <div class="premium-corner-accent premium-bottom-left" style="position: absolute; width: 20px; height: 20px; border: 2px solid #b30000; bottom: -1px; left: -1px; border-right: none; border-top: none; border-radius: 0 0 0 16px;"></div>
-                            <div class="premium-corner-accent premium-bottom-right" style="position: absolute; width: 20px; height: 20px; border: 2px solid #b30000; bottom: -1px; right: -1px; border-left: none; border-top: none; border-radius: 0 0 16px 0;"></div>
                         </div>
                     </div>
                 </div>
@@ -946,6 +942,15 @@ $token = $_GET['token'] ?? '';
                 </div>
 
                 <div class="form-row">
+                    <div class="form-group">
+                        <label for="alka-containerSize">Taille du container</label>
+                        <div class="range-input-group">
+                            <input type="range" id="alka-containerSize" data-style="alka-containerSize" min="200" max="600" value="320" step="10">
+                            <input type="number" class="size-number" data-style="alka-containerSize" value="320" min="200" max="600">
+                            <span class="range-value">320px</span>
+                        </div>
+                    </div>
+                    
                     <div class="form-group">
                         <label for="alka-fontSize">Taille de la police</label>
                         <div class="range-input-group">

@@ -649,41 +649,38 @@ $token = $_GET['token'] ?? '';
         .premium-container {
             position: relative;
             background: #000000;
-            border-radius: 16px;
-            padding: 20px 40px;
-            min-width: 320px;
-            max-width: 90vw;
-            display: flex;
+            border-radius: 15px;
+            padding: 1vh 2vw;
+            max-width: fit-content;
+            display: inline-flex;
             align-items: center;
             justify-content: center;
-            width: auto;
-            height: auto;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
             --premium-accent-color: #ff6b35;
             --premium-text-color: #ffffff;
             --premium-digits-color: #ff6b35;
-            /* Mobile tweak: Better responsive behavior */
-            overflow: hidden;
-            word-wrap: break-word;
-            word-break: break-word;
+            --premium-container-size: 320px;
         }
 
         .premium-logo-area {
             position: absolute;
-            top: -20px;
+            top: -15px;
             left: 50%;
             transform: translateX(-50%);
             background: var(--premium-accent-color);
-            padding: 4px 20px;
-            border-radius: 20px;
-            font-size: 0.8rem;
+            padding: 2px 12px;
+            border-radius: 15px;
+            font-size: 0.65rem;
             font-weight: 800;
-            color: #000;
-            letter-spacing: 0.1em;
+            color: #000 !important;
+            letter-spacing: 0.05em;
             text-transform: uppercase;
+            white-space: nowrap;
+            z-index: 10;
         }
 
         #premium-timer {
-            font-size: 3.5rem;
+            font-size: 3.2vw;
             color: var(--premium-text-color);
             text-align: center;
             white-space: nowrap;
@@ -691,46 +688,49 @@ $token = $_GET['token'] ?? '';
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 15px;
+            gap: 0.5ch;
+            letter-spacing: 0.04em;
         }
 
         .premium-time-group {
-            display: flex;
+            display: inline-flex;
             align-items: baseline;
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 12px;
-            padding: 10px 15px;
-            border: 2px solid rgba(255, 107, 53, 0.3);
-            transition: all 0.3s ease;
         }
 
         .premium-time-group:hover {
-            background: rgba(255, 107, 53, 0.1);
-            border-color: var(--premium-accent-color);
-            transform: translateY(-2px);
+            transform: none;
         }
 
         .premium-digits {
+            display: inline-block;
+            width: 1.8ch;
+            text-align: center;
             font-weight: 900;
             color: var(--premium-digits-color);
-            font-size: 1.2em;
-            letter-spacing: 0.05em;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+            font-size: 1em;
+            letter-spacing: 0;
         }
 
         .premium-unit {
-            font-size: 0.5em;
-            color: rgba(255, 255, 255, 0.7);
-            margin-left: 8px;
+            display: inline-block;
+            width: auto;
+            text-align: center;
+            padding-left: 0.5ch;
+            padding-right: 0.5ch;
+            font-size: 0.7em;
+            color: rgba(255, 255, 255, 0.9);
             font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.1em;
+            text-transform: lowercase;
+            letter-spacing: 0;
         }
 
         .premium-separator {
+            display: inline-block;
+            width: 1ch;
+            text-align: center;
             color: var(--premium-accent-color);
             font-weight: 800;
-            font-size: 1.1em;
+            font-size: 1em;
             opacity: 0.8;
             animation: premium-blink 2s ease-in-out infinite;
         }
