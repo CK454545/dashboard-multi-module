@@ -779,10 +779,7 @@ $token = $_GET['token'] ?? '';
                 <i class="fas fa-tachometer-alt"></i>
                 Dashboard
             </a>
-            <a href="agency.php?token=<?=$token?>" class="nav-tab website-tab">
-                <i class="fas fa-globe"></i>
-                Site Web
-            </a>
+
             <a href="#" class="nav-tab" onclick="openModal('rules'); return false;">
                 <i class="fas fa-scroll"></i>
                 Règlement

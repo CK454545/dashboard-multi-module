@@ -335,21 +335,21 @@ $token = $_GET['token'] ?? '';
             border-radius: 8px;
             padding: 8px 12px;
             display: flex;
-            align-items: center;
+            flex-direction: column;
             gap: 8px;
             z-index: 1000;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
             min-width: 400px;
             max-width: 90vw;
-            flex-wrap: wrap;
-            justify-content: center;
+            align-items: center;
         }
 
         .team-action-bar-header {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            margin-bottom: var(--spacing-xs);
+            width: 100%;
+            margin-bottom: 4px;
         }
 
         .team-action-bar-controls {
@@ -367,7 +367,7 @@ $token = $_GET['token'] ?? '';
         }
 
         .team-action-bar-title {
-            font-size: 0.75rem;
+            font-size: 0.7rem;
             font-weight: 600;
             color: #ef4444;
             text-transform: uppercase;
@@ -663,6 +663,18 @@ $token = $_GET['token'] ?? '';
         <!-- Si paramètre control=true, afficher les contrôles -->
         <?php if($control): ?>
         <div class="team-action-bar" id="team-action-bar">
+            <div class="team-action-bar-header">
+                <div class="team-action-bar-title">
+                    <i class="fas fa-users"></i>
+                    Module Team VS Team
+                </div>
+                <div class="team-action-bar-controls">
+                    <a href="/modules/teams-config.php?token=<?=$token?>" class="team-action-bar-config">
+                        <i class="fas fa-cog"></i>
+                    </a>
+                </div>
+            </div>
+            
             <div class="team-action-bar-sections">
                 <div class="team-action-section">
                     <div class="team-action-section-header">
@@ -705,14 +717,6 @@ $token = $_GET['token'] ?? '';
                         <button class="team-action-btn primary" data-action="swap-scores">
                             <i class="fas fa-exchange-alt"></i> Swap
                         </button>
-                    </div>
-                </div>
-                
-                <div class="team-action-section">
-                    <div class="team-action-bar-controls">
-                        <a href="/modules/teams-config.php?token=<?=$token?>" class="team-action-bar-config">
-                            <i class="fas fa-cog"></i>
-                        </a>
                     </div>
                 </div>
             </div>
