@@ -603,6 +603,70 @@ $token = $_GET['token'] ?? '';
             }
         }
 
+        /* ==================== STYLE MFA PREMIUM ==================== */
+        .mfa-premium-coming-soon {
+            background: linear-gradient(135deg, rgba(139, 0, 255, 0.1), rgba(0, 212, 255, 0.1));
+            border: 2px solid var(--primary-color);
+            border-radius: var(--radius-lg);
+            padding: var(--spacing-xl);
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .mfa-premium-coming-soon::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+            animation: shimmer 2s infinite;
+        }
+
+        @keyframes shimmer {
+            0% { left: -100%; }
+            100% { left: 100%; }
+        }
+
+        .mfa-premium-icon {
+            font-size: 3rem;
+            color: var(--primary-color);
+            margin-bottom: var(--spacing-md);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        .mfa-premium-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            margin-bottom: var(--spacing-sm);
+        }
+
+        .mfa-premium-subtitle {
+            color: var(--text-secondary);
+            font-size: 1rem;
+            margin-bottom: var(--spacing-lg);
+        }
+
+        .mfa-premium-badge {
+            display: inline-block;
+            background: var(--primary-color);
+            color: white;
+            padding: var(--spacing-sm) var(--spacing-md);
+            border-radius: var(--radius-full);
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+        }
+
         /* ==================== RESPONSIVE ==================== */
         @media (max-width: 768px) {
             .tabs {
@@ -766,6 +830,20 @@ $token = $_GET['token'] ?? '';
                         </div>
                     </div>
                 </div>
+            </div>
+        </div>
+
+        <!-- ==================== MFA PREMIUM ==================== -->
+        <div class="config-section mfa-premium-coming-soon" style="margin-top: var(--spacing-xl);">
+            <div class="mfa-premium-icon">
+                <i class="fas fa-crown"></i>
+            </div>
+            <h2 class="mfa-premium-title">MFA PREMIUM</h2>
+            <p class="mfa-premium-subtitle">
+                <i class="fas fa-star"></i> Style premium MFA - Compatible TikTok Live Studio
+            </p>
+            <div class="mfa-premium-badge">
+                À venir
             </div>
         </div>
 

@@ -538,6 +538,85 @@ $token = $_GET['token'] ?? '';
             animation: float 3s ease-in-out infinite;
         }
 
+        /* ==================== COPYRIGHT SECTION ==================== */
+        .copyright-section {
+            margin-top: 3rem;
+            padding-top: 2rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .copyright-container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 1.5rem 2rem;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .copyright-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .copyright-left {
+            display: flex;
+            align-items: center;
+        }
+
+        .copyright-text {
+            color: #a0a0a0;
+            font-size: 0.9rem;
+            font-weight: 400;
+        }
+
+        .copyright-text i {
+            color: #8b00ff;
+            margin-right: 0.3rem;
+        }
+
+        .copyright-right {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .dev-text {
+            color: #a0a0a0;
+            font-size: 0.9rem;
+            font-weight: 400;
+        }
+
+        .dev-link {
+            color: #00d4ff;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.9rem;
+            padding: 0.3rem 0.8rem;
+            border-radius: 8px;
+            background: rgba(0, 212, 255, 0.1);
+            border: 1px solid rgba(0, 212, 255, 0.2);
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+
+        .dev-link:hover {
+            background: rgba(0, 212, 255, 0.2);
+            border-color: rgba(0, 212, 255, 0.4);
+            transform: translateY(-1px);
+            box-shadow: 0 5px 15px rgba(0, 212, 255, 0.3);
+        }
+
+        .dev-link i {
+            font-size: 0.8rem;
+        }
+
         @keyframes float {
             0%, 100% { transform: translateY(0); }
             50% { transform: translateY(-10px); }
@@ -714,6 +793,22 @@ $token = $_GET['token'] ?? '';
                 font-size: 0.8rem;
                 padding: 0.6rem 1rem;
             }
+
+            .copyright-content {
+                flex-direction: column;
+                text-align: center;
+                gap: 1rem;
+            }
+
+            .copyright-container {
+                padding: 1rem 1.5rem;
+            }
+
+            .copyright-text,
+            .dev-text,
+            .dev-link {
+                font-size: 0.8rem;
+            }
         }
 
         /* ==================== LOADING BAR ==================== */
@@ -886,6 +981,25 @@ $token = $_GET['token'] ?? '';
                     <button class="copy-button" onclick="copyToken()">
                         <i class="fas fa-copy"></i> Copier
                     </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Copyright Section -->
+        <section class="copyright-section">
+            <div class="copyright-container">
+                <div class="copyright-content">
+                    <div class="copyright-left">
+                        <span class="copyright-text">
+                            <i class="fas fa-copyright"></i> 2024 MyFull Agency (MFA)
+                        </span>
+                    </div>
+                    <div class="copyright-right">
+                        <span class="dev-text">Développement & Design par</span>
+                        <a href="mailto:gaetanck.pro@gmail.com" class="dev-link">
+                            <i class="fas fa-code"></i> CK
+                        </a>
+                    </div>
                 </div>
             </div>
         </section>
