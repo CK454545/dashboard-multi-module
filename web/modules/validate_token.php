@@ -66,16 +66,18 @@ function checkTimerAccess($token) {
     // Seul le token dev peut accéder au module timer
     $devToken = 'dev_token_2024';
     
-    if ($token !== $devToken) {
-        http_response_code(503);
-        echo json_encode([
-            'error' => 'Module en cours de réparation',
-            'message' => 'Le module Timer est temporairement indisponible pour maintenance. Seuls les développeurs peuvent y accéder.'
-        ]);
-        exit;
+    // Vérifier si c'est le token de développement local
+    if ($token === $devToken) {
+        return true;
     }
     
-    return true;
+    // Bloquer tous les autres tokens (même les tokens de production valides)
+    http_response_code(503);
+    echo json_encode([
+        'error' => 'Module en cours de réparation',
+        'message' => 'Le module Timer est temporairement indisponible pour maintenance. Seuls les développeurs peuvent y accéder.'
+    ]);
+    exit;
 }
 
 /**
