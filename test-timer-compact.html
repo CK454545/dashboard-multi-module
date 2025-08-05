@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Timer Compact</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            background: #f0f0f0;
+            font-family: Arial, sans-serif;
+        }
+        
+        .test-container {
+            display: flex;
+            flex-direction: column;
+            gap: 40px;
+            align-items: center;
+        }
+        
+        .test-section {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+        
+        h2 {
+            margin-top: 0;
+            color: #333;
+        }
+        
+        /* Nouveau style compact MFA */
+        .alka-container {
+            position: relative;
+            background: #000000;
+            border-radius: 15px;
+            padding: 1vh 2vw;
+            max-width: fit-content;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
+        }
+        
+        .alka-logo-area {
+            position: absolute;
+            top: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #ff6b35;
+            padding: 2px 12px;
+            border-radius: 15px;
+            font-size: 0.65rem;
+            font-weight: 800;
+            color: #000;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+            white-space: nowrap;
+        }
+        
+        #alka-timer {
+            font-size: 3.2vw;
+            color: #ffffff;
+            text-align: center;
+            white-space: nowrap;
+            font-weight: 800;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5ch;
+            letter-spacing: 0.04em;
+        }
+        
+        .alka-time-group {
+            display: inline-flex;
+            align-items: baseline;
+        }
+        
+        .alka-digits {
+            display: inline-block;
+            width: 1.8ch;
+            text-align: center;
+            font-weight: 900;
+            color: #ff6b35;
+            font-size: 1em;
+            letter-spacing: 0;
+        }
+        
+        .alka-unit {
+            display: inline-block;
+            width: auto;
+            text-align: center;
+            padding-left: 0.5ch;
+            padding-right: 0.5ch;
+            font-size: 0.7em;
+            color: rgba(255, 255, 255, 0.9);
+            font-weight: 600;
+            text-transform: lowercase;
+            letter-spacing: 0;
+        }
+        
+        .alka-separator {
+            display: inline-block;
+            width: 1ch;
+            text-align: center;
+            color: #ff6b35;
+            font-weight: 800;
+            font-size: 1em;
+            opacity: 0.8;
+            animation: alka-blink 2s ease-in-out infinite;
+        }
+        
+        @keyframes alka-blink {
+            0%, 100% { opacity: 0.8; }
+            50% { opacity: 0.3; }
+        }
+        
+        /* Style concurrent pour comparaison */
+        .competitor-container {
+            background-color: black;
+            border-radius: 15px;
+            padding: 1vh 2vw;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
+            max-width: fit-content;
+            display: inline-block;
+        }
+        
+        #competitor-timer {
+            font-size: 3.2vw;
+            color: white;
+            text-align: center;
+            white-space: nowrap;
+            letter-spacing: 0.04em;
+            font-weight: 800;
+        }
+        
+        .digit {
+            display: inline-block;
+            width: 1.8ch;
+            text-align: center;
+        }
+        
+        .unit {
+            display: inline-block;
+            width: auto;
+            text-align: center;
+            padding-left: 0.5ch;
+            padding-right: 0.5ch;
+            color: white;
+        }
+        
+        @media (max-width: 768px) {
+            #alka-timer, #competitor-timer {
+                font-size: 5vw;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            #alka-timer, #competitor-timer {
+                font-size: 6vw;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <div class="test-section">
+            <h2>Nouveau Timer MFA Compact</h2>
+            <div class="alka-container">
+                <div class="alka-logo-area">
+                    <span>MFA PREMIUM</span>
+                </div>
+                <div id="alka-timer">
+                    <div class="alka-time-group">
+                        <span class="alka-digits">0</span><span class="alka-digits">1</span>
+                        <span class="alka-unit">h</span>
+                    </div>
+                    <span class="alka-separator">:</span>
+                    <div class="alka-time-group">
+                        <span class="alka-digits">2</span><span class="alka-digits">3</span>
+                        <span class="alka-unit">m</span>
+                    </div>
+                    <span class="alka-separator">:</span>
+                    <div class="alka-time-group">
+                        <span class="alka-digits">4</span><span class="alka-digits">5</span>
+                        <span class="alka-unit">s</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="test-section">
+            <h2>Style Concurrent (référence)</h2>
+            <div class="competitor-container">
+                <div id="competitor-timer">
+                    <span class="digit">0</span><span class="digit">1</span><span class="unit"> h </span>
+                    <span class="digit">2</span><span class="digit">3</span><span class="unit"> m </span>
+                    <span class="digit">4</span><span class="digit">5</span><span class="unit"> s </span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="test-section">
+            <h2>Comparaison des tailles</h2>
+            <p>Le nouveau timer MFA est maintenant aussi compact que le concurrent !</p>
+            <ul style="text-align: left; display: inline-block;">
+                <li>Container adaptatif avec <code>fit-content</code></li>
+                <li>Padding minimal : <code>1vh 2vw</code></li>
+                <li>Font-size responsive : <code>3.2vw</code></li>
+                <li>Largeur des chiffres optimale : <code>1.8ch</code></li>
+                <li>Pas d'éléments décoratifs superflus</li>
+            </ul>
+        </div>
+    </div>
+    
+    <script>
+        // Animation de test
+        setInterval(() => {
+            const seconds = new Date().getSeconds();
+            const minutes = new Date().getMinutes();
+            const hours = new Date().getHours();
+            
+            // Mettre à jour le timer MFA
+            const alkaDigits = document.querySelectorAll('.alka-digits');
+            alkaDigits[0].textContent = Math.floor(hours / 10);
+            alkaDigits[1].textContent = hours % 10;
+            alkaDigits[2].textContent = Math.floor(minutes / 10);
+            alkaDigits[3].textContent = minutes % 10;
+            alkaDigits[4].textContent = Math.floor(seconds / 10);
+            alkaDigits[5].textContent = seconds % 10;
+            
+            // Mettre à jour le timer concurrent
+            const competitorDigits = document.querySelectorAll('.digit');
+            competitorDigits[0].textContent = Math.floor(hours / 10);
+            competitorDigits[1].textContent = hours % 10;
+            competitorDigits[2].textContent = Math.floor(minutes / 10);
+            competitorDigits[3].textContent = minutes % 10;
+            competitorDigits[4].textContent = Math.floor(seconds / 10);
+            competitorDigits[5].textContent = seconds % 10;
+        }, 1000);
+    </script>
+</body>
+</html>
