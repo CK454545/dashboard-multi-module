@@ -194,6 +194,9 @@ $token = $_GET['token'] ?? '';
             padding: var(--spacing-xl);
             margin-bottom: var(--spacing-lg);
             backdrop-filter: blur(10px);
+            overflow-x: auto;
+            max-width: 100%;
+            box-sizing: border-box;
         }
 
         .section-title {
@@ -333,6 +336,9 @@ $token = $_GET['token'] ?? '';
             text-align: center;
             backdrop-filter: blur(10px);
             margin-bottom: var(--spacing-xl);
+            overflow: hidden;
+            max-width: 100%;
+            box-sizing: border-box;
         }
 
         .preview-title {
@@ -560,6 +566,16 @@ $token = $_GET['token'] ?? '';
 
         /* ==================== RESPONSIVE ==================== */
         @media (max-width: 768px) {
+            .config-container {
+                padding: var(--spacing-md);
+            }
+            
+            .preview-container {
+                padding: var(--spacing-lg);
+                margin-left: 0;
+                margin-right: 0;
+            }
+            
             .tabs {
                 flex-direction: column;
             }
@@ -587,13 +603,16 @@ $token = $_GET['token'] ?? '';
             position: relative;
             background: #000000;
             border-radius: 16px;
-            padding: 20px 40px;
-            min-width: 320px;
+            padding: 15px 25px;
+            min-width: 260px;
+            max-width: calc(100vw - 40px);
             display: flex;
             align-items: center;
             justify-content: center;
-            width: 100%;
-            height: 100%;
+            width: auto;
+            height: auto;
+            margin: 0 auto;
+            box-sizing: border-box;
             --premium-accent-color: #ff6b35;
             --premium-text-color: #ffffff;
             --premium-digits-color: #ff6b35;
@@ -745,18 +764,108 @@ $token = $_GET['token'] ?? '';
             border-radius: 0 0 16px 0;
         }
 
-        /* Responsive pour Alka */
+        /* Responsive pour MFA PREMIUM */
         @media (max-width: 768px) {
-            #alka-preview-timer {
-                font-size: 2.5rem;
-                gap: 10px;
+            .premium-container {
+                min-width: 240px !important;
+                padding: 12px 20px !important;
+                max-width: calc(100vw - 30px) !important;
             }
-            .alka-container {
-                padding: 15px 25px;
-                min-width: 280px;
+            
+            #premium-preview-timer {
+                font-size: 2.5rem !important;
+                gap: 8px !important;
             }
-            .alka-time-group {
-                padding: 8px 12px;
+            
+            .premium-time-group {
+                padding: 5px 8px !important;
+                min-width: 70px !important;
+            }
+            
+            .premium-digits {
+                font-size: 1em !important;
+                min-width: 45px !important;
+            }
+            
+            .premium-unit {
+                font-size: 0.4em !important;
+                margin-left: 5px !important;
+            }
+            
+            .premium-separator {
+                font-size: 0.9em !important;
+            }
+            
+            .premium-logo-area {
+                font-size: 0.7rem !important;
+                padding: 3px 12px !important;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .premium-container {
+                min-width: auto !important;
+                width: calc(100vw - 20px) !important;
+                max-width: calc(100vw - 20px) !important;
+                padding: 10px 15px !important;
+                margin: 0 10px !important;
+            }
+            
+            #premium-preview-timer {
+                font-size: 1.8rem !important;
+                gap: 6px !important;
+            }
+            
+            .premium-time-group {
+                padding: 4px 6px !important;
+                min-width: 55px !important;
+            }
+            
+            .premium-digits {
+                font-size: 0.9em !important;
+                min-width: 35px !important;
+            }
+            
+            .premium-unit {
+                font-size: 0.35em !important;
+                margin-left: 3px !important;
+            }
+            
+            .premium-separator {
+                font-size: 0.8em !important;
+            }
+            
+            .premium-logo-area {
+                font-size: 0.6rem !important;
+                padding: 2px 10px !important;
+                top: -15px !important;
+            }
+        }
+        
+        @media (max-width: 360px) {
+            .premium-container {
+                width: calc(100vw - 16px) !important;
+                max-width: calc(100vw - 16px) !important;
+                padding: 8px 12px !important;
+                margin: 0 8px !important;
+            }
+            
+            #premium-preview-timer {
+                font-size: 1.4rem !important;
+                gap: 4px !important;
+            }
+            
+            .premium-time-group {
+                padding: 3px 5px !important;
+                min-width: 45px !important;
+            }
+            
+            .premium-unit {
+                display: none !important;
+            }
+            
+            .premium-separator {
+                font-size: 0.7em !important;
             }
         }
         
@@ -880,24 +989,24 @@ $token = $_GET['token'] ?? '';
                 <!-- Aperçu MFA PREMIUM -->
                 <div id="mfa-preview" class="preview-section" style="display: none;">
                     <div class="preview-title">Aperçu MFA PREMIUM</div>
-                    <div class="preview-container">
-                        <div class="premium-container" style="position: relative; background: #000000; border-radius: 16px; padding: 20px 40px; min-width: 320px; display: flex; align-items: center; justify-content: center;">
+                    <div class="preview-container" style="padding: 0 10px;">
+                        <div class="premium-container" style="position: relative; background: #000000; border-radius: 16px; padding: 15px 20px; min-width: 240px; max-width: 100%; display: flex; align-items: center; justify-content: center; margin: 0 auto; box-sizing: border-box;">
                             <div class="premium-logo-area" style="position: absolute; top: -20px; left: 50%; transform: translateX(-50%); background: #b30000; padding: 4px 20px; border-radius: 20px; font-size: 0.8rem; font-weight: 800; color: #000; letter-spacing: 0.1em; text-transform: uppercase; font-family: 'Luckiest Guy', cursive;">
                                 <span id="preview-premium-text">MFA - MY FULL AGENCY</span>
                             </div>
-                            <div id="preview-premium-timer" style="font-size: 40px; color: #ffffff; text-align: center; white-space: nowrap; font-weight: 800; display: flex; align-items: center; justify-content: center; gap: 15px; width: 100%; font-family: 'Luckiest Guy', cursive;">
-                                <div class="premium-time-group" style="display: flex; align-items: baseline; background: rgba(255, 255, 255, 0.05); border-radius: 12px; padding: 10px 15px; border: 2px solid rgba(179, 0, 0, 0.3); transition: all 0.3s ease; min-width: 80px; justify-content: center;">
-                                    <span class="premium-digits" style="font-weight: 900; color: #ffffff; font-size: 1.2em; letter-spacing: 0.05em; text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3); display: flex; justify-content: center; min-width: 60px; font-family: 'Luckiest Guy', cursive;"><span>0</span><span>1</span></span>
+                            <div id="preview-premium-timer" style="font-size: min(40px, 7vw); color: #ffffff; text-align: center; white-space: nowrap; font-weight: 800; display: flex; align-items: center; justify-content: center; gap: min(15px, 2vw); width: 100%; font-family: 'Luckiest Guy', cursive; flex-wrap: wrap;">
+                                <div class="premium-time-group" style="display: flex; align-items: baseline; background: rgba(255, 255, 255, 0.05); border-radius: 12px; padding: min(10px, 1.5vw) min(15px, 2vw); border: 2px solid rgba(179, 0, 0, 0.3); transition: all 0.3s ease; min-width: min(80px, 15vw); justify-content: center;">
+                                    <span class="premium-digits" style="font-weight: 900; color: #ffffff; font-size: 1.2em; letter-spacing: 0.05em; text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3); display: flex; justify-content: center; min-width: min(60px, 12vw); font-family: 'Luckiest Guy', cursive;"><span>0</span><span>0</span></span>
                                     <span class="premium-unit" style="font-size: 0.5em; color: #ffffff; margin-left: 8px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em; font-family: 'Luckiest Guy', cursive;">H</span>
                                 </div>
-                                <span class="premium-separator" style="color: #b30000; font-weight: 800; font-size: 1.1em; opacity: 0.8; animation: premium-blink 2s ease-in-out infinite; display: flex; align-items: center; justify-content: center; width: 20px; font-family: 'Luckiest Guy', cursive;">:</span>
-                                <div class="premium-time-group" style="display: flex; align-items: baseline; background: rgba(255, 255, 255, 0.05); border-radius: 12px; padding: 10px 15px; border: 2px solid rgba(179, 0, 0, 0.3); transition: all 0.3s ease; min-width: 80px; justify-content: center;">
-                                    <span class="premium-digits" style="font-weight: 900; color: #ffffff; font-size: 1.2em; letter-spacing: 0.05em; text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3); display: flex; justify-content: center; min-width: 60px; font-family: 'Luckiest Guy', cursive;"><span>0</span><span>0</span></span>
+                                <span class="premium-separator" style="color: #b30000; font-weight: 800; font-size: 1.1em; opacity: 0.8; animation: premium-blink 2s ease-in-out infinite; display: flex; align-items: center; justify-content: center; width: auto; font-family: 'Luckiest Guy', cursive;">:</span>
+                                <div class="premium-time-group" style="display: flex; align-items: baseline; background: rgba(255, 255, 255, 0.05); border-radius: 12px; padding: min(10px, 1.5vw) min(15px, 2vw); border: 2px solid rgba(179, 0, 0, 0.3); transition: all 0.3s ease; min-width: min(80px, 15vw); justify-content: center;">
+                                    <span class="premium-digits" style="font-weight: 900; color: #ffffff; font-size: 1.2em; letter-spacing: 0.05em; text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3); display: flex; justify-content: center; min-width: min(60px, 12vw); font-family: 'Luckiest Guy', cursive;"><span>0</span><span>0</span></span>
                                     <span class="premium-unit" style="font-size: 0.5em; color: #ffffff; margin-left: 8px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em; font-family: 'Luckiest Guy', cursive;">M</span>
                                 </div>
-                                <span class="premium-separator" style="color: #b30000; font-weight: 800; font-size: 1.1em; opacity: 0.8; animation: premium-blink 2s ease-in-out infinite; display: flex; align-items: center; justify-content: center; width: 20px; font-family: 'Luckiest Guy', cursive;">:</span>
-                                <div class="premium-time-group" style="display: flex; align-items: baseline; background: rgba(255, 255, 255, 0.05); border-radius: 12px; padding: 10px 15px; border: 2px solid rgba(179, 0, 0, 0.3); transition: all 0.3s ease; min-width: 80px; justify-content: center;">
-                                    <span class="premium-digits" style="font-weight: 900; color: #ffffff; font-size: 1.2em; letter-spacing: 0.05em; text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3); display: flex; justify-content: center; min-width: 60px; font-family: 'Luckiest Guy', cursive;"><span>0</span><span>0</span></span>
+                                <span class="premium-separator" style="color: #b30000; font-weight: 800; font-size: 1.1em; opacity: 0.8; animation: premium-blink 2s ease-in-out infinite; display: flex; align-items: center; justify-content: center; width: auto; font-family: 'Luckiest Guy', cursive;">:</span>
+                                <div class="premium-time-group" style="display: flex; align-items: baseline; background: rgba(255, 255, 255, 0.05); border-radius: 12px; padding: min(10px, 1.5vw) min(15px, 2vw); border: 2px solid rgba(179, 0, 0, 0.3); transition: all 0.3s ease; min-width: min(80px, 15vw); justify-content: center;">
+                                    <span class="premium-digits" style="font-weight: 900; color: #ffffff; font-size: 1.2em; letter-spacing: 0.05em; text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3); display: flex; justify-content: center; min-width: min(60px, 12vw); font-family: 'Luckiest Guy', cursive;"><span>0</span><span>0</span></span>
                                     <span class="premium-unit" style="font-size: 0.5em; color: #ffffff; margin-left: 8px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em; font-family: 'Luckiest Guy', cursive;">S</span>
                                 </div>
                             </div>
@@ -1309,6 +1418,40 @@ $token = $_GET['token'] ?? '';
             updatePremiumPreviewTimer();
             
             seconds++;
+        }
+        
+        // Fonction pour mettre à jour le timer Premium
+        function updatePremiumPreviewTimer() {
+            const mfaEnabled = document.getElementById('alka-enabled').checked;
+            if (!mfaEnabled) return;
+            
+            const hours = Math.floor(seconds / 3600);
+            const minutes = Math.floor((seconds % 3600) / 60);
+            const secs = seconds % 60;
+            
+            const updateDigit = (selector, value) => {
+                const element = document.querySelector(selector);
+                if (element) {
+                    element.textContent = value;
+                }
+            };
+            
+            // Mettre à jour les chiffres dans l'aperçu MFA PREMIUM
+            const container = document.getElementById('preview-premium-timer');
+            if (container) {
+                const digits = container.querySelectorAll('.premium-time-group .premium-digits span');
+                if (digits.length >= 6) {
+                    // Heures
+                    digits[0].textContent = Math.floor(hours / 10);
+                    digits[1].textContent = hours % 10;
+                    // Minutes
+                    digits[2].textContent = Math.floor(minutes / 10);
+                    digits[3].textContent = minutes % 10;
+                    // Secondes
+                    digits[4].textContent = Math.floor(secs / 10);
+                    digits[5].textContent = secs % 10;
+                }
+            }
         }
         
         // Initialiser le timer à 00:00:00
