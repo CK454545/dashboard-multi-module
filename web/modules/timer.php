@@ -645,350 +645,7 @@ $token = $_GET['token'] ?? '';
             }
         }
 
-        /* ==================== STYLE MFA PREMIUM ==================== */
-        .premium-container {
-            position: relative;
-            background: #000000;
-            border-radius: 15px;
-            padding: 1vh 2vw;
-            max-width: fit-content;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
-            --premium-accent-color: #ff6b35;
-            --premium-text-color: #ffffff;
-            --premium-digits-color: #ff6b35;
-            --premium-container-size: 320px;
-        }
 
-        .premium-logo-area {
-            position: absolute;
-            top: -15px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: var(--premium-accent-color);
-            padding: 2px 12px;
-            border-radius: 15px;
-            font-size: 0.65rem;
-            font-weight: 800;
-            color: #000 !important;
-            letter-spacing: 0.05em;
-            text-transform: uppercase;
-            white-space: nowrap;
-            z-index: 10;
-        }
-
-        #premium-timer {
-            font-size: 3.2vw;
-            color: var(--premium-text-color);
-            text-align: center;
-            white-space: nowrap;
-            font-weight: 800;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.5ch;
-            letter-spacing: 0.04em;
-        }
-
-        .premium-time-group {
-            display: inline-flex;
-            align-items: baseline;
-        }
-
-        .premium-time-group:hover {
-            transform: none;
-        }
-
-        .premium-digits {
-            display: inline-block;
-            width: 1.8ch;
-            text-align: center;
-            font-weight: 900;
-            color: var(--premium-digits-color);
-            font-size: 1em;
-            letter-spacing: 0;
-        }
-
-        .premium-unit {
-            display: inline-block;
-            width: auto;
-            text-align: center;
-            padding-left: 0.5ch;
-            padding-right: 0.5ch;
-            font-size: 0.7em;
-            color: rgba(255, 255, 255, 0.9);
-            font-weight: 600;
-            text-transform: lowercase;
-            letter-spacing: 0;
-        }
-
-        .premium-separator {
-            display: inline-block;
-            width: 1ch;
-            text-align: center;
-            color: var(--premium-accent-color);
-            font-weight: 800;
-            font-size: 1em;
-            opacity: 0.8;
-            animation: premium-blink 2s ease-in-out infinite;
-        }
-
-        @keyframes premium-blink {
-            0%, 100% { opacity: 0.8; }
-            50% { opacity: 0.3; }
-        }
-
-        .premium-low-time .premium-time-group {
-            background: rgba(255, 0, 0, 0.1);
-            border-color: #ff0000;
-            animation: premium-urgent-shake 0.5s ease-in-out infinite;
-        }
-
-        .premium-low-time .premium-digits {
-            color: #ff0000;
-        }
-
-        @keyframes premium-urgent-shake {
-            0%, 100% { transform: translateX(0); }
-            25% { transform: translateX(-2px); }
-            75% { transform: translateX(2px); }
-        }
-
-        .premium-change-animation {
-            animation: premium-flip-in 0.4s ease-out;
-        }
-
-        @keyframes premium-flip-in {
-            0% { 
-                transform: scaleY(0);
-                opacity: 0;
-            }
-            50% { 
-                transform: scaleY(1.1);
-            }
-            100% { 
-                transform: scaleY(1);
-                opacity: 1;
-            }
-        }
-
-        .premium-corner-accent {
-            position: absolute;
-            width: 20px;
-            height: 20px;
-            border: 2px solid var(--premium-accent-color);
-        }
-
-        .premium-corner-accent.premium-top-left {
-            top: -1px;
-            left: -1px;
-            border-right: none;
-            border-bottom: none;
-            border-radius: 16px 0 0 0;
-        }
-
-        .premium-corner-accent.premium-top-right {
-            top: -1px;
-            right: -1px;
-            border-left: none;
-            border-bottom: none;
-            border-radius: 0 16px 0 0;
-        }
-
-        .premium-corner-accent.premium-bottom-left {
-            bottom: -1px;
-            left: -1px;
-            border-right: none;
-            border-top: none;
-            border-radius: 0 0 0 16px;
-        }
-
-        .premium-corner-accent.premium-bottom-right {
-            bottom: -1px;
-            right: -1px;
-            border-left: none;
-            border-top: none;
-            border-radius: 0 0 16px 0;
-        }
-
-        /* ==================== RESPONSIVE DESIGN POUR MFA PREMIUM ==================== */
-        @media (max-width: 1024px) {
-            .premium-container {
-                min-width: 280px;
-                padding: 15px 30px;
-            }
-            
-            #premium-timer {
-                font-size: 3rem;
-                gap: 12px;
-            }
-            
-            .premium-time-group {
-                padding: 8px 12px;
-            }
-        }
-
-        @media (max-width: 768px) {
-            .premium-container {
-                min-width: 260px;
-                padding: 12px 20px;
-                max-width: 95vw;
-                /* Mobile tweak: Better mobile centering */
-                margin: 0 auto;
-                display: flex;
-                justify-content: center;
-                align-items: center;
-            }
-            
-            #premium-timer {
-                font-size: 2.5rem;
-                gap: 10px;
-                /* Mobile tweak: Better mobile timer centering */
-                justify-content: center;
-                align-items: center;
-                flex-wrap: wrap;
-            }
-            
-            .premium-time-group {
-                padding: 6px 10px;
-            }
-            
-            .premium-digits {
-                font-size: 1em;
-            }
-            
-            .premium-unit {
-                font-size: 0.4em;
-                margin-left: 6px;
-            }
-            
-            .premium-separator {
-                font-size: 1em;
-            }
-        }
-
-        @media (max-width: 480px) {
-            .premium-container {
-                min-width: 200px; /* Mobile tweak: reduced min-width */
-                padding: 8px 12px; /* Mobile tweak: reduced padding */
-                max-width: 95vw; /* Mobile tweak: better max-width */
-                /* Mobile tweak: Better mobile centering */
-                margin: 0 auto;
-                display: flex;
-                justify-content: center;
-                align-items: center;
-            }
-            
-            #premium-timer {
-                font-size: 1.6rem; /* Mobile tweak: smaller font size */
-                gap: 6px; /* Mobile tweak: reduced gap */
-                flex-wrap: wrap; /* Mobile tweak: allow wrapping */
-                justify-content: center;
-                /* Mobile tweak: Better mobile timer centering */
-                align-items: center;
-            }
-            
-            .premium-time-group {
-                padding: 4px 6px; /* Mobile tweak: reduced padding */
-                margin: 2px; /* Mobile tweak: add margin for spacing */
-            }
-            
-            .premium-digits {
-                font-size: 0.85em; /* Mobile tweak: smaller digits */
-            }
-            
-            .premium-unit {
-                font-size: 0.3em; /* Mobile tweak: smaller unit text */
-                margin-left: 3px; /* Mobile tweak: reduced margin */
-            }
-            
-            .premium-separator {
-                font-size: 0.8em; /* Mobile tweak: smaller separator */
-            }
-            
-            .premium-logo-area {
-                font-size: 0.6rem; /* Mobile tweak: smaller logo text */
-                padding: 2px 12px; /* Mobile tweak: reduced padding */
-            }
-        }
-
-        @media (max-width: 360px) {
-            .premium-container {
-                min-width: 180px; /* Mobile tweak: even smaller min-width */
-                padding: 6px 8px; /* Mobile tweak: minimal padding */
-                max-width: 98vw; /* Mobile tweak: better max-width */
-            }
-            
-            #premium-timer {
-                font-size: 1.4rem; /* Mobile tweak: much smaller font */
-                gap: 4px; /* Mobile tweak: minimal gap */
-                flex-direction: column; /* Mobile tweak: stack vertically if needed */
-                align-items: center;
-            }
-            
-            .premium-time-group {
-                padding: 3px 4px; /* Mobile tweak: minimal padding */
-                margin: 1px; /* Mobile tweak: minimal margin */
-            }
-            
-            .premium-digits {
-                font-size: 0.75em; /* Mobile tweak: smaller digits */
-            }
-            
-            .premium-unit {
-                font-size: 0.25em; /* Mobile tweak: very small unit text */
-                margin-left: 2px; /* Mobile tweak: minimal margin */
-            }
-            
-            .premium-separator {
-                font-size: 0.7em; /* Mobile tweak: smaller separator */
-            }
-            
-            .premium-logo-area {
-                font-size: 0.5rem; /* Mobile tweak: very small logo text */
-                padding: 1px 8px; /* Mobile tweak: minimal padding */
-            }
-        }
-
-        /* Mobile tweak: Ultra small screens (iPhone SE, etc.) */
-        @media (max-width: 320px) {
-            .premium-container {
-                min-width: 160px; /* Mobile tweak: ultra small min-width */
-                padding: 4px 6px; /* Mobile tweak: ultra minimal padding */
-                max-width: 99vw; /* Mobile tweak: full width */
-            }
-            
-            #premium-timer {
-                font-size: 1.2rem; /* Mobile tweak: ultra small font */
-                gap: 3px; /* Mobile tweak: ultra minimal gap */
-                flex-direction: column; /* Mobile tweak: always stack */
-            }
-            
-            .premium-time-group {
-                padding: 2px 3px; /* Mobile tweak: ultra minimal padding */
-                margin: 1px; /* Mobile tweak: minimal margin */
-            }
-            
-            .premium-digits {
-                font-size: 0.7em; /* Mobile tweak: ultra small digits */
-            }
-            
-            .premium-unit {
-                font-size: 0.2em; /* Mobile tweak: ultra small unit text */
-                margin-left: 1px; /* Mobile tweak: minimal margin */
-            }
-            
-            .premium-separator {
-                font-size: 0.6em; /* Mobile tweak: ultra small separator */
-            }
-            
-            .premium-logo-area {
-                font-size: 0.4rem; /* Mobile tweak: ultra small logo text */
-                padding: 1px 6px; /* Mobile tweak: ultra minimal padding */
-            }
-        }
     </style>
 </head>
 <body class="style-default size-medium">
@@ -1090,14 +747,14 @@ $token = $_GET['token'] ?? '';
     </div>
 
 <script>
-  // ==================== NOUVELLE LOGIQUE ALKA AGENCY ====================
+  // ==================== LOGIQUE TIMER ====================
   // Cette logique fonctionne parfaitement sur TikTok Live Studio
   
   const token = '<?php echo htmlspecialchars($token); ?>';
   const userId = '<?php echo htmlspecialchars($user['discord_id'] ?? ''); ?>';
   const isRealtime = <?php echo isset($_GET['realtime']) && $_GET['realtime'] === 'true' ? 'true' : 'false'; ?>;
 
-  // Variables Alka Agency
+  // Variables Timer
   let timerState = {
     endTime: null,        // Timestamp UNIX de fin
     duration: 0,          // Durée initiale en secondes
@@ -1127,8 +784,8 @@ $token = $_GET['token'] ?? '';
     initializeTimer();
     
     loadConfig().then(() => {
-      // Initialiser pour TikTok après le chargement
-      setTimeout(initializeForTikTok, 1000);
+          // Initialiser le timer après le chargement
+    setTimeout(initializeForTikTok, 1000);
     });
     setTimeout(loadStyles, 100);
     setTimeout(loadStyles, 500);
@@ -1307,9 +964,8 @@ $token = $_GET['token'] ?? '';
     if (styles.general) {
       const general = styles.general;
       if (general.transparent === true || general.transparent === 'true' || general.transparent === 1) {
-        css += 'body, html, .widget-container, .display, .alka-container, .premium-container { background: transparent !important; } ';
-        // Forcer la transparence pour MFA Premium
-        css += '.alka-container { background: transparent !important; } ';
+        css += 'body, html, .widget-container, .display { background: transparent !important; } ';
+
       } else if (general.background) {
         css += `body, html { background: ${general.background} !important; } `;
       }
@@ -1356,493 +1012,7 @@ $token = $_GET['token'] ?? '';
       }
     }
 
-    // 4. Style MFA PREMIUM (Alka Agency)
-    if (styles.alka && (styles.alka.enabled === true || styles.alka.enabled === 'true' || styles.alka.enabled === 1)) {
-      // Masquer l'affichage normal
-      css += '#timer-display { display: none !important; } ';
-      
-      // Créer la structure HTML pour MFA PREMIUM
-      let alkaContainer = document.getElementById('alka-timer-container');
-      if (!alkaContainer) {
-        alkaContainer = document.createElement('div');
-        alkaContainer.id = 'alka-timer-container';
-        alkaContainer.className = 'alka-container';
-        alkaContainer.innerHTML = `
-          <div class="alka-logo-area">
-            <span id="alka-text">${styles.alka.text || 'MFA - MY FULL AGENCY'}</span>
-          </div>
-          <div id="alka-timer">
-            <div class="alka-time-group">
-              <span class="alka-digits"><span id="alka-h1">0</span><span id="alka-h2">0</span></span>
-              <span class="alka-unit">h</span>
-            </div>
-            <span class="alka-separator">:</span>
-            <div class="alka-time-group">
-              <span class="alka-digits"><span id="alka-m1">0</span><span id="alka-m2">0</span></span>
-              <span class="alka-unit">m</span>
-            </div>
-            <span class="alka-separator">:</span>
-            <div class="alka-time-group">
-              <span class="alka-digits"><span id="alka-s1">0</span><span id="alka-s2">0</span></span>
-              <span class="alka-unit">s</span>
-            </div>
-          </div>
-        `;
-        
-        // Insérer après le timer-display
-        const timerDisplay = document.getElementById('timer-display');
-        if (timerDisplay && timerDisplay.parentNode) {
-          timerDisplay.parentNode.insertBefore(alkaContainer, timerDisplay.nextSibling);
-        }
-      }
-      
-      // Appliquer les styles CSS pour MFA PREMIUM
-      const alkaBgColor = styles.alka.bgColor || '#000000';
-      const alkaAccentColor = styles.alka.accentColor || '#ff6b35';
-      const alkaTextColor = styles.alka.textColor || '#ffffff';
-      const alkaDigitsColor = styles.alka.digitsColor || '#ff6b35';
-      const alkaContainerSize = styles.alka.containerSize || '320';
-      const alkaFontSize = styles.alka.fontSize || '56';
-      
-      css += `
-        .alka-container {
-          position: relative;
-          background: ${alkaBgColor} !important;
-          border-radius: 16px !important;
-          padding: 20px 40px !important;
-          min-width: ${alkaContainerSize}px !important;
-          display: flex !important;
-          align-items: center !important;
-          justify-content: center !important;
-          width: 100% !important;
-          height: 100% !important;
-          --alka-accent-color: ${alkaAccentColor} !important;
-          --alka-text-color: ${alkaTextColor} !important;
-          --alka-digits-color: ${alkaDigitsColor} !important;
-        }
-        
-        .alka-logo-area {
-          position: absolute !important;
-          top: -20px !important;
-          left: 50% !important;
-          transform: translateX(-50%) !important;
-          background: ${alkaAccentColor} !important;
-          padding: 4px 20px !important;
-          border-radius: 20px !important;
-          font-size: 0.8rem !important;
-          font-weight: 800 !important;
-          color: #000 !important;
-          letter-spacing: 0.1em !important;
-          text-transform: uppercase !important;
-        }
-        
-        #alka-timer {
-          font-size: ${alkaFontSize}px !important;
-          color: ${alkaTextColor} !important;
-          text-align: center !important;
-          white-space: nowrap !important;
-          font-weight: 800 !important;
-          display: flex !important;
-          align-items: center !important;
-          justify-content: center !important;
-          gap: 15px !important;
-        }
-        
-        .alka-time-group {
-          display: flex !important;
-          align-items: baseline !important;
-          background: rgba(255, 255, 255, 0.05) !important;
-          border-radius: 12px !important;
-          padding: 10px 15px !important;
-          border: 2px solid rgba(255, 107, 53, 0.3) !important;
-          transition: all 0.3s ease !important;
-        }
-        
-        .alka-time-group:hover {
-          background: rgba(255, 107, 53, 0.1) !important;
-          border-color: ${alkaAccentColor} !important;
-          transform: translateY(-2px) !important;
-        }
-        
-        .alka-digits {
-          font-weight: 900 !important;
-          color: ${alkaDigitsColor} !important;
-          font-size: 1.2em !important;
-          letter-spacing: 0.05em !important;
-          text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3) !important;
-        }
-        
-        .alka-unit {
-          font-size: 0.5em !important;
-          color: rgba(255, 255, 255, 0.7) !important;
-          margin-left: 8px !important;
-          font-weight: 600 !important;
-          text-transform: uppercase !important;
-          letter-spacing: 0.1em !important;
-        }
-        
-        .alka-separator {
-          color: ${alkaAccentColor} !important;
-          font-weight: 800 !important;
-          font-size: 1.1em !important;
-          opacity: 0.8 !important;
-          animation: alka-blink 2s ease-in-out infinite !important;
-        }
-        
-        @keyframes alka-blink {
-          0%, 100% { opacity: 0.8; }
-          50% { opacity: 0.3; }
-        }
-        
-        .alka-low-time .alka-time-group {
-          background: rgba(255, 0, 0, 0.1) !important;
-          border-color: #ff0000 !important;
-          animation: alka-urgent-shake 0.5s ease-in-out infinite !important;
-        }
-        
-        .alka-low-time .alka-digits {
-          color: #ff0000 !important;
-        }
-        
-        @keyframes alka-urgent-shake {
-          0%, 100% { transform: translateX(0); }
-          25% { transform: translateX(-2px); }
-          75% { transform: translateX(2px); }
-        }
-        
-        .alka-change-animation {
-          animation: alka-flip-in 0.4s ease-out !important;
-        }
-        
-        @keyframes alka-flip-in {
-          0% { 
-            transform: scaleY(0);
-            opacity: 0;
-          }
-          50% { 
-            transform: scaleY(1.1);
-          }
-          100% { 
-            transform: scaleY(1);
-            opacity: 1;
-          }
-        }
-        
-        .alka-corner-accent {
-          position: absolute !important;
-          width: 20px !important;
-          height: 20px !important;
-          border: 2px solid ${alkaAccentColor} !important;
-        }
-        
-        .alka-corner-accent.alka-top-left {
-          top: -1px !important;
-          left: -1px !important;
-          border-right: none !important;
-          border-bottom: none !important;
-          border-radius: 16px 0 0 0 !important;
-        }
-        
-        .alka-corner-accent.alka-top-right {
-          top: -1px !important;
-          right: -1px !important;
-          border-left: none !important;
-          border-bottom: none !important;
-          border-radius: 0 16px 0 0 !important;
-        }
-        
-        .alka-corner-accent.alka-bottom-left {
-          bottom: -1px !important;
-          left: -1px !important;
-          border-right: none !important;
-          border-top: none !important;
-          border-radius: 0 0 0 16px !important;
-        }
-        
-        .alka-corner-accent.alka-bottom-right {
-          bottom: -1px !important;
-          right: -1px !important;
-          border-left: none !important;
-          border-top: none !important;
-          border-radius: 0 0 16px 0 !important;
-        }
-      `;
-      
-      // Options d'affichage
-      if (!styles.alka.showSeparators) {
-        css += '.alka-separator { display: none !important; } ';
-      }
-      if (!styles.alka.showUnits) {
-        css += '.alka-unit { display: none !important; } ';
-      }
-      if (!styles.alka.showCorners) {
-        css += '.alka-corner-accent { display: none !important; } ';
-      }
-      if (!styles.alka.blinkSeparators) {
-        css += '.alka-separator { animation: none !important; } ';
-      }
-      if (!styles.alka.hoverEffects) {
-        css += '.alka-time-group { transition: none !important; } ';
-      }
-      if (!styles.alka.urgentAnimation) {
-        css += '.alka-low-time .alka-time-group { animation: none !important; } ';
-      }
-      
-      // Mettre à jour le texte
-      const alkaText = document.getElementById('alka-text');
-      if (alkaText) {
-        alkaText.textContent = styles.alka.text || 'Fin du timer = fin de live';
-      }
-      
-    } else {
-      // Si MFA PREMIUM n'est pas activé, masquer le conteneur et montrer l'affichage normal
-      css += '#alka-timer-container { display: none !important; } ';
-      css += '#timer-display { display: block !important; } ';
-    }
 
-    // 4. Style MFA PREMIUM (Alka Agency)
-    if (styles.alka && (styles.alka.enabled === true || styles.alka.enabled === 'true' || styles.alka.enabled === 1)) {
-      // Masquer l'affichage normal
-      css += '#timer-display { display: none !important; } ';
-      
-      // Créer la structure HTML pour MFA PREMIUM
-      let alkaContainer = document.getElementById('alka-timer-container');
-      if (!alkaContainer) {
-        alkaContainer = document.createElement('div');
-        alkaContainer.id = 'alka-timer-container';
-        alkaContainer.className = 'alka-container';
-        alkaContainer.innerHTML = `
-          <div class="alka-logo-area">
-            <span id="alka-text">${styles.alka.text || 'MFA - MY FULL AGENCY'}</span>
-          </div>
-          <div id="alka-timer">
-            <div class="alka-time-group">
-              <span class="alka-digits"><span id="alka-h1">0</span><span id="alka-h2">0</span></span>
-              <span class="alka-unit">h</span>
-            </div>
-            <span class="alka-separator">:</span>
-            <div class="alka-time-group">
-              <span class="alka-digits"><span id="alka-m1">0</span><span id="alka-m2">0</span></span>
-              <span class="alka-unit">m</span>
-            </div>
-            <span class="alka-separator">:</span>
-            <div class="alka-time-group">
-              <span class="alka-digits"><span id="alka-s1">0</span><span id="alka-s2">0</span></span>
-              <span class="alka-unit">s</span>
-            </div>
-          </div>
-        `;
-        
-        // Insérer après le timer-display
-        const timerDisplay = document.getElementById('timer-display');
-        if (timerDisplay && timerDisplay.parentNode) {
-          timerDisplay.parentNode.insertBefore(alkaContainer, timerDisplay.nextSibling);
-        }
-      }
-      
-      // Appliquer les styles CSS pour MFA PREMIUM
-      const alkaBgColor = styles.alka.bgColor || '#000000';
-      const alkaAccentColor = styles.alka.accentColor || '#ff6b35';
-      const alkaTextColor = styles.alka.textColor || '#ffffff';
-      const alkaDigitsColor = styles.alka.digitsColor || '#ff6b35';
-      const alkaContainerSize = styles.alka.containerSize || '320';
-      const alkaFontSize = styles.alka.fontSize || '56';
-      
-      css += `
-        .alka-container {
-          position: relative;
-          background: ${alkaBgColor} !important;
-          border-radius: 16px !important;
-          padding: 20px 40px !important;
-          min-width: ${alkaContainerSize}px !important;
-          display: flex !important;
-          align-items: center !important;
-          justify-content: center !important;
-          width: 100% !important;
-          height: 100% !important;
-          --alka-accent-color: ${alkaAccentColor} !important;
-          --alka-text-color: ${alkaTextColor} !important;
-          --alka-digits-color: ${alkaDigitsColor} !important;
-        }
-        
-        .alka-logo-area {
-          position: absolute !important;
-          top: -20px !important;
-          left: 50% !important;
-          transform: translateX(-50%) !important;
-          background: ${alkaAccentColor} !important;
-          padding: 4px 20px !important;
-          border-radius: 20px !important;
-          font-size: 0.8rem !important;
-          font-weight: 800 !important;
-          color: #000 !important;
-          letter-spacing: 0.1em !important;
-          text-transform: uppercase !important;
-        }
-        
-        #alka-timer {
-          font-size: ${alkaFontSize}px !important;
-          color: ${alkaTextColor} !important;
-          text-align: center !important;
-          white-space: nowrap !important;
-          font-weight: 800 !important;
-          display: flex !important;
-          align-items: center !important;
-          justify-content: center !important;
-          gap: 15px !important;
-        }
-        
-        .alka-time-group {
-          display: flex !important;
-          align-items: baseline !important;
-          background: rgba(255, 255, 255, 0.05) !important;
-          border-radius: 12px !important;
-          padding: 10px 15px !important;
-          border: 2px solid rgba(255, 107, 53, 0.3) !important;
-          transition: all 0.3s ease !important;
-        }
-        
-        .alka-time-group:hover {
-          background: rgba(255, 107, 53, 0.1) !important;
-          border-color: ${alkaAccentColor} !important;
-          transform: translateY(-2px) !important;
-        }
-        
-        .alka-digits {
-          font-weight: 900 !important;
-          color: ${alkaDigitsColor} !important;
-          font-size: 1.2em !important;
-          letter-spacing: 0.05em !important;
-          text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3) !important;
-        }
-        
-        .alka-unit {
-          font-size: 0.5em !important;
-          color: rgba(255, 255, 255, 0.7) !important;
-          margin-left: 8px !important;
-          font-weight: 600 !important;
-          text-transform: uppercase !important;
-          letter-spacing: 0.1em !important;
-        }
-        
-        .alka-separator {
-          color: ${alkaAccentColor} !important;
-          font-weight: 800 !important;
-          font-size: 1.1em !important;
-          opacity: 0.8 !important;
-          animation: alka-blink 2s ease-in-out infinite !important;
-        }
-        
-        @keyframes alka-blink {
-          0%, 100% { opacity: 0.8; }
-          50% { opacity: 0.3; }
-        }
-        
-        .alka-low-time .alka-time-group {
-          background: rgba(255, 0, 0, 0.1) !important;
-          border-color: #ff0000 !important;
-          animation: alka-urgent-shake 0.5s ease-in-out infinite !important;
-        }
-        
-        .alka-low-time .alka-digits {
-          color: #ff0000 !important;
-        }
-        
-        @keyframes alka-urgent-shake {
-          0%, 100% { transform: translateX(0); }
-          25% { transform: translateX(-2px); }
-          75% { transform: translateX(2px); }
-        }
-        
-        .alka-change-animation {
-          animation: alka-flip-in 0.4s ease-out !important;
-        }
-        
-        @keyframes alka-flip-in {
-          0% { 
-            transform: scaleY(0);
-            opacity: 0;
-          }
-          50% { 
-            transform: scaleY(1.1);
-          }
-          100% { 
-            transform: scaleY(1);
-            opacity: 1;
-          }
-        }
-        
-        .alka-corner-accent {
-          position: absolute !important;
-          width: 20px !important;
-          height: 20px !important;
-          border: 2px solid ${alkaAccentColor} !important;
-        }
-        
-        .alka-corner-accent.alka-top-left {
-          top: -1px !important;
-          left: -1px !important;
-          border-right: none !important;
-          border-bottom: none !important;
-          border-radius: 16px 0 0 0 !important;
-        }
-        
-        .alka-corner-accent.alka-top-right {
-          top: -1px !important;
-          right: -1px !important;
-          border-left: none !important;
-          border-bottom: none !important;
-          border-radius: 0 16px 0 0 !important;
-        }
-        
-        .alka-corner-accent.alka-bottom-left {
-          bottom: -1px !important;
-          left: -1px !important;
-          border-right: none !important;
-          border-top: none !important;
-          border-radius: 0 0 0 16px !important;
-        }
-        
-        .alka-corner-accent.alka-bottom-right {
-          bottom: -1px !important;
-          right: -1px !important;
-          border-left: none !important;
-          border-top: none !important;
-          border-radius: 0 0 16px 0 !important;
-        }
-      `;
-      
-      // Options d'affichage
-      if (!styles.alka.showSeparators) {
-        css += '.alka-separator { display: none !important; } ';
-      }
-      if (!styles.alka.showUnits) {
-        css += '.alka-unit { display: none !important; } ';
-      }
-      if (!styles.alka.showCorners) {
-        css += '.alka-corner-accent { display: none !important; } ';
-      }
-      if (!styles.alka.blinkSeparators) {
-        css += '.alka-separator { animation: none !important; } ';
-      }
-      if (!styles.alka.hoverEffects) {
-        css += '.alka-time-group { transition: none !important; } ';
-      }
-      if (!styles.alka.urgentAnimation) {
-        css += '.alka-low-time .alka-time-group { animation: none !important; } ';
-      }
-      
-      // Mettre à jour le texte
-      const alkaText = document.getElementById('alka-text');
-      if (alkaText) {
-        alkaText.textContent = styles.alka.text || 'Fin du timer = fin de live';
-      }
-      
-    } else {
-      // Si MFA PREMIUM n'est pas activé, masquer le conteneur et montrer l'affichage normal
-      css += '#alka-timer-container { display: none !important; } ';
-      css += '#timer-display { display: block !important; } ';
-    }
 
     // Ajuster pour la barre de contrôles si elle est visible
     if (!styles.options || !styles.options['hide-controls']) {
@@ -1934,7 +1104,7 @@ $token = $_GET['token'] ?? '';
     }
   }, 500);
 
-  // ---------- NOUVELLE LOGIQUE ALKA AGENCY ----------
+  // ---------- LOGIQUE TIMER ----------
 
   function formatTime(totalSeconds) {
     // S'assurer qu'on a un nombre valide
@@ -1971,59 +1141,14 @@ $token = $_GET['token'] ?? '';
         remaining = timerState.duration;
     }
     
-    // Mettre à jour l'affichage normal avec la même logique
+    // Mettre à jour l'affichage normal
     const el = document.getElementById('timer-display');
     if (el) {
         el.textContent = formatTime(remaining);
     }
-    
-    // Mettre à jour l'affichage MFA PREMIUM avec EXACTEMENT la même logique
-    // Le style MFA Premium utilise la même logique, juste un affichage visuel différent
-    const alkaContainer = document.getElementById('alka-timer-container');
-    if (alkaContainer) {
-        // Utiliser EXACTEMENT la même logique que formatTime()
-        totalSeconds = parseInt(remaining) || 0;
-        totalSeconds = Math.max(0, totalSeconds);
-        
-        const hours = Math.floor(totalSeconds / 3600);
-        const minutes = Math.floor((totalSeconds % 3600) / 60);
-        const seconds = totalSeconds % 60;
-        
-        // Mettre à jour les chiffres avec la même logique que le timer normal
-        const updateDigit = (id, value) => {
-            const element = alkaContainer.querySelector(`#${id}`);
-            if (element) {
-                const newValue = value.toString();
-                const oldValue = element.textContent;
-                
-                // Même logique que le timer normal : mettre à jour seulement si changé
-                if (oldValue !== newValue) {
-                    element.textContent = newValue;
-                    element.classList.add('alka-change-animation');
-                    setTimeout(() => element.classList.remove('alka-change-animation'), 400);
-                }
-            }
-        };
-        
-        // Même logique que formatTime() : mettre à jour chaque chiffre
-        updateDigit('alka-h1', Math.floor(hours / 10));
-        updateDigit('alka-h2', hours % 10);
-        updateDigit('alka-m1', Math.floor(minutes / 10));
-        updateDigit('alka-m2', minutes % 10);
-        updateDigit('alka-s1', Math.floor(seconds / 10));
-        updateDigit('alka-s2', seconds % 10);
-        
-        // Même logique que le timer normal : alerte quand temps faible
-        if (totalSeconds <= 60) {
-            alkaContainer.classList.add('alka-low-time');
-        } else {
-            alkaContainer.classList.remove('alka-low-time');
-        }
-    }
   }
 
-  // Le style MFA Premium utilise maintenant EXACTEMENT la même logique que le timer normal
-  // Pas besoin de fonction séparée - tout est géré dans updateDisplay() et forceDisplay()
+
 
   function debugTikTok() {
     console.log('=== TikTok Debug ===');
@@ -2046,125 +1171,11 @@ $token = $_GET['token'] ?? '';
 
   window.debugTikTok = debugTikTok;
 
-  function debugAlka() {
-    console.log('=== Alka Agency Debug ===');
-    console.log('Current timerState:', timerState);
-    
-    // Simuler la logique d'Alka Agency
-    const now = Math.floor(Date.now() / 1000);
-    let remaining = 0;
-    
-    if (timerState.isRunning && timerState.endTime) {
-        remaining = Math.max(0, timerState.endTime - now);
-    } else {
-        remaining = timerState.duration;
-    }
-    
-    console.log('Alka-style calculation:');
-    console.log('- Current time (UNIX):', now);
-    console.log('- End time:', timerState.endTime);
-    console.log('- Duration:', timerState.duration);
-    console.log('- Is running:', timerState.isRunning);
-    console.log('- Is paused:', timerState.isPaused);
-    console.log('- Calculated remaining:', remaining);
-    console.log('- Formatted time:', formatTime(remaining));
-    
-    // Tester l'affichage
-    const el = document.getElementById('timer-display');
-    console.log('- Current display text:', el?.textContent);
-    
-    // Forcer l'affichage
-    forceDisplay();
-    console.log('- After forceDisplay:', el?.textContent);
-  }
 
-  window.debugAlka = debugAlka;
 
-  // Fonction de debug spécifique pour MFA PREMIUM
-  function debugMfaPremium() {
-    console.log('=== MFA PREMIUM Debug ===');
-    console.log('Timer State:', timerState);
-    
-    const alkaContainer = document.getElementById('alka-timer-container');
-    console.log('Alka Container exists:', !!alkaContainer);
-    
-    if (alkaContainer) {
-      console.log('Alka Container HTML:', alkaContainer.innerHTML);
-      console.log('Alka Container visible:', alkaContainer.style.display !== 'none');
-    }
-    
-    // Le style MFA Premium est maintenant géré automatiquement dans updateDisplay()
-    // Pas besoin de test manuel - tout est synchronisé
-  }
 
-  window.debugMfaPremium = debugMfaPremium;
 
-  // Fonction de test pour forcer l'affichage MFA PREMIUM
-  function testMfaPremium() {
-    console.log('=== Test MFA PREMIUM ===');
-    
-    // Forcer la création du conteneur
-    let alkaContainer = document.getElementById('alka-timer-container');
-    if (!alkaContainer) {
-      console.log('Creating test MFA PREMIUM container...');
-      alkaContainer = document.createElement('div');
-      alkaContainer.id = 'alka-timer-container';
-      alkaContainer.className = 'alka-container';
-      alkaContainer.style.cssText = `
-        position: relative;
-        background: #000000;
-        border-radius: 16px;
-        padding: 20px 40px;
-        min-width: 320px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        width: 100%;
-        height: 100%;
-      `;
-      alkaContainer.innerHTML = `
-        <div class="alka-logo-area" style="position: absolute; top: -20px; left: 50%; transform: translateX(-50%); background: #ff6b35; padding: 4px 20px; border-radius: 20px; font-size: 0.8rem; font-weight: 800; color: #000; letter-spacing: 0.1em; text-transform: uppercase;">
-          <span id="alka-text">Test MFA PREMIUM</span>
-        </div>
-        <div id="alka-timer" style="font-size: 56px; color: #ffffff; text-align: center; white-space: nowrap; font-weight: 800; display: flex; align-items: center; justify-content: center; gap: 15px;">
-          <div class="alka-time-group" style="display: flex; align-items: baseline; background: rgba(255, 255, 255, 0.05); border-radius: 12px; padding: 10px 15px; border: 2px solid rgba(255, 107, 53, 0.3);">
-            <span class="alka-digits" style="font-weight: 900; color: #ff6b35; font-size: 1.2em; letter-spacing: 0.05em; text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);"><span id="alka-h1">0</span><span id="alka-h2">0</span></span>
-            <span class="alka-unit" style="font-size: 0.5em; color: rgba(255, 255, 255, 0.7); margin-left: 8px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em;">H</span>
-          </div>
-          <span class="alka-separator" style="color: #ff6b35; font-weight: 800; font-size: 1.1em; opacity: 0.8;">:</span>
-          <div class="alka-time-group" style="display: flex; align-items: baseline; background: rgba(255, 255, 255, 0.05); border-radius: 12px; padding: 10px 15px; border: 2px solid rgba(255, 107, 53, 0.3);">
-            <span class="alka-digits" style="font-weight: 900; color: #ff6b35; font-size: 1.2em; letter-spacing: 0.05em; text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);"><span id="alka-m1">0</span><span id="alka-m2">0</span></span>
-            <span class="alka-unit" style="font-size: 0.5em; color: rgba(255, 255, 255, 0.7); margin-left: 8px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em;">M</span>
-          </div>
-          <span class="alka-separator" style="color: #ff6b35; font-weight: 800; font-size: 1.1em; opacity: 0.8;">:</span>
-          <div class="alka-time-group" style="display: flex; align-items: baseline; background: rgba(255, 255, 255, 0.05); border-radius: 12px; padding: 10px 15px; border: 2px solid rgba(255, 107, 53, 0.3);">
-            <span class="alka-digits" style="font-weight: 900; color: #ff6b35; font-size: 1.2em; letter-spacing: 0.05em; text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);"><span id="alka-s1">0</span><span id="alka-s2">0</span></span>
-            <span class="alka-unit" style="font-size: 0.5em; color: rgba(255, 255, 255, 0.7); margin-left: 8px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em;">S</span>
-          </div>
-        </div>
-      `;
-      
-      // Masquer l'affichage normal
-      const timerDisplay = document.getElementById('timer-display');
-      if (timerDisplay) {
-        timerDisplay.style.display = 'none';
-      }
-      
-      // Insérer le conteneur
-      const displayContainer = document.querySelector('.display');
-      if (displayContainer) {
-        displayContainer.appendChild(alkaContainer);
-        console.log('Test MFA PREMIUM container created and inserted');
-      }
-    } else {
-      console.log('MFA PREMIUM container already exists');
-    }
-    
-    // Le style MFA Premium est maintenant géré automatiquement dans updateDisplay()
-    // Pas besoin de test manuel - tout est synchronisé
-  }
 
-  window.testMfaPremium = testMfaPremium;
 
   // Fonction de debug pour vérifier l'interval
   function debugInterval() {
@@ -2211,95 +1222,7 @@ $token = $_GET['token'] ?? '';
 
   window.testTimer = testTimer;
 
-  // Fonction de debug pour forcer le démarrage du timer
-  function forceStartTimer() {
-    console.log('=== Force Start Timer ===');
-    console.log('Before:', timerState);
-    
-    // Forcer l'état
-    timerState.isRunning = true;
-    timerState.isPaused = false;
-    timerState.endTime = Math.floor(Date.now() / 1000) + timerState.duration;
-    
-    // Démarrer l'interval
-    if (interval) clearInterval(interval);
-    interval = setInterval(updateDisplay, 1000);
-    updateDisplay();
-    
-    console.log('After:', timerState);
-    console.log('Interval started:', !!interval);
-  }
 
-  window.forceStartTimer = forceStartTimer;
-
-  // Fonction pour forcer l'activation du style MFA PREMIUM
-  function forceMfaPremium() {
-    console.log('=== Force MFA PREMIUM ===');
-    
-    // Créer le conteneur MFA PREMIUM s'il n'existe pas
-    let alkaContainer = document.getElementById('alka-timer-container');
-    if (!alkaContainer) {
-      console.log('Creating MFA PREMIUM container...');
-      alkaContainer = document.createElement('div');
-      alkaContainer.id = 'alka-timer-container';
-      alkaContainer.className = 'alka-container';
-      alkaContainer.style.cssText = `
-        position: relative;
-        background: #000000;
-        border-radius: 16px;
-        padding: 20px 40px;
-        min-width: 320px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        width: 100%;
-        height: 100%;
-      `;
-      alkaContainer.innerHTML = `
-        <div class="alka-logo-area" style="position: absolute; top: -20px; left: 50%; transform: translateX(-50%); background: #ff6b35; padding: 4px 20px; border-radius: 20px; font-size: 0.8rem; font-weight: 800; color: #000; letter-spacing: 0.1em; text-transform: uppercase;">
-          <span id="alka-text">MFA PREMIUM</span>
-        </div>
-        <div id="alka-timer" style="font-size: 56px; color: #ffffff; text-align: center; white-space: nowrap; font-weight: 800; display: flex; align-items: center; justify-content: center; gap: 15px;">
-          <div class="alka-time-group" style="display: flex; align-items: baseline; background: rgba(255, 255, 255, 0.05); border-radius: 12px; padding: 10px 15px; border: 2px solid rgba(255, 107, 53, 0.3);">
-            <span class="alka-digits" style="font-weight: 900; color: #ff6b35; font-size: 1.2em; letter-spacing: 0.05em; text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);"><span id="alka-h1">0</span><span id="alka-h2">0</span></span>
-            <span class="alka-unit" style="font-size: 0.5em; color: rgba(255, 255, 255, 0.7); margin-left: 8px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em;">H</span>
-          </div>
-          <span class="alka-separator" style="color: #ff6b35; font-weight: 800; font-size: 1.1em; opacity: 0.8;">:</span>
-          <div class="alka-time-group" style="display: flex; align-items: baseline; background: rgba(255, 255, 255, 0.05); border-radius: 12px; padding: 10px 15px; border: 2px solid rgba(255, 107, 53, 0.3);">
-            <span class="alka-digits" style="font-weight: 900; color: #ff6b35; font-size: 1.2em; letter-spacing: 0.05em; text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);"><span id="alka-m1">0</span><span id="alka-m2">0</span></span>
-            <span class="alka-unit" style="font-size: 0.5em; color: rgba(255, 255, 255, 0.7); margin-left: 8px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em;">M</span>
-          </div>
-          <span class="alka-separator" style="color: #ff6b35; font-weight: 800; font-size: 1.1em; opacity: 0.8;">:</span>
-          <div class="alka-time-group" style="display: flex; align-items: baseline; background: rgba(255, 255, 255, 0.05); border-radius: 12px; padding: 10px 15px; border: 2px solid rgba(255, 107, 53, 0.3);">
-            <span class="alka-digits" style="font-weight: 900; color: #ff6b35; font-size: 1.2em; letter-spacing: 0.05em; text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);"><span id="alka-s1">0</span><span id="alka-s2">0</span></span>
-            <span class="alka-unit" style="font-size: 0.5em; color: rgba(255, 255, 255, 0.7); margin-left: 8px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em;">S</span>
-          </div>
-        </div>
-      `;
-      
-      // Masquer l'affichage normal
-      const timerDisplay = document.getElementById('timer-display');
-      if (timerDisplay) {
-        timerDisplay.style.display = 'none';
-      }
-      
-      // Insérer le conteneur
-      const displayContainer = document.querySelector('.display');
-      if (displayContainer) {
-        displayContainer.appendChild(alkaContainer);
-        console.log('MFA PREMIUM container created and inserted');
-      }
-    } else {
-      console.log('MFA PREMIUM container already exists');
-    }
-    
-    // Tester la mise à jour
-    const remaining = getCurrentRemaining();
-    console.log('Force MFA PREMIUM - remaining:', remaining);
-    updateAlkaDisplay(remaining);
-  }
-
-  window.forceMfaPremium = forceMfaPremium;
 
   function updateDisplay() {
     let remaining = 0;
@@ -2319,54 +1242,10 @@ $token = $_GET['token'] ?? '';
         remaining = timerState.duration;
     }
     
-    // Mettre à jour l'affichage normal avec la même logique
+    // Mettre à jour l'affichage normal
     const el = document.getElementById('timer-display');
     if (el) {
         el.textContent = formatTime(remaining);
-    }
-    
-    // Mettre à jour l'affichage MFA PREMIUM avec EXACTEMENT la même logique
-    // Le style MFA Premium utilise la même logique, juste un affichage visuel différent
-    const alkaContainer = document.getElementById('alka-timer-container');
-    if (alkaContainer) {
-        // Utiliser EXACTEMENT la même logique que formatTime()
-        totalSeconds = parseInt(remaining) || 0;
-        totalSeconds = Math.max(0, totalSeconds);
-        
-        const hours = Math.floor(totalSeconds / 3600);
-        const minutes = Math.floor((totalSeconds % 3600) / 60);
-        const seconds = totalSeconds % 60;
-        
-        // Mettre à jour les chiffres avec la même logique que le timer normal
-        const updateDigit = (id, value) => {
-            const element = alkaContainer.querySelector(`#${id}`);
-            if (element) {
-                const newValue = value.toString();
-                const oldValue = element.textContent;
-                
-                // Même logique que le timer normal : mettre à jour seulement si changé
-                if (oldValue !== newValue) {
-                    element.textContent = newValue;
-                    element.classList.add('alka-change-animation');
-                    setTimeout(() => element.classList.remove('alka-change-animation'), 400);
-                }
-            }
-        };
-        
-        // Même logique que formatTime() : mettre à jour chaque chiffre
-        updateDigit('alka-h1', Math.floor(hours / 10));
-        updateDigit('alka-h2', hours % 10);
-        updateDigit('alka-m1', Math.floor(minutes / 10));
-        updateDigit('alka-m2', minutes % 10);
-        updateDigit('alka-s1', Math.floor(seconds / 10));
-        updateDigit('alka-s2', seconds % 10);
-        
-        // Même logique que le timer normal : alerte quand temps faible
-        if (totalSeconds <= 60) {
-            alkaContainer.classList.add('alka-low-time');
-        } else {
-            alkaContainer.classList.remove('alka-low-time');
-        }
     }
   }
 
@@ -2421,14 +1300,8 @@ $token = $_GET['token'] ?? '';
       interval = null;
     }
     
-    // Utiliser updateDisplay pour la cohérence (même logique que le timer normal)
+    // Utiliser updateDisplay pour la cohérence
     updateDisplay();
-    
-    // Forcer la mise à jour du style MFA Premium
-    setTimeout(() => {
-        const remaining = getCurrentRemaining();
-        updateAlkaDisplay(remaining);
-    }, 50);
     
     await saveState();
   }
@@ -2456,11 +1329,8 @@ $token = $_GET['token'] ?? '';
         }
     }
     
-    // Utiliser updateDisplay pour la cohérence (même logique que le timer normal)
+    // Utiliser updateDisplay pour la cohérence
     updateDisplay();
-    
-    // Le style MFA Premium est maintenant géré automatiquement dans updateDisplay()
-    // Pas besoin de mise à jour manuelle - tout est synchronisé
     
     await saveState();
   }
@@ -2477,11 +1347,8 @@ $token = $_GET['token'] ?? '';
       } else {
         timerState.duration += totalSeconds;
       }
-      // Utiliser updateDisplay pour la cohérence (même logique que le timer normal)
+      // Utiliser updateDisplay pour la cohérence
       updateDisplay();
-      
-      // Le style MFA Premium est maintenant géré automatiquement dans updateDisplay()
-      // Pas besoin de mise à jour manuelle - tout est synchronisé
       
       saveState();
     }
@@ -2499,11 +1366,8 @@ $token = $_GET['token'] ?? '';
       } else {
         timerState.duration = Math.max(0, timerState.duration - totalSeconds);
       }
-      // Utiliser updateDisplay pour la cohérence (même logique que le timer normal)
+      // Utiliser updateDisplay pour la cohérence
       updateDisplay();
-      
-      // Le style MFA Premium est maintenant géré automatiquement dans updateDisplay()
-      // Pas besoin de mise à jour manuelle - tout est synchronisé
       
       saveState();
     }
@@ -2574,9 +1438,6 @@ $token = $_GET['token'] ?? '';
       // Forcer la mise à jour immédiate de l'affichage
       updateDisplay();
       
-      // Le style MFA Premium est maintenant géré automatiquement dans updateDisplay()
-      // Pas besoin de mise à jour manuelle - tout est synchronisé
-      
       // Vérifier que l'état a bien été mis à jour
       if (!timerState.isRunning) {
         forceStartTimer();
@@ -2590,21 +1451,10 @@ $token = $_GET['token'] ?? '';
       
       // Forcer la mise à jour immédiate de l'affichage
       updateDisplay();
-      
-      // Le style MFA Premium est maintenant géré automatiquement dans updateDisplay()
-      // Pas besoin de mise à jour manuelle - tout est synchronisé
     }
   };
   
-  // Exposer les fonctions pour que le style MFA Premium puisse les utiliser
-  window.handleTimeAction = handleTimeAction;
-  window.addManualTime = addManualTime;
-  window.subtractManualTime = subtractManualTime;
-  window.resetTimer = resetTimer;
-  
-  // Le style MFA Premium est maintenant géré automatiquement dans updateDisplay() et forceDisplay()
-  // Pas besoin de fonction séparée - tout est synchronisé
-  
+  // Exposer les fonctions globalement
   window.handleTimeAction = handleTimeAction;
   window.addManualTime = addManualTime;
   window.subtractManualTime = subtractManualTime;
@@ -2613,62 +1463,7 @@ $token = $_GET['token'] ?? '';
   // Affichage initial
   forceDisplay();
   
-  // Fonction de debug pour vérifier le style MFA Premium
-  window.debugMfaPremium = function() {
-    console.log('=== Debug MFA Premium ===');
-    console.log('Timer State:', timerState);
-    
-    const alkaContainer = document.getElementById('alka-timer-container');
-    console.log('Alka Container exists:', !!alkaContainer);
-    
-    if (alkaContainer) {
-      console.log('Alka Container HTML:', alkaContainer.innerHTML);
-      console.log('Alka Container visible:', alkaContainer.style.display !== 'none');
-      
-      // Tester la mise à jour manuelle
-      let remaining = 0;
-      if (timerState.isRunning && timerState.endTime) {
-        const now = Math.floor(Date.now() / 1000);
-        remaining = Math.max(0, timerState.endTime - now);
-      } else {
-        remaining = timerState.duration;
-      }
-      
-      console.log('Calculated remaining:', remaining);
-      console.log('Formatted time:', formatTime(remaining));
-      
-      // Forcer la mise à jour manuelle
-      const totalSeconds = parseInt(remaining) || 0;
-      const totalSecondsMax = Math.max(0, totalSeconds);
-      
-      const hours = Math.floor(totalSecondsMax / 3600);
-      const minutes = Math.floor((totalSecondsMax % 3600) / 60);
-      const seconds = totalSecondsMax % 60;
-      
-      console.log('Hours:', hours, 'Minutes:', minutes, 'Seconds:', seconds);
-      
-      const updateDigit = (id, value) => {
-        const element = alkaContainer.querySelector(`#${id}`);
-        if (element) {
-          const newValue = value.toString();
-          element.textContent = newValue;
-          console.log(`Updated ${id} to ${newValue[0]}`);
-        } else {
-          console.log(`Element ${id} not found`);
-        }
-      };
-      
-      updateDigit('alka-h1', Math.floor(hours / 10));
-      updateDigit('alka-h2', hours % 10);
-      updateDigit('alka-m1', Math.floor(minutes / 10));
-      updateDigit('alka-m2', minutes % 10);
-      updateDigit('alka-s1', Math.floor(seconds / 10));
-      updateDigit('alka-s2', seconds % 10);
-    }
-  };
-  
-  // Le style MFA Premium est maintenant géré directement dans updateDisplay() et forceDisplay()
-  // Pas besoin d'initialisation séparée - tout est synchronisé automatiquement
+
 
   // Fonction de diagnostic spécifique pour TikTok Live Studio
   async function diagnoseTikTokLive() {
@@ -2686,7 +1481,6 @@ $token = $_GET['token'] ?? '';
     // 2. Vérifier les éléments DOM
     console.log('DOM Elements:', {
       timerDisplay: !!document.getElementById('timer-display'),
-      alkaContainer: !!document.getElementById('alka-timer-container'),
       actionBar: !!document.querySelector('.timer-action-bar'),
       control: <?= $control ? 'true' : 'false' ?>
     });

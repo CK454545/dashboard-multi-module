@@ -15,21 +15,9 @@ function requireValidToken() {
     
     // Vérifier si c'est un token de développement local
     $localTokens = [
-        'dev_test_1' => [
-            'discord_id' => '123456789012345678',
-            'pseudo' => 'Testeur Local 1'
-        ],
-        'dev_test_2' => [
-            'discord_id' => '987654321098765432',
-            'pseudo' => 'Testeur Local 2'
-        ],
-        'dev_admin' => [
+        'dev_token_2024' => [
             'discord_id' => '111111111111111111',
-            'pseudo' => 'Admin Local'
-        ],
-        'dev_local_token_2024' => [
-            'discord_id' => '999999999999999999',
-            'pseudo' => 'Développeur Local'
+            'pseudo' => 'Développeur'
         ]
     ];
     
@@ -72,12 +60,31 @@ function requireValidToken() {
 }
 
 /**
+ * Fonction pour vérifier l'accès au module timer (en cours de réparation)
+ */
+function checkTimerAccess($token) {
+    // Seul le token dev peut accéder au module timer
+    $devToken = 'dev_token_2024';
+    
+    if ($token !== $devToken) {
+        http_response_code(503);
+        echo json_encode([
+            'error' => 'Module en cours de réparation',
+            'message' => 'Le module Timer est temporairement indisponible pour maintenance. Seuls les développeurs peuvent y accéder.'
+        ]);
+        exit;
+    }
+    
+    return true;
+}
+
+/**
  * Fonction pour obtenir les données utilisateur depuis la base de données
  * Compatible avec les tokens de développement local
  */
 function getUserData($token, $module, $key = null) {
     // Vérifier si c'est un token de développement local
-    $localTokens = ['dev_test_1', 'dev_test_2', 'dev_admin', 'dev_local_token_2024'];
+    $localTokens = ['dev_token_2024'];
     
     if (in_array($token, $localTokens)) {
         // Retourner des données simulées pour les tokens de développement
@@ -129,7 +136,7 @@ function getUserData($token, $module, $key = null) {
  */
 function saveUserData($token, $module, $key, $value) {
     // Vérifier si c'est un token de développement local
-    $localTokens = ['dev_test_1', 'dev_test_2', 'dev_admin', 'dev_local_token_2024'];
+    $localTokens = ['dev_token_2024'];
     
     if (in_array($token, $localTokens)) {
         // Pour les tokens de développement, on peut soit ignorer la sauvegarde
