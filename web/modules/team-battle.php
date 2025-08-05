@@ -324,20 +324,7 @@ $token = $_GET['token'] ?? '';
         }
 
         /* ==================== TEAM ACTION BAR - NOUVELLE BARRE MODERNE ==================== */
-        .team-action-bar {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background: rgba(15, 23, 42, 0.95);
-            backdrop-filter: blur(20px);
-            border-top: 1px solid rgba(148, 163, 184, 0.1);
-            padding: var(--spacing-sm) var(--spacing-md);
-            z-index: 1000;
-            display: flex;
-            flex-direction: column;
-            gap: var(--spacing-sm);
-        }
+        /* Première définition supprimée pour éviter les conflits - on utilise la version compacte */
 
         .team-action-bar-header {
             display: flex;
@@ -380,8 +367,9 @@ $token = $_GET['token'] ?? '';
 
         .team-action-bar-sections {
             display: flex;
-            flex-direction: column;
-            gap: var(--spacing-sm);
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
         }
 
         .team-action-bar-title {
@@ -417,114 +405,6 @@ $token = $_GET['token'] ?? '';
             transform: scale(1.05);
         }
 
-        .team-action-bar-sections {
-            display: flex;
-            flex-direction: column;
-            gap: var(--spacing-sm);
-        }
-
-        .team-action-section {
-            background: rgba(30, 41, 59, 0.5);
-            border-radius: var(--radius-md);
-            padding: var(--spacing-sm);
-            border: 1px solid rgba(148, 163, 184, 0.1);
-        }
-
-        .team-action-section-header {
-            display: flex;
-            align-items: center;
-            gap: var(--spacing-xs);
-            margin-bottom: var(--spacing-xs);
-            font-size: 0.7rem;
-            font-weight: 600;
-            color: var(--text-secondary);
-            text-transform: uppercase;
-            letter-spacing: 0.3px;
-        }
-
-        .team-action-buttons {
-            display: grid;
-            grid-template-columns: repeat(7, 1fr);
-            gap: var(--spacing-xs);
-        }
-
-        .team-action-buttons.general {
-            grid-template-columns: repeat(2, 1fr);
-        }
-
-        /* Anciens styles supprimés - remplacés par le nouveau design ultra compact */
-
-        /* ==================== CONFIG BUTTON INTEGRATED ==================== */
-        .config-btn-integrated {
-            position: absolute;
-            top: var(--spacing-md);
-            right: var(--spacing-md);
-            width: 30px;
-            height: 30px;
-            border-radius: 50%;
-            background: var(--bg-glass);
-            backdrop-filter: blur(20px);
-            border: 1px solid var(--accent-color);
-            color: var(--accent-color);
-            font-size: 0.8rem;
-            cursor: pointer;
-            transition: all var(--transition-fast);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            text-decoration: none;
-            z-index: 10;
-        }
-
-        .config-btn-integrated:hover {
-            background: var(--accent-color);
-            color: white;
-            transform: scale(1.1);
-        }
-
-        /* ==================== GENERAL CONTROLS ==================== */
-        .general-controls {
-            display: flex;
-            justify-content: center;
-            gap: var(--spacing-md);
-            margin-top: var(--spacing-sm);
-        }
-
-        .btn-large {
-            padding: var(--spacing-md) var(--spacing-xl);
-            font-size: 0.875rem;
-        }
-
-        /* ==================== TEXT EFFECTS ANIMATIONS - DÉSACTIVÉES ==================== */
-        /* Animations désactivées pour éviter les distractions */
-
-        /* ==================== ULTRA COMPACT CONTROL PANELS ==================== */
-        .team-action-bar {
-            position: fixed;
-            bottom: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: rgba(15, 23, 42, 0.95);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(148, 163, 184, 0.1);
-            border-radius: 8px;
-            padding: 8px 12px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            z-index: 1000;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-            min-width: 400px;
-            max-width: 90vw;
-        }
-
-        .team-action-bar-sections {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            flex-wrap: wrap;
-        }
-
         .team-action-section {
             display: flex;
             align-items: center;
@@ -545,6 +425,10 @@ $token = $_GET['token'] ?? '';
             display: flex;
             align-items: center;
             gap: 4px;
+        }
+
+        .team-action-buttons.general {
+            gap: 6px;
         }
 
         /* ==================== ULTRA COMPACT BUTTONS ==================== */
@@ -706,18 +590,23 @@ $token = $_GET['token'] ?? '';
                 padding: 6px 8px;
                 gap: 6px;
                 min-width: 320px;
+                max-width: 95vw;
             }
 
             .team-action-bar-sections {
                 gap: 8px;
+                flex-direction: column;
             }
 
             .team-action-section {
                 gap: 4px;
+                justify-content: center;
             }
 
             .team-action-buttons {
                 gap: 3px;
+                justify-content: center;
+                flex-wrap: wrap;
             }
 
             .team-action-btn {
@@ -731,21 +620,57 @@ $token = $_GET['token'] ?? '';
                 font-size: 9px;
                 margin-right: 3px;
             }
-
-            /* Bouton toggle supprimé - panneau toujours visible */
         }
 
         @media (max-width: 480px) {
-            .team-action-buttons {
-                grid-template-columns: repeat(3, 1fr);
+            .team-action-bar {
+                min-width: 280px;
+                padding: 4px 6px;
+                bottom: 5px;
             }
             
-            .team-action-buttons.general {
-                grid-template-columns: 1fr;
+            .team-action-bar-sections {
+                gap: 6px;
             }
             
             .team-action-section {
-                padding: var(--spacing-sm);
+                gap: 3px;
+            }
+            
+            .team-action-buttons {
+                gap: 2px;
+                justify-content: center;
+            }
+            
+            .team-action-btn {
+                padding: 2px 4px;
+                font-size: 8px;
+                height: 20px;
+                min-width: 24px;
+            }
+            
+            .team-action-section-header {
+                font-size: 8px;
+                margin-right: 2px;
+            }
+        }
+
+        @media (max-width: 360px) {
+            .team-action-bar {
+                min-width: 260px;
+                padding: 3px 4px;
+            }
+            
+            .team-action-btn {
+                padding: 1px 3px;
+                font-size: 7px;
+                height: 18px;
+                min-width: 20px;
+            }
+            
+            .team-action-section-header {
+                font-size: 7px;
+                margin-right: 1px;
             }
         }
     </style>
@@ -786,18 +711,6 @@ $token = $_GET['token'] ?? '';
         <!-- Si paramètre control=true, afficher les contrôles -->
         <?php if($control): ?>
         <div class="team-action-bar" id="team-action-bar">
-            <div class="team-action-bar-header">
-                <div class="team-action-bar-title">
-                    <i class="fas fa-users"></i>
-                    Module Team VS Team
-                </div>
-                <div class="team-action-bar-controls">
-                    <a href="/modules/teams-config.php?token=<?=$token?>" class="team-action-bar-config">
-                        <i class="fas fa-cog"></i>
-                    </a>
-                </div>
-            </div>
-            
             <div class="team-action-bar-sections">
                 <div class="team-action-section">
                     <div class="team-action-section-header">
@@ -842,6 +755,10 @@ $token = $_GET['token'] ?? '';
                         </button>
                     </div>
                 </div>
+                
+                <a href="/modules/teams-config.php?token=<?=$token?>" class="team-action-bar-config">
+                    <i class="fas fa-cog"></i>
+                </a>
             </div>
         </div>
         <?php endif; ?>
