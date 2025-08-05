@@ -947,7 +947,7 @@ $token = $_GET['token'] ?? '';
                         <div class="range-input-group">
                             <input type="range" id="alka-containerSize" data-style="alka-containerSize" min="200" max="600" value="320" step="10">
                             <input type="number" class="size-number" data-style="alka-containerSize" value="320" min="200" max="600">
-                            <span class="range-value">320px</span>
+                            <span class="range-value" id="alka-containerSize-value">320px</span>
                         </div>
                     </div>
                     
@@ -1311,7 +1311,7 @@ $token = $_GET['token'] ?? '';
                 `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
             
             // Mettre à jour aussi l'affichage Premium si activé
-            updatePremiumPreviewTimer();
+            updateMFAPreviewValues();
             
             seconds++;
         }

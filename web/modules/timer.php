@@ -1963,7 +1963,7 @@ $token = $_GET['token'] ?? '';
   function initializeForTikTok() {
     // Forcer une valeur initiale si tout est à 0
     if (timerState.duration === 0 && !timerState.isRunning) {
-        timerState.duration = 300; // 5 minutes par défaut
+        timerState.duration = 0; // 00:00:00 par défaut
         forceDisplay(); // Forcer l'affichage
         saveState();
     }

@@ -669,6 +669,25 @@ $token = $_GET['token'] ?? '';
             }
         }
 
+        /* ==================== FORCE DISPLAY FOR CONTROL MODE ==================== */
+        <?php if($control): ?>
+        .team-action-bar {
+            display: flex !important;
+            visibility: visible !important;
+            opacity: 1 !important;
+        }
+        .team-action-bar-config {
+            display: flex !important;
+            visibility: visible !important;
+            opacity: 1 !important;
+        }
+        .team-action-btn {
+            display: flex !important;
+            visibility: visible !important;
+            opacity: 1 !important;
+        }
+        <?php endif; ?>
+
         @media (max-width: 768px) {
             body {
                 padding: var(--spacing-md);
@@ -1147,13 +1166,15 @@ $token = $_GET['token'] ?? '';
             if (styles.options) {
                 const options = styles.options;
                 
-                // Masquer les contrôles si demandé
-                if (options['hide-controls'] === true || options['hide-controls'] === 'true' || options['hide-controls'] === 1) {
+                // Masquer les contrôles si demandé, SAUF si on est en mode contrôle (paramètre control=true)
+                const isControlMode = <?php echo $control ? 'true' : 'false' ?>;
+                
+                if ((options['hide-controls'] === true || options['hide-controls'] === 'true' || options['hide-controls'] === 1) && !isControlMode) {
                     css += '.team-action-bar { display: none !important; } ';
-                     css += '.team-action-bar-config { display: none !important; } ';
-                     css += '.team-action-btn { display: none !important; } ';
-                 } else {
-                     css += '.team-action-bar { display: flex !important; } ';
+                    css += '.team-action-bar-config { display: none !important; } ';
+                    css += '.team-action-btn { display: none !important; } ';
+                } else {
+                    css += '.team-action-bar { display: flex !important; } ';
                 }
             }
             
@@ -1540,6 +1561,42 @@ $token = $_GET['token'] ?? '';
 
         
         <?php if($control): ?>
+        // Fonction pour forcer l'affichage du panneau de contrôle
+        function forceControlPanelDisplay() {
+            const controlPanel = document.getElementById('team-action-bar');
+            if (controlPanel) {
+                controlPanel.style.display = 'flex';
+                controlPanel.style.visibility = 'visible';
+                controlPanel.style.opacity = '1';
+            }
+            
+            // Forcer l'affichage de tous les boutons
+            const buttons = document.querySelectorAll('.team-action-btn');
+            buttons.forEach(button => {
+                button.style.display = 'flex';
+                button.style.visibility = 'visible';
+                button.style.opacity = '1';
+            });
+            
+            // Forcer l'affichage du bouton de configuration
+            const configButton = document.querySelector('.team-action-bar-config');
+            if (configButton) {
+                configButton.style.display = 'flex';
+                configButton.style.visibility = 'visible';
+                configButton.style.opacity = '1';
+            }
+        }
+        
+        // Appeler la fonction au chargement et après un délai
+        document.addEventListener('DOMContentLoaded', () => {
+            forceControlPanelDisplay();
+        });
+        
+        // Appeler aussi après un délai pour s'assurer que les styles sont appliqués
+        setTimeout(forceControlPanelDisplay, 100);
+        setTimeout(forceControlPanelDisplay, 500);
+        setTimeout(forceControlPanelDisplay, 1000);
+        
         // Gestion des boutons
         setTimeout(() => {
             const buttons = document.querySelectorAll('.team-action-btn');
