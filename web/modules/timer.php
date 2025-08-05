@@ -192,13 +192,15 @@ $token = $_GET['token'] ?? '';
         }
 
         #timer-display {
-            font-size: 6rem;
+            font-size: min(6rem, 12vw);
             font-weight: 800;
             color: white;
             text-transform: uppercase;
             letter-spacing: 2px;
             margin: 0;
             font-variant-numeric: tabular-nums;
+            word-wrap: break-word;
+            text-align: center;
         }
 
         /* ==================== TIMER ACTION BAR ==================== */
@@ -409,6 +411,10 @@ $token = $_GET['token'] ?? '';
 
         /* ==================== RESPONSIVE DESIGN ==================== */
         @media (max-width: 1024px) {
+            #timer-display {
+                font-size: 5rem;
+            }
+            
             .timer-action-bar {
                 min-width: 350px;
                 padding: 6px 10px;
@@ -420,6 +426,15 @@ $token = $_GET['token'] ?? '';
         }
 
         @media (max-width: 768px) {
+            #timer-display {
+                font-size: 4rem;
+                letter-spacing: 1px;
+            }
+            
+            .display {
+                padding: var(--spacing-md);
+            }
+            
             .timer-action-bar {
                 bottom: 10px;
                 padding: 6px 8px;
@@ -464,6 +479,15 @@ $token = $_GET['token'] ?? '';
         }
 
         @media (max-width: 480px) {
+            #timer-display {
+                font-size: 3rem;
+                letter-spacing: 0.5px;
+            }
+            
+            .widget-container {
+                padding: var(--spacing-sm);
+            }
+            
             .timer-action-bar {
                 min-width: 280px;
                 padding: 4px 6px;
@@ -509,6 +533,15 @@ $token = $_GET['token'] ?? '';
         }
 
         @media (max-width: 360px) {
+            #timer-display {
+                font-size: 2.5rem;
+                letter-spacing: 0;
+            }
+            
+            body {
+                padding: var(--spacing-sm);
+            }
+            
             .timer-action-bar {
                 min-width: 260px;
                 padding: 3px 4px;
@@ -538,14 +571,16 @@ $token = $_GET['token'] ?? '';
             position: relative;
             background: #000000;
             border-radius: 16px;
-            padding: 20px 40px;
-            min-width: 320px;
-            max-width: 90vw;
+            padding: 15px 25px;
+            min-width: 260px;
+            max-width: calc(100vw - 20px);
             display: flex;
             align-items: center;
             justify-content: center;
             width: auto;
             height: auto;
+            margin: 0 auto;
+            box-sizing: border-box;
             --premium-accent-color: #ff6b35;
             --premium-text-color: #ffffff;
             --premium-digits-color: #ff6b35;
@@ -564,10 +599,14 @@ $token = $_GET['token'] ?? '';
             color: #000;
             letter-spacing: 0.1em;
             text-transform: uppercase;
+            white-space: nowrap;
+            max-width: 90%;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
 
         #premium-timer {
-            font-size: 3.5rem;
+            font-size: 3rem;
             color: var(--premium-text-color);
             text-align: center;
             white-space: nowrap;
@@ -575,7 +614,8 @@ $token = $_GET['token'] ?? '';
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 15px;
+            gap: 12px;
+            flex-wrap: wrap;
         }
 
         .premium-time-group {
@@ -583,7 +623,7 @@ $token = $_GET['token'] ?? '';
             align-items: baseline;
             background: rgba(255, 255, 255, 0.05);
             border-radius: 12px;
-            padding: 10px 15px;
+            padding: 8px 12px;
             border: 2px solid rgba(255, 107, 53, 0.3);
             transition: all 0.3s ease;
         }
@@ -700,25 +740,9 @@ $token = $_GET['token'] ?? '';
         /* ==================== RESPONSIVE DESIGN POUR MFA PREMIUM ==================== */
         @media (max-width: 1024px) {
             .premium-container {
-                min-width: 280px;
-                padding: 15px 30px;
-            }
-            
-            #premium-timer {
-                font-size: 3rem;
-                gap: 12px;
-            }
-            
-            .premium-time-group {
-                padding: 8px 12px;
-            }
-        }
-
-        @media (max-width: 768px) {
-            .premium-container {
                 min-width: 260px;
-                padding: 12px 20px;
-                max-width: 95vw;
+                padding: 15px 25px;
+                max-width: 92vw;
             }
             
             #premium-timer {
@@ -730,25 +754,17 @@ $token = $_GET['token'] ?? '';
                 padding: 6px 10px;
             }
             
-            .premium-digits {
-                font-size: 1em;
-            }
-            
-            .premium-unit {
-                font-size: 0.4em;
-                margin-left: 6px;
-            }
-            
-            .premium-separator {
-                font-size: 1em;
+            .premium-logo-area {
+                font-size: 0.75rem;
+                padding: 3px 15px;
             }
         }
 
-        @media (max-width: 480px) {
+        @media (max-width: 768px) {
             .premium-container {
                 min-width: 240px;
-                padding: 10px 15px;
-                max-width: 98vw;
+                padding: 12px 20px;
+                max-width: 90vw;
             }
             
             #premium-timer {
@@ -758,15 +774,16 @@ $token = $_GET['token'] ?? '';
             
             .premium-time-group {
                 padding: 5px 8px;
+                border-radius: 10px;
             }
             
             .premium-digits {
-                font-size: 0.9em;
+                font-size: 1em;
             }
             
             .premium-unit {
-                font-size: 0.35em;
-                margin-left: 4px;
+                font-size: 0.4em;
+                margin-left: 5px;
             }
             
             .premium-separator {
@@ -775,24 +792,125 @@ $token = $_GET['token'] ?? '';
             
             .premium-logo-area {
                 font-size: 0.7rem;
-                padding: 3px 15px;
+                padding: 3px 12px;
+                top: -15px;
             }
         }
 
-        @media (max-width: 360px) {
+        @media (max-width: 480px) {
             .premium-container {
-                min-width: 220px;
-                padding: 8px 12px;
-                max-width: 99vw;
+                min-width: auto;
+                width: calc(100vw - 20px);
+                max-width: calc(100vw - 20px);
+                padding: 10px 15px;
+                margin: 0 10px;
             }
             
             #premium-timer {
-                font-size: 1.8rem;
+                font-size: 1.5rem;
                 gap: 6px;
             }
             
             .premium-time-group {
                 padding: 4px 6px;
+                border-radius: 8px;
+                border-width: 1px;
+            }
+            
+            .premium-digits {
+                font-size: 0.9em;
+                letter-spacing: 0.02em;
+            }
+            
+            .premium-unit {
+                font-size: 0.35em;
+                margin-left: 3px;
+            }
+            
+            .premium-separator {
+                font-size: 0.8em;
+                margin: 0 2px;
+            }
+            
+            .premium-logo-area {
+                font-size: 0.6rem;
+                padding: 2px 10px;
+                top: -12px;
+                letter-spacing: 0.05em;
+            }
+            
+            .premium-corner-accent {
+                width: 15px !important;
+                height: 15px !important;
+                border-width: 1px !important;
+            }
+        }
+
+        @media (max-width: 360px) {
+            .premium-container {
+                width: calc(100vw - 16px);
+                max-width: calc(100vw - 16px);
+                padding: 8px 12px;
+                margin: 0 8px;
+                border-radius: 12px;
+            }
+            
+            #premium-timer {
+                font-size: 1.3rem;
+                gap: 4px;
+            }
+            
+            .premium-time-group {
+                padding: 3px 5px;
+                border-radius: 6px;
+            }
+            
+            .premium-digits {
+                font-size: 0.85em;
+                letter-spacing: 0;
+            }
+            
+            .premium-unit {
+                font-size: 0.3em;
+                margin-left: 2px;
+            }
+            
+            .premium-separator {
+                font-size: 0.7em;
+                margin: 0 1px;
+            }
+            
+            .premium-logo-area {
+                font-size: 0.55rem;
+                padding: 2px 8px;
+                top: -10px;
+                letter-spacing: 0;
+                border-radius: 12px;
+            }
+            
+            .premium-corner-accent {
+                width: 12px !important;
+                height: 12px !important;
+                display: none; /* Masquer sur très petits écrans */
+            }
+        }
+
+        /* Styles additionnels pour très petits écrans */
+        @media (max-width: 320px) {
+            .premium-container {
+                width: calc(100vw - 10px);
+                max-width: calc(100vw - 10px);
+                padding: 6px 10px;
+                margin: 0 5px;
+            }
+            
+            #premium-timer {
+                font-size: 1.1rem;
+                gap: 3px;
+            }
+            
+            .premium-time-group {
+                padding: 2px 4px;
             }
             
             .premium-digits {
@@ -800,17 +918,11 @@ $token = $_GET['token'] ?? '';
             }
             
             .premium-unit {
-                font-size: 0.3em;
-                margin-left: 3px;
+                display: none; /* Masquer les unités sur très petits écrans */
             }
             
             .premium-separator {
-                font-size: 0.8em;
-            }
-            
-            .premium-logo-area {
-                font-size: 0.6rem;
-                padding: 2px 12px;
+                font-size: 0.6em;
             }
         }
     </style>
@@ -1229,21 +1341,24 @@ $token = $_GET['token'] ?? '';
       const alkaAccentColor = styles.alka.accentColor || '#ff6b35';
       const alkaTextColor = styles.alka.textColor || '#ffffff';
       const alkaDigitsColor = styles.alka.digitsColor || '#ff6b35';
-      const alkaContainerSize = styles.alka.containerSize || '320';
-      const alkaFontSize = styles.alka.fontSize || '56';
+      const alkaContainerSize = styles.alka.containerSize || '280';
+      const alkaFontSize = styles.alka.fontSize || '48';
       
       css += `
         .alka-container {
           position: relative;
           background: ${alkaBgColor} !important;
           border-radius: 16px !important;
-          padding: 20px 40px !important;
-          min-width: ${alkaContainerSize}px !important;
+          padding: 15px 25px !important;
+          min-width: 260px !important;
+          max-width: calc(100vw - 20px) !important;
           display: flex !important;
           align-items: center !important;
           justify-content: center !important;
-          width: 100% !important;
-          height: 100% !important;
+          width: auto !important;
+          height: auto !important;
+          margin: 0 auto !important;
+          box-sizing: border-box !important;
           --alka-accent-color: ${alkaAccentColor} !important;
           --alka-text-color: ${alkaTextColor} !important;
           --alka-digits-color: ${alkaDigitsColor} !important;
@@ -1262,10 +1377,14 @@ $token = $_GET['token'] ?? '';
           color: #000 !important;
           letter-spacing: 0.1em !important;
           text-transform: uppercase !important;
+          white-space: nowrap !important;
+          max-width: 85% !important;
+          overflow: hidden !important;
+          text-overflow: ellipsis !important;
         }
         
         #alka-timer {
-          font-size: ${alkaFontSize}px !important;
+          font-size: min(${alkaFontSize}px, 8vw) !important;
           color: ${alkaTextColor} !important;
           text-align: center !important;
           white-space: nowrap !important;
@@ -1273,7 +1392,8 @@ $token = $_GET['token'] ?? '';
           display: flex !important;
           align-items: center !important;
           justify-content: center !important;
-          gap: 15px !important;
+          gap: min(12px, 2vw) !important;
+          flex-wrap: wrap !important;
         }
         
         .alka-time-group {
@@ -1281,7 +1401,7 @@ $token = $_GET['token'] ?? '';
           align-items: baseline !important;
           background: rgba(255, 255, 255, 0.05) !important;
           border-radius: 12px !important;
-          padding: 10px 15px !important;
+          padding: min(8px, 1.5vw) min(12px, 2.5vw) !important;
           border: 2px solid rgba(255, 107, 53, 0.3) !important;
           transition: all 0.3s ease !important;
         }
@@ -1477,21 +1597,24 @@ $token = $_GET['token'] ?? '';
       const alkaAccentColor = styles.alka.accentColor || '#ff6b35';
       const alkaTextColor = styles.alka.textColor || '#ffffff';
       const alkaDigitsColor = styles.alka.digitsColor || '#ff6b35';
-      const alkaContainerSize = styles.alka.containerSize || '320';
-      const alkaFontSize = styles.alka.fontSize || '56';
+      const alkaContainerSize = styles.alka.containerSize || '280';
+      const alkaFontSize = styles.alka.fontSize || '48';
       
       css += `
         .alka-container {
           position: relative;
           background: ${alkaBgColor} !important;
           border-radius: 16px !important;
-          padding: 20px 40px !important;
-          min-width: ${alkaContainerSize}px !important;
+          padding: 15px 25px !important;
+          min-width: 260px !important;
+          max-width: calc(100vw - 20px) !important;
           display: flex !important;
           align-items: center !important;
           justify-content: center !important;
-          width: 100% !important;
-          height: 100% !important;
+          width: auto !important;
+          height: auto !important;
+          margin: 0 auto !important;
+          box-sizing: border-box !important;
           --alka-accent-color: ${alkaAccentColor} !important;
           --alka-text-color: ${alkaTextColor} !important;
           --alka-digits-color: ${alkaDigitsColor} !important;
@@ -1510,10 +1633,14 @@ $token = $_GET['token'] ?? '';
           color: #000 !important;
           letter-spacing: 0.1em !important;
           text-transform: uppercase !important;
+          white-space: nowrap !important;
+          max-width: 85% !important;
+          overflow: hidden !important;
+          text-overflow: ellipsis !important;
         }
         
         #alka-timer {
-          font-size: ${alkaFontSize}px !important;
+          font-size: min(${alkaFontSize}px, 8vw) !important;
           color: ${alkaTextColor} !important;
           text-align: center !important;
           white-space: nowrap !important;
@@ -1521,7 +1648,8 @@ $token = $_GET['token'] ?? '';
           display: flex !important;
           align-items: center !important;
           justify-content: center !important;
-          gap: 15px !important;
+          gap: min(12px, 2vw) !important;
+          flex-wrap: wrap !important;
         }
         
         .alka-time-group {
@@ -1529,7 +1657,7 @@ $token = $_GET['token'] ?? '';
           align-items: baseline !important;
           background: rgba(255, 255, 255, 0.05) !important;
           border-radius: 12px !important;
-          padding: 10px 15px !important;
+          padding: min(8px, 1.5vw) min(12px, 2.5vw) !important;
           border: 2px solid rgba(255, 107, 53, 0.3) !important;
           transition: all 0.3s ease !important;
         }
