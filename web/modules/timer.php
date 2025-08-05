@@ -1369,28 +1369,24 @@ $token = $_GET['token'] ?? '';
         alkaContainer.className = 'alka-container';
         alkaContainer.innerHTML = `
           <div class="alka-logo-area">
-            <span id="alka-text">${styles.alka.text || 'Fin du timer = fin de live'}</span>
+            <span id="alka-text">${styles.alka.text || 'MFA - MY FULL AGENCY'}</span>
           </div>
           <div id="alka-timer">
             <div class="alka-time-group">
               <span class="alka-digits"><span id="alka-h1">0</span><span id="alka-h2">0</span></span>
-              <span class="alka-unit">H</span>
+              <span class="alka-unit">h</span>
             </div>
             <span class="alka-separator">:</span>
             <div class="alka-time-group">
               <span class="alka-digits"><span id="alka-m1">0</span><span id="alka-m2">0</span></span>
-              <span class="alka-unit">M</span>
+              <span class="alka-unit">m</span>
             </div>
             <span class="alka-separator">:</span>
             <div class="alka-time-group">
               <span class="alka-digits"><span id="alka-s1">0</span><span id="alka-s2">0</span></span>
-              <span class="alka-unit">S</span>
+              <span class="alka-unit">s</span>
             </div>
           </div>
-          <div class="alka-corner-accent alka-top-left"></div>
-          <div class="alka-corner-accent alka-top-right"></div>
-          <div class="alka-corner-accent alka-bottom-left"></div>
-          <div class="alka-corner-accent alka-bottom-right"></div>
         `;
         
         // Insérer après le timer-display
@@ -1617,28 +1613,24 @@ $token = $_GET['token'] ?? '';
         alkaContainer.className = 'alka-container';
         alkaContainer.innerHTML = `
           <div class="alka-logo-area">
-            <span id="alka-text">${styles.alka.text || 'Fin du timer = fin de live'}</span>
+            <span id="alka-text">${styles.alka.text || 'MFA - MY FULL AGENCY'}</span>
           </div>
           <div id="alka-timer">
             <div class="alka-time-group">
               <span class="alka-digits"><span id="alka-h1">0</span><span id="alka-h2">0</span></span>
-              <span class="alka-unit">H</span>
+              <span class="alka-unit">h</span>
             </div>
             <span class="alka-separator">:</span>
             <div class="alka-time-group">
               <span class="alka-digits"><span id="alka-m1">0</span><span id="alka-m2">0</span></span>
-              <span class="alka-unit">M</span>
+              <span class="alka-unit">m</span>
             </div>
             <span class="alka-separator">:</span>
             <div class="alka-time-group">
               <span class="alka-digits"><span id="alka-s1">0</span><span id="alka-s2">0</span></span>
-              <span class="alka-unit">S</span>
+              <span class="alka-unit">s</span>
             </div>
           </div>
-          <div class="alka-corner-accent alka-top-left"></div>
-          <div class="alka-corner-accent alka-top-right"></div>
-          <div class="alka-corner-accent alka-bottom-left"></div>
-          <div class="alka-corner-accent alka-bottom-right"></div>
         `;
         
         // Insérer après le timer-display

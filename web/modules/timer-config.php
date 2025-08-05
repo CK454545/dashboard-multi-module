@@ -678,6 +678,47 @@ $token = $_GET['token'] ?? '';
             animation: premium-urgent-shake 0.5s ease-in-out infinite;
         }
 
+        /* Responsive design for mobile devices */
+        @media (max-width: 768px) {
+            .premium-container {
+                padding: 15px 25px;
+                min-width: 280px;
+            }
+            
+            #premium-preview-timer {
+                font-size: 2.5rem;
+                gap: 10px;
+            }
+            
+            .premium-logo-area {
+                font-size: 0.7rem;
+                padding: 3px 15px;
+                top: -15px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .premium-container {
+                padding: 12px 20px;
+                min-width: 250px;
+            }
+            
+            #premium-preview-timer {
+                font-size: 2rem;
+                gap: 8px;
+            }
+            
+            .premium-logo-area {
+                font-size: 0.6rem;
+                padding: 2px 12px;
+                top: -12px;
+            }
+            
+            .premium-time-group {
+                padding: 8px 12px;
+            }
+        }
+
         .premium-low-time .premium-digits {
             color: #ff0000;
         }
@@ -881,11 +922,11 @@ $token = $_GET['token'] ?? '';
                 <div id="mfa-preview" class="preview-section" style="display: none;">
                     <div class="preview-title">Aperçu MFA PREMIUM</div>
                     <div class="preview-container">
-                        <div class="premium-container" style="position: relative; background: #000000; border-radius: 15px; padding: 1vh 2vw; max-width: fit-content; display: inline-flex; align-items: center; justify-content: center; box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);">
-                            <div class="premium-logo-area" style="position: absolute; top: -15px; left: 50%; transform: translateX(-50%); background: #b30000; padding: 2px 12px; border-radius: 15px; font-size: 0.65rem; font-weight: 800; color: #000; letter-spacing: 0.05em; text-transform: uppercase; white-space: nowrap; z-index: 10;">
+                        <div class="premium-container" style="position: relative; background: #000000; border-radius: 12px; padding: 0.8vh 1.5vw; max-width: fit-content; display: inline-flex; align-items: center; justify-content: center; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);">
+                            <div class="premium-logo-area" style="position: absolute; top: -12px; left: 50%; transform: translateX(-50%); background: #b30000; padding: 2px 10px; border-radius: 12px; font-size: 0.6rem; font-weight: 800; color: #000; letter-spacing: 0.05em; text-transform: uppercase; white-space: nowrap; z-index: 10;">
                                 <span id="preview-premium-text">MFA - MY FULL AGENCY</span>
                             </div>
-                            <div id="preview-premium-timer" style="font-size: 3.2vw; color: #ffffff; text-align: center; white-space: nowrap; font-weight: 800; display: flex; align-items: center; justify-content: center; gap: 0.5ch; letter-spacing: 0.04em;">
+                            <div id="preview-premium-timer" style="font-size: 2.5vw; color: #ffffff; text-align: center; white-space: nowrap; font-weight: 800; display: flex; align-items: center; justify-content: center; gap: 0.3ch; letter-spacing: 0.02em;">
                                 <div class="premium-time-group" style="display: inline-flex; align-items: baseline;">
                                     <span class="premium-digits" style="display: inline-block; width: 1.8ch; text-align: center; font-weight: 900; color: #ffffff; font-size: 1em; letter-spacing: 0;"><span>0</span><span>1</span></span>
                                     <span class="premium-unit" style="display: inline-block; width: auto; text-align: center; padding-left: 0.5ch; padding-right: 0.5ch; font-size: 0.7em; color: rgba(255, 255, 255, 0.9); font-weight: 600; text-transform: lowercase; letter-spacing: 0;">h</span>
@@ -1298,6 +1339,61 @@ $token = $_GET['token'] ?? '';
         
         // Initialiser le timer à 00:00:00
         seconds = 0;
+
+        // Fonction pour afficher les notifications
+        function showNotification(message, type = 'info') {
+            console.log('showNotification function called with:', message, type);
+            // Créer l'élément de notification
+            const notification = document.createElement('div');
+            notification.className = `notification notification-${type}`;
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                padding: 12px 20px;
+                border-radius: 8px;
+                color: white;
+                font-weight: 500;
+                z-index: 10000;
+                transform: translateX(100%);
+                transition: transform 0.3s ease;
+                max-width: 300px;
+                word-wrap: break-word;
+            `;
+            
+            // Couleurs selon le type
+            switch(type) {
+                case 'success':
+                    notification.style.backgroundColor = '#10b981';
+                    break;
+                case 'error':
+                    notification.style.backgroundColor = '#ef4444';
+                    break;
+                case 'warning':
+                    notification.style.backgroundColor = '#f59e0b';
+                    break;
+                default:
+                    notification.style.backgroundColor = '#3b82f6';
+            }
+            
+            notification.textContent = message;
+            document.body.appendChild(notification);
+            
+            // Animation d'entrée
+            setTimeout(() => {
+                notification.style.transform = 'translateX(0)';
+            }, 100);
+            
+            // Auto-suppression après 3 secondes
+            setTimeout(() => {
+                notification.style.transform = 'translateX(100%)';
+                setTimeout(() => {
+                    if (notification.parentNode) {
+                        notification.parentNode.removeChild(notification);
+                    }
+                }, 300);
+            }, 3000);
+        }
         
 
 
@@ -1529,13 +1625,28 @@ $token = $_GET['token'] ?? '';
                 const result = await response.json();
                 
                 if (result.success) {
-                    showNotification('Styles sauvegardés avec succès !', 'success');
+                    if (typeof showNotification === 'function') {
+                        showNotification('Styles sauvegardés avec succès !', 'success');
+                    } else {
+                        console.error('showNotification function is not defined');
+                        alert('Styles sauvegardés avec succès !');
+                    }
                 } else {
-                    showNotification('Erreur lors de la sauvegarde', 'error');
+                    if (typeof showNotification === 'function') {
+                        showNotification('Erreur lors de la sauvegarde', 'error');
+                    } else {
+                        console.error('showNotification function is not defined');
+                        alert('Erreur lors de la sauvegarde');
+                    }
                 }
             } catch (error) {
                 console.error('Erreur lors de la sauvegarde:', error);
-                showNotification('Erreur lors de la sauvegarde', 'error');
+                if (typeof showNotification === 'function') {
+                    showNotification('Erreur lors de la sauvegarde', 'error');
+                } else {
+                    console.error('showNotification function is not defined');
+                    alert('Erreur lors de la sauvegarde');
+                }
             }
         }
 
@@ -1987,6 +2098,13 @@ $token = $_GET['token'] ?? '';
         // Appeler le test au chargement
         document.addEventListener('DOMContentLoaded', () => {
             setTimeout(testTabs, 1000);
+            
+            // Vérifier que showNotification est disponible
+            if (typeof showNotification === 'function') {
+                console.log('showNotification function is available');
+            } else {
+                console.error('showNotification function is NOT available');
+            }
         });
     </script>
   </body>
