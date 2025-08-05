@@ -323,20 +323,26 @@ $token = $_GET['token'] ?? '';
             text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
         }
 
-        /* ==================== TEAM ACTION BAR - STYLE IDENTIQUE AU MODULE WIN ==================== */
+        /* ==================== TEAM ACTION BAR - STYLE COMPACT COMME LE TIMER ==================== */
         .team-action-bar {
             position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
             background: rgba(15, 23, 42, 0.95);
-            backdrop-filter: blur(20px);
-            border-top: 1px solid rgba(148, 163, 184, 0.1);
-            padding: var(--spacing-sm) var(--spacing-md);
-            z-index: 1000;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(148, 163, 184, 0.1);
+            border-radius: 8px;
+            padding: 8px 12px;
             display: flex;
-            flex-direction: column;
-            gap: var(--spacing-sm);
+            align-items: center;
+            gap: 8px;
+            z-index: 1000;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            min-width: 400px;
+            max-width: 90vw;
+            flex-wrap: wrap;
+            justify-content: center;
         }
 
         .team-action-bar-header {
@@ -354,8 +360,10 @@ $token = $_GET['token'] ?? '';
 
         .team-action-bar-sections {
             display: flex;
-            flex-direction: column;
-            gap: var(--spacing-sm);
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+            justify-content: center;
         }
 
         .team-action-bar-title {
@@ -392,32 +400,34 @@ $token = $_GET['token'] ?? '';
         }
 
         .team-action-section {
-            background: rgba(30, 41, 59, 0.5);
-            border-radius: var(--radius-md);
-            padding: var(--spacing-sm);
-            border: 1px solid rgba(148, 163, 184, 0.1);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            flex-wrap: wrap;
         }
 
         .team-action-section-header {
-            display: flex;
-            align-items: center;
-            gap: var(--spacing-xs);
-            margin-bottom: var(--spacing-xs);
-            font-size: 0.7rem;
+            font-size: 10px;
             font-weight: 600;
-            color: var(--text-secondary);
+            color: #94a3b8;
             text-transform: uppercase;
-            letter-spacing: 0.3px;
+            letter-spacing: 0.5px;
+            white-space: nowrap;
+            margin-right: 4px;
         }
 
         .team-action-buttons {
-            display: grid;
-            grid-template-columns: repeat(7, 1fr);
-            gap: var(--spacing-xs);
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            flex-wrap: wrap;
         }
 
         .team-action-buttons.general {
-            grid-template-columns: repeat(2, 1fr);
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            flex-wrap: wrap;
         }
 
         /* ==================== ULTRA COMPACT BUTTONS ==================== */
@@ -527,10 +537,6 @@ $token = $_GET['token'] ?? '';
                 height: auto;
                 gap: var(--spacing-lg);
             }
-            
-            .team-action-buttons {
-                grid-template-columns: repeat(4, 1fr);
-            }
 
             .teams-container {
                 flex-direction: column;
@@ -539,6 +545,11 @@ $token = $_GET['token'] ?? '';
 
             .vs-separator {
                 display: none;
+            }
+            
+            .team-action-bar {
+                min-width: 350px;
+                max-width: 95vw;
             }
         }
 
@@ -556,35 +567,43 @@ $token = $_GET['token'] ?? '';
             }
             
             .team-action-bar {
-                padding: var(--spacing-xs);
+                min-width: 300px;
+                max-width: 95vw;
+                padding: 6px 10px;
             }
             
             .team-action-buttons {
-                grid-template-columns: repeat(4, 1fr);
-                gap: var(--spacing-xs);
+                gap: 3px;
             }
             
-            .team-action-buttons.general {
-                grid-template-columns: repeat(2, 1fr);
+            .team-action-btn {
+                font-size: 9px;
+                padding: 3px 6px;
+                height: 22px;
+                min-width: 28px;
             }
         }
 
         @media (max-width: 480px) {
             .team-action-bar {
-                padding: var(--spacing-xs);
+                min-width: 280px;
+                max-width: 95vw;
+                padding: 4px 8px;
             }
             
             .team-action-buttons {
-                grid-template-columns: repeat(3, 1fr);
-                gap: var(--spacing-xs);
+                gap: 2px;
             }
             
-            .team-action-buttons.general {
-                grid-template-columns: repeat(2, 1fr);
+            .team-action-btn {
+                font-size: 8px;
+                padding: 2px 4px;
+                height: 20px;
+                min-width: 24px;
             }
             
-            .team-action-section {
-                padding: var(--spacing-xs);
+            .team-action-section-header {
+                font-size: 8px;
             }
         }
 
@@ -644,22 +663,10 @@ $token = $_GET['token'] ?? '';
         <!-- Si paramètre control=true, afficher les contrôles -->
         <?php if($control): ?>
         <div class="team-action-bar" id="team-action-bar">
-            <div class="team-action-bar-header">
-                <div class="team-action-bar-title">
-                    <i class="fas fa-users"></i>
-                    Module Team VS Team
-                </div>
-                <div class="team-action-bar-controls">
-                    <a href="/modules/teams-config.php?token=<?=$token?>" class="team-action-bar-config">
-                        <i class="fas fa-cog"></i>
-                    </a>
-                </div>
-            </div>
-            
             <div class="team-action-bar-sections">
                 <div class="team-action-section">
                     <div class="team-action-section-header">
-                        <i class="fas fa-users"></i> Équipe Verte
+                        <i class="fas fa-users"></i> Verte
                     </div>
                     <div class="team-action-buttons">
                         <button class="team-action-btn subtract" data-action="add-score" data-team="green" data-value="-10">-10</button>
@@ -674,7 +681,7 @@ $token = $_GET['token'] ?? '';
                 
                 <div class="team-action-section">
                     <div class="team-action-section-header">
-                        <i class="fas fa-users"></i> Équipe Rouge
+                        <i class="fas fa-users"></i> Rouge
                     </div>
                     <div class="team-action-buttons">
                         <button class="team-action-btn subtract" data-action="add-score" data-team="red" data-value="-10">-10</button>
@@ -689,15 +696,23 @@ $token = $_GET['token'] ?? '';
                 
                 <div class="team-action-section">
                     <div class="team-action-section-header">
-                        <i class="fas fa-gamepad"></i> Actions Générales
+                        <i class="fas fa-gamepad"></i> Actions
                     </div>
                     <div class="team-action-buttons general">
-                        <button class="team-action-btn reset large" data-action="reset-all">
-                            <i class="fas fa-redo"></i> Reset Tout
+                        <button class="team-action-btn reset" data-action="reset-all">
+                            <i class="fas fa-redo"></i> Reset
                         </button>
-                        <button class="team-action-btn primary large" data-action="swap-scores">
-                            <i class="fas fa-exchange-alt"></i> Échanger
+                        <button class="team-action-btn primary" data-action="swap-scores">
+                            <i class="fas fa-exchange-alt"></i> Swap
                         </button>
+                    </div>
+                </div>
+                
+                <div class="team-action-section">
+                    <div class="team-action-bar-controls">
+                        <a href="/modules/teams-config.php?token=<?=$token?>" class="team-action-bar-config">
+                            <i class="fas fa-cog"></i>
+                        </a>
                     </div>
                 </div>
             </div>
