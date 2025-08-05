@@ -83,6 +83,9 @@ $token = $_GET['token'] ?? '';
             line-height: 1.6;
             height: 100vh;
             padding: var(--spacing-lg);
+            /* Mobile tweak: Better mobile handling */
+            overflow-x: hidden;
+            min-height: 100vh;
         }
 
         /* ==================== MAIN CONTAINER ==================== */
@@ -93,6 +96,9 @@ $token = $_GET['token'] ?? '';
             display: flex;
             flex-direction: column;
             overflow: hidden;
+            /* Mobile tweak: Better mobile container */
+            width: 100%;
+            min-height: 100vh;
         }
 
         /* ==================== REALTIME INDICATOR ==================== */
@@ -129,6 +135,10 @@ $token = $_GET['token'] ?? '';
             text-align: center;
             padding: var(--spacing-lg);
             padding-bottom: 150px; /* Espace par défaut pour éviter la collision avec les contrôles */
+            /* Mobile tweak: Better mobile display */
+            width: 100%;
+            min-height: 100vh;
+            overflow: hidden;
         }
 
         /* ==================== CONFIG BUTTON FIXED ==================== */
@@ -189,6 +199,11 @@ $token = $_GET['token'] ?? '';
             align-items: center;
             justify-content: center;
             text-align: center;
+            /* Mobile tweak: Better mobile text container */
+            width: 100%;
+            max-width: 100vw;
+            padding: 0 10px;
+            overflow: hidden;
         }
 
         #timer-display {
@@ -199,6 +214,10 @@ $token = $_GET['token'] ?? '';
             letter-spacing: 2px;
             margin: 0;
             font-variant-numeric: tabular-nums;
+            /* Mobile tweak: Better responsive behavior */
+            word-wrap: break-word;
+            word-break: break-word;
+            overflow-wrap: break-word;
         }
 
         /* ==================== TIMER ACTION BAR ==================== */
@@ -420,6 +439,31 @@ $token = $_GET['token'] ?? '';
         }
 
         @media (max-width: 768px) {
+            /* Mobile tweak: Better mobile body padding */
+            body {
+                padding: 10px;
+            }
+
+            /* Mobile tweak: Better mobile container */
+            .widget-container {
+                height: calc(100vh - 20px);
+                padding: 0;
+            }
+
+            /* Mobile tweak: Better mobile display */
+            .display {
+                padding: 10px;
+                padding-bottom: 120px;
+                justify-content: center;
+                align-items: center;
+            }
+
+            /* Mobile tweak: Better mobile text container */
+            .text-container {
+                padding: 0 5px;
+                max-width: 100%;
+            }
+
             .timer-action-bar {
                 bottom: 10px;
                 padding: 6px 8px;
@@ -461,9 +505,40 @@ $token = $_GET['token'] ?? '';
                 height: 18px;
                 font-size: 8px;
             }
+
+            /* Mobile tweak: Timer display responsive */
+            #timer-display {
+                font-size: 4rem; /* Mobile tweak: smaller font size */
+                letter-spacing: 1px; /* Mobile tweak: reduced letter spacing */
+            }
         }
 
         @media (max-width: 480px) {
+            /* Mobile tweak: Better mobile body padding */
+            body {
+                padding: 5px;
+            }
+
+            /* Mobile tweak: Better mobile container */
+            .widget-container {
+                height: calc(100vh - 10px);
+                padding: 0;
+            }
+
+            /* Mobile tweak: Better mobile display */
+            .display {
+                padding: 5px;
+                padding-bottom: 100px;
+                justify-content: center;
+                align-items: center;
+            }
+
+            /* Mobile tweak: Better mobile text container */
+            .text-container {
+                padding: 0 2px;
+                max-width: 100%;
+            }
+
             .timer-action-bar {
                 min-width: 280px;
                 padding: 4px 6px;
@@ -506,9 +581,40 @@ $token = $_GET['token'] ?? '';
                 height: 16px;
                 font-size: 7px;
             }
+
+            /* Mobile tweak: Timer display responsive for small screens */
+            #timer-display {
+                font-size: 3rem; /* Mobile tweak: much smaller font size */
+                letter-spacing: 0.5px; /* Mobile tweak: minimal letter spacing */
+            }
         }
 
         @media (max-width: 360px) {
+            /* Mobile tweak: Better mobile body padding */
+            body {
+                padding: 2px;
+            }
+
+            /* Mobile tweak: Better mobile container */
+            .widget-container {
+                height: calc(100vh - 4px);
+                padding: 0;
+            }
+
+            /* Mobile tweak: Better mobile display */
+            .display {
+                padding: 2px;
+                padding-bottom: 80px;
+                justify-content: center;
+                align-items: center;
+            }
+
+            /* Mobile tweak: Better mobile text container */
+            .text-container {
+                padding: 0 1px;
+                max-width: 100%;
+            }
+
             .timer-action-bar {
                 min-width: 260px;
                 padding: 3px 4px;
@@ -531,6 +637,12 @@ $token = $_GET['token'] ?? '';
                 height: 14px;
                 font-size: 6px;
             }
+
+            /* Mobile tweak: Timer display responsive for ultra small screens */
+            #timer-display {
+                font-size: 2.5rem; /* Mobile tweak: ultra small font size */
+                letter-spacing: 0.25px; /* Mobile tweak: minimal letter spacing */
+            }
         }
 
         /* ==================== STYLE MFA PREMIUM ==================== */
@@ -549,6 +661,10 @@ $token = $_GET['token'] ?? '';
             --premium-accent-color: #ff6b35;
             --premium-text-color: #ffffff;
             --premium-digits-color: #ff6b35;
+            /* Mobile tweak: Better responsive behavior */
+            overflow: hidden;
+            word-wrap: break-word;
+            word-break: break-word;
         }
 
         .premium-logo-area {
@@ -719,11 +835,20 @@ $token = $_GET['token'] ?? '';
                 min-width: 260px;
                 padding: 12px 20px;
                 max-width: 95vw;
+                /* Mobile tweak: Better mobile centering */
+                margin: 0 auto;
+                display: flex;
+                justify-content: center;
+                align-items: center;
             }
             
             #premium-timer {
                 font-size: 2.5rem;
                 gap: 10px;
+                /* Mobile tweak: Better mobile timer centering */
+                justify-content: center;
+                align-items: center;
+                flex-wrap: wrap;
             }
             
             .premium-time-group {
@@ -746,71 +871,122 @@ $token = $_GET['token'] ?? '';
 
         @media (max-width: 480px) {
             .premium-container {
-                min-width: 240px;
-                padding: 10px 15px;
-                max-width: 98vw;
+                min-width: 200px; /* Mobile tweak: reduced min-width */
+                padding: 8px 12px; /* Mobile tweak: reduced padding */
+                max-width: 95vw; /* Mobile tweak: better max-width */
+                /* Mobile tweak: Better mobile centering */
+                margin: 0 auto;
+                display: flex;
+                justify-content: center;
+                align-items: center;
             }
             
             #premium-timer {
-                font-size: 2rem;
-                gap: 8px;
+                font-size: 1.6rem; /* Mobile tweak: smaller font size */
+                gap: 6px; /* Mobile tweak: reduced gap */
+                flex-wrap: wrap; /* Mobile tweak: allow wrapping */
+                justify-content: center;
+                /* Mobile tweak: Better mobile timer centering */
+                align-items: center;
             }
             
             .premium-time-group {
-                padding: 5px 8px;
+                padding: 4px 6px; /* Mobile tweak: reduced padding */
+                margin: 2px; /* Mobile tweak: add margin for spacing */
             }
             
             .premium-digits {
-                font-size: 0.9em;
+                font-size: 0.85em; /* Mobile tweak: smaller digits */
             }
             
             .premium-unit {
-                font-size: 0.35em;
-                margin-left: 4px;
+                font-size: 0.3em; /* Mobile tweak: smaller unit text */
+                margin-left: 3px; /* Mobile tweak: reduced margin */
             }
             
             .premium-separator {
-                font-size: 0.9em;
+                font-size: 0.8em; /* Mobile tweak: smaller separator */
             }
             
             .premium-logo-area {
-                font-size: 0.7rem;
-                padding: 3px 15px;
+                font-size: 0.6rem; /* Mobile tweak: smaller logo text */
+                padding: 2px 12px; /* Mobile tweak: reduced padding */
             }
         }
 
         @media (max-width: 360px) {
             .premium-container {
-                min-width: 220px;
-                padding: 8px 12px;
-                max-width: 99vw;
+                min-width: 180px; /* Mobile tweak: even smaller min-width */
+                padding: 6px 8px; /* Mobile tweak: minimal padding */
+                max-width: 98vw; /* Mobile tweak: better max-width */
             }
             
             #premium-timer {
-                font-size: 1.8rem;
-                gap: 6px;
+                font-size: 1.4rem; /* Mobile tweak: much smaller font */
+                gap: 4px; /* Mobile tweak: minimal gap */
+                flex-direction: column; /* Mobile tweak: stack vertically if needed */
+                align-items: center;
             }
             
             .premium-time-group {
-                padding: 4px 6px;
+                padding: 3px 4px; /* Mobile tweak: minimal padding */
+                margin: 1px; /* Mobile tweak: minimal margin */
             }
             
             .premium-digits {
-                font-size: 0.8em;
+                font-size: 0.75em; /* Mobile tweak: smaller digits */
             }
             
             .premium-unit {
-                font-size: 0.3em;
-                margin-left: 3px;
+                font-size: 0.25em; /* Mobile tweak: very small unit text */
+                margin-left: 2px; /* Mobile tweak: minimal margin */
             }
             
             .premium-separator {
-                font-size: 0.8em;
+                font-size: 0.7em; /* Mobile tweak: smaller separator */
             }
             
             .premium-logo-area {
-                font-size: 0.6rem;
-                padding: 2px 12px;
+                font-size: 0.5rem; /* Mobile tweak: very small logo text */
+                padding: 1px 8px; /* Mobile tweak: minimal padding */
+            }
+        }
+
+        /* Mobile tweak: Ultra small screens (iPhone SE, etc.) */
+        @media (max-width: 320px) {
+            .premium-container {
+                min-width: 160px; /* Mobile tweak: ultra small min-width */
+                padding: 4px 6px; /* Mobile tweak: ultra minimal padding */
+                max-width: 99vw; /* Mobile tweak: full width */
+            }
+            
+            #premium-timer {
+                font-size: 1.2rem; /* Mobile tweak: ultra small font */
+                gap: 3px; /* Mobile tweak: ultra minimal gap */
+                flex-direction: column; /* Mobile tweak: always stack */
+            }
+            
+            .premium-time-group {
+                padding: 2px 3px; /* Mobile tweak: ultra minimal padding */
+                margin: 1px; /* Mobile tweak: minimal margin */
+            }
+            
+            .premium-digits {
+                font-size: 0.7em; /* Mobile tweak: ultra small digits */
+            }
+            
+            .premium-unit {
+                font-size: 0.2em; /* Mobile tweak: ultra small unit text */
+                margin-left: 1px; /* Mobile tweak: minimal margin */
+            }
+            
+            .premium-separator {
+                font-size: 0.6em; /* Mobile tweak: ultra small separator */
+            }
+            
+            .premium-logo-area {
+                font-size: 0.4rem; /* Mobile tweak: ultra small logo text */
+                padding: 1px 6px; /* Mobile tweak: ultra minimal padding */
             }
         }
     </style>
