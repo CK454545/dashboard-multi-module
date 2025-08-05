@@ -7,6 +7,9 @@ $user = requireValidToken();
 
 $control = isset($_GET['control']) && $_GET['control'] === 'true';
 $token = $_GET['token'] ?? '';
+
+// Vérifier l'accès au module timer (en cours de réparation)
+checkTimerAccess($token);
 ?>
 <!DOCTYPE html>
 <html lang="fr">
