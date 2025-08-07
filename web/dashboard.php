@@ -403,7 +403,7 @@ $token = $_GET['token'] ?? '';
             align-items: center;
             gap: 1rem;
             position: relative;
-            z-index: 1001;
+            z-index: 20000;
         }
 
         .user-info {
@@ -777,6 +777,7 @@ $token = $_GET['token'] ?? '';
             transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             overflow: hidden;
             transform-style: preserve-3d;
+            z-index: 1;
         }
 
         .module-bg-pattern {
