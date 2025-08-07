@@ -13,7 +13,7 @@ class ProfileManager {
 
     public function __construct($token) {
         $this->token = $token;
-        $this->db = new SQLite3(__DIR__ . '/../../database/database.sqlite');
+        $this->db = new SQLite3(__DIR__ . '/../../database/database.db');
         $this->user = requireValidToken();
     }
 

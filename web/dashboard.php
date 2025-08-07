@@ -60,6 +60,7 @@ $token = $_GET['token'] ?? '';
             padding: 0;
             box-sizing: border-box;
         }
+        html { overflow-x: hidden; }
 
         body {
             font-family: var(--font-secondary);
@@ -69,6 +70,7 @@ $token = $_GET['token'] ?? '';
             overflow-x: hidden;
             position: relative;
             background: var(--gradient-dark);
+            width: 100%;
         }
 
         /* ==================== INTRO VIDEO STYLES ==================== */
@@ -283,7 +285,7 @@ $token = $_GET['token'] ?? '';
             border-bottom: 1px solid rgba(0, 128, 255, 0.3);
             padding: 1.5rem 0;
             margin-bottom: 3rem;
-            overflow: visible;
+            overflow: hidden;
             z-index: 10;
         }
 
@@ -298,6 +300,8 @@ $token = $_GET['token'] ?? '';
                 rgba(0, 128, 255, 0.1) 50%, 
                 transparent 100%);
             animation: headerScan 3s ease-in-out infinite;
+            overflow: hidden;
+            will-change: transform;
         }
 
         @keyframes headerScan {
@@ -314,7 +318,25 @@ $token = $_GET['token'] ?? '';
             padding: 0 2rem;
             position: relative;
             z-index: 2;
+            overflow: hidden;
         }
+        .theme-switcher {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-right: 16px;
+        }
+        .theme-btn {
+            width: 28px; height: 28px; border-radius: 50%; border: 1px solid rgba(255,255,255,0.2);
+            background: transparent; cursor: pointer; display:inline-flex; align-items:center; justify-content:center;
+            transition: transform .2s ease, box-shadow .2s ease; position: relative;
+        }
+        .theme-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 16px rgba(0,0,0,.3);} 
+        .theme-btn .dot{ width:16px; height:16px; border-radius:50%; }
+        .theme-btn[data-theme="blue"] .dot{ background: linear-gradient(135deg, #0080FF, #00B4FF); }
+        .theme-btn[data-theme="red"] .dot{ background: linear-gradient(135deg, #FF0040, #FF5570); }
+        .theme-btn[data-theme="mixed"] .dot{ background: linear-gradient(135deg, #00B4FF, #FF0040); }
+        .theme-btn.active{ outline: 2px solid var(--primary-blue); }
 
         .logo-section {
             display: flex;
@@ -2089,6 +2111,31 @@ $token = $_GET['token'] ?? '';
             0% { transform: translateX(-100%); }
             100% { transform: translateX(133%); }
         }
+
+        /***** THEMES *****/
+        :root { /* valeurs par défaut (bleu) déjà définies plus haut */ }
+        body.theme-red {
+          --primary-blue: #FF0040;
+          --light-blue: #FF5570;
+          --gradient-blue: linear-gradient(135deg, #FF0040, #FF5570);
+          --gradient-mixed: linear-gradient(135deg, #FF0040 0%, #FF5570 100%);
+        }
+        body.theme-mixed {
+          --primary-blue: #00B4FF;
+          --primary-red: #FF0040;
+          --gradient-mixed: linear-gradient(135deg, #00B4FF 0%, #FF0040 100%);
+        }
+
+        /* Couche de verrouillage pour dashboard quand déconnecté */
+        .dashboard-lock-overlay{
+          position: fixed; inset: 0; z-index: 30000; backdrop-filter: blur(6px);
+          background: rgba(0,10,26,0.8); display: none; align-items: center; justify-content: center;
+        }
+        .dashboard-lock-overlay.show{ display: flex; }
+        .lock-card{ background: var(--bg-card); border:1px solid rgba(255,255,255,.15); padding: 24px; border-radius: 16px; text-align:center; max-width: 420px; }
+        .lock-card h3{ font-family: var(--font-primary); margin-bottom: 8px; }
+        .lock-card p{ color: var(--text-secondary); margin-bottom: 16px; }
+        .lock-card .btn{ display:inline-flex; align-items:center; gap:8px; padding:10px 16px; border-radius:10px; border:1px solid rgba(0,128,255,.3); background: var(--bg-card); color:#fff; text-decoration:none; }
     </style>
 </head>
 <body>
@@ -2129,6 +2176,11 @@ $token = $_GET['token'] ?? '';
                 <div class="header-bg-effect"></div>
                 <div class="header-content">
                     <div class="logo-section">
+                            <div class="theme-switcher" aria-label="Changer de thème">
+                                <button class="theme-btn" data-theme="blue" title="Bleu (par défaut)"><span class="dot"></span></button>
+                                <button class="theme-btn" data-theme="red" title="Rouge"><span class="dot"></span></button>
+                                <button class="theme-btn" data-theme="mixed" title="Mix"><span class="dot"></span></button>
+                            </div>
                         <div class="logo-container">
                             <img src="https://i.goopics.net/g93k7n.png" alt="MFA CONNECT" class="logo-3d">
                         </div>
@@ -2172,15 +2224,15 @@ $token = $_GET['token'] ?? '';
                                     <i class="fas fa-user-edit"></i>
                                     <span>Modifier Profil</span>
                                 </a>
-                                <a href="#" class="profile-action" onclick="showNotification('Paramètres ouverts', 'info')">
+                                <a href="#" class="profile-action" onclick="openSettings()">
                                     <i class="fas fa-cog"></i>
                                     <span>Paramètres</span>
                                 </a>
-                                <a href="#" class="profile-action" onclick="showNotification('Historique consulté', 'info')">
+                                <a href="#" class="profile-action" onclick="openHistoryModal()">
                                     <i class="fas fa-history"></i>
                                     <span>Historique</span>
                                 </a>
-                                <a href="#" class="profile-action" onclick="showNotification('Déconnexion...', 'warning')">
+                                <a href="#" class="profile-action" onclick="logoutUser()">
                                     <i class="fas fa-sign-out-alt"></i>
                                     <span>Déconnexion</span>
                                 </a>
@@ -2633,6 +2685,53 @@ $token = $_GET['token'] ?? '';
             </div>
         </div>
     </div>
+
+    <!-- Modal Paramètres (à venir) -->
+    <div id="settingsModal" class="modal">
+      <div class="modal-backdrop"></div>
+      <div class="modal-container">
+        <div class="modal-header">
+          <div class="modal-title-wrapper">
+            <div class="modal-icon"><i class="fas fa-cog"></i></div>
+            <h2 class="modal-title">Paramètres</h2>
+          </div>
+          <button class="modal-close" onclick="closeModal('settings')"><i class="fas fa-times"></i></button>
+        </div>
+        <div class="modal-body">
+          <p style="opacity:.6">Fonctionnalité à venir. Certaines options seront bientôt disponibles.</p>
+          <div style="filter:grayscale(1); opacity:.6; pointer-events:none;">
+            <div class="form-group"><label class="form-label">Sons</label><input type="checkbox" checked></div>
+            <div class="form-group"><label class="form-label">Animations</label><input type="checkbox" checked></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal Historique -->
+    <div id="historyModal" class="modal">
+      <div class="modal-backdrop"></div>
+      <div class="modal-container">
+        <div class="modal-header">
+          <div class="modal-title-wrapper">
+            <div class="modal-icon"><i class="fas fa-history"></i></div>
+            <h2 class="modal-title">Historique</h2>
+          </div>
+          <button class="modal-close" onclick="closeModal('history')"><i class="fas fa-times"></i></button>
+        </div>
+        <div class="modal-body">
+          <div id="historyList" style="display:flex; flex-direction:column; gap:10px;"></div>
+        </div>
+      </div>
+    </div>
+
+    <div id="dashboardLock" class="dashboard-lock-overlay">
+      <div class="lock-card">
+        <h3>Session terminée</h3>
+        <p>Vous êtes déconnecté. Les modules sont bloqués.</p>
+        <a id="reloginBtn" class="btn" href="#"><i class="fas fa-key"></i>Se reconnecter</a>
+      </div>
+    </div>
+
     <script>
         // ==================== INTRO VIDEO LOGIC ====================
         document.addEventListener('DOMContentLoaded', function() {
@@ -3171,6 +3270,101 @@ $token = $_GET['token'] ?? '';
                 }
             });
         }
+
+        async function openSettings(){ openModal('settings'); }
+
+        // Charger l'historique récent depuis user_activity_log
+        async function loadHistory(){
+          const res = await fetch(`/modules/profile_manager.php?action=get_profile&token=${encodeURIComponent('<?= $token ?>')}`, {method:'POST'});
+          // On réutilise l'endpoint existant pour déclencher l'initialisation si besoin, puis on appelle un petit fetch SQL en brut côté profil_manager via log_activity inexistante.
+        }
+
+        // Quand on ouvre l'historique, on tente de lire les derniers logs via une route légère
+        async function openHistoryModal(){
+          try {
+            const res = await fetch(`/modules/profile_manager.php?action=wins_today_summary&token=${encodeURIComponent('<?= $token ?>')}`, {method:'POST'});
+            const data = await res.json();
+          } catch(e) {}
+          // Pour afficher quelque chose d'utile, on montre les temps du jour des 3 modules
+          const container = document.getElementById('historyList');
+          container.innerHTML = '<div>Chargement...</div>';
+          const [wins,timer,battle] = await Promise.all([
+            fetch(`/modules/profile_manager.php?action=wins_today_summary&token=${encodeURIComponent('<?= $token ?>')}`, {method:'POST'}).then(r=>r.json()).catch(()=>({wins_today_seconds:0})),
+            fetch(`/modules/profile_manager.php?action=timer_today_summary&token=${encodeURIComponent('<?= $token ?>')}`, {method:'POST'}).then(r=>r.json()).catch(()=>({timer_today_seconds:0})),
+            fetch(`/modules/profile_manager.php?action=battle_today_summary&token=${encodeURIComponent('<?= $token ?>')}`, {method:'POST'}).then(r=>r.json()).catch(()=>({battle_today_seconds:0}))
+          ]);
+          function fmt(s){const m=Math.floor(s/60),sec=s%60;return `${m}m ${sec}s`;}
+          container.innerHTML = `
+            <div>Temps aujourd'hui - Wins: <strong>${fmt(wins.wins_today_seconds||0)}</strong></div>
+            <div>Temps aujourd'hui - Timer: <strong>${fmt(timer.timer_today_seconds||0)}</strong></div>
+            <div>Temps aujourd'hui - Team Battle: <strong>${fmt(battle.battle_today_seconds||0)}</strong></div>
+          `;
+          openModal('history');
+        }
+
+        // Déconnexion: invalide le token côté activité et verrouille l'UI sans recharger
+        async function logoutUser(){
+          try {
+            await fetch(`/modules/profile_manager.php?action=log_activity&token=${encodeURIComponent('<?= $token ?>')}`, {
+              method: 'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({action:'logout', module:'profile'})
+            });
+          } catch(e){}
+          // Lock UI
+          document.getElementById('dashboardLock').classList.add('show');
+          // Désactiver tous les liens de lancement de module
+          document.querySelectorAll('.btn-module').forEach(a=>{ a.classList.add('disabled'); a.setAttribute('tabindex','-1'); a.addEventListener('click', e=>e.preventDefault()); });
+          // Option: rediriger vers page d'accueil avec un token vide pour forcer re-login
+          const relogin = document.getElementById('reloginBtn');
+          const url = new URL(window.location.href); url.searchParams.set('token',''); relogin.href = url.toString();
+        }
+
+        // Appliquer thème préféré depuis backend quand dispo
+        function applyTheme(theme){
+          document.body.classList.remove('theme-red','theme-mixed');
+          if (theme === 'red') document.body.classList.add('theme-red');
+          if (theme === 'mixed') document.body.classList.add('theme-mixed');
+        }
+
+        // Après chargement du profil, appliquer le thème
+        const originalUpdateProfileDisplay = window.updateProfileDisplay;
+        window.updateProfileDisplay = function(data){
+          if (typeof originalUpdateProfileDisplay === 'function') originalUpdateProfileDisplay(data);
+          if (data && data.preferences && data.preferences.color_scheme){
+            // Si le backend stocke color_scheme, on l'utilise sinon theme_preference si présent
+            const theme = (data.preferences.color_scheme === 'blue_red') ? 'mixed' : (data.preferences.color_scheme === 'red' ? 'red' : 'blue');
+            applyTheme(theme);
+          }
+        };
+
+        // Lors de l'enregistrement du profil dans le modal, forcer application thème si choisi
+        (function(){
+          const themeSelect = document.getElementById('editTheme');
+          if (themeSelect){ themeSelect.addEventListener('change', ()=>applyTheme(themeSelect.value)); }
+        })();
+
+        (function initThemeSwitcher(){
+          const container = document.querySelector('.theme-switcher');
+          if (!container) return;
+          const btns = container.querySelectorAll('.theme-btn');
+          function setActive(theme){ btns.forEach(b=>b.classList.toggle('active', b.dataset.theme===theme)); }
+          btns.forEach(btn=>{
+            btn.addEventListener('click', async ()=>{
+              const theme = btn.dataset.theme;
+              applyTheme(theme);
+              setActive(theme);
+              try{
+                await fetch(`/modules/profile_manager.php?action=update_preferences&token=${encodeURIComponent('<?= $token ?>')}`, {
+                  method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ color_scheme: theme==='mixed' ? 'blue_red' : theme })
+                });
+                showNotification('Thème appliqué', 'success');
+              }catch(e){/*noop*/}
+            });
+          });
+          // Marquer actif au chargement selon classe
+          if (document.body.classList.contains('theme-red')) setActive('red');
+          else if (document.body.classList.contains('theme-mixed')) setActive('mixed');
+          else setActive('blue');
+        })();
     </script>
 </body>
 </html>
