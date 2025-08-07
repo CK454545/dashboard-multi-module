@@ -283,7 +283,7 @@ $token = $_GET['token'] ?? '';
             border-bottom: 1px solid rgba(0, 128, 255, 0.3);
             padding: 1.5rem 0;
             margin-bottom: 3rem;
-            overflow: hidden;
+            overflow: visible;
         }
 
         .header-bg-effect {
