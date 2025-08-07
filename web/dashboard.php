@@ -3428,6 +3428,36 @@ $token = $_GET['token'] ?? '';
           }
           setInterval(pollTeams, 1200); pollTeams();
         })();
+<<<<<<< Current (Your changes)
+=======
+
+        // ==================== DEMO PARTICLE SYSTEM (SANS API) ====================
+        (function(){
+          const winsCard = document.querySelector(".module-card[data-module='wins']");
+          const timerCard = document.querySelector(".module-card[data-module='timer']");
+          const battleCard = document.querySelector(".module-card[data-module='battle']");
+          [winsCard, timerCard, battleCard].forEach(card=>{ if(!card) return; if(!card.querySelector('.fly-layer')){ const l=document.createElement('div'); l.className='fly-layer'; card.appendChild(l);} });
+
+          function spawnFly(card, text, cls){ if(!card) return; const layer=card.querySelector('.fly-layer'); if(!layer) return; const el=document.createElement('div'); el.className=`fly-number ${cls||''}`; el.textContent=text; const rect=layer.getBoundingClientRect(); const x=Math.random()*(rect.width-60)+30; const y=Math.random()*(rect.height-60)+30; const dx=(Math.random()*60-30); const rot=(Math.random()*40-20)+'deg'; el.style.setProperty('--x', x+'px'); el.style.setProperty('--y', y+'px'); el.style.setProperty('--dx', dx+'px'); el.style.setProperty('--rot', rot); el.style.left=0; el.style.top=0; el.style.animation='flyUp3D 1.2s ease-out forwards'; layer.appendChild(el); setTimeout(()=>el.remove(),1400); }
+
+          // Wins demo state
+          const winsValueEl = document.getElementById('winsPreviewValue');
+          let wins = 0; let mult = 1; let multActive = false;
+          function updateWins(){ if(winsValueEl) winsValueEl.textContent = String(wins); }
+          setInterval(()=>{ const change = [ -5,-2,-1, +1,+2,+5,+10 ][Math.floor(Math.random()*7)]; wins = Math.max(0, wins + change); updateWins(); spawnFly(winsCard, `${change>0?'+':''}${change} WIN`, change>=0?'win-pos':'win-neg'); if(Math.random()<0.2){ multActive = !multActive; mult = [1,2,3][Math.floor(Math.random()*3)]; if(multActive && mult>1) spawnFly(winsCard, `x${mult} ACTIF`, 'win-multi'); } }, 1200);
+
+          // Timer demo state
+          const timerValueEl = document.querySelector(".module-card[data-module='timer'] .preview-value");
+          let timer = 75; let running = true; function fmtMMSS(t){ const m=Math.floor(t/60), s=t%60; return `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`; }
+          function renderTimer(){ if(timerValueEl) timerValueEl.textContent = fmtMMSS(Math.max(0,timer)); }
+          setInterval(()=>{ if(!running) return; timer = Math.max(0, timer-1); renderTimer(); spawnFly(timerCard, '+1s', 'timer'); if(timer===0 || Math.random()<0.05){ timer = 60 + Math.floor(Math.random()*60); } }, 1000);
+
+          // Teams demo state
+          const battleValueEl = document.querySelector(".module-card[data-module='battle'] .preview-value");
+          let g=0, r=0; function renderTeams(){ if(battleValueEl) battleValueEl.textContent = `${g}-${r}`; }
+          setInterval(()=>{ const team = Math.random()<0.5 ? 'g' : 'r'; const delta = [1,2,3][Math.floor(Math.random()*3)]; if(team==='g'){ g += delta; spawnFly(battleCard, `+${delta}`, 'team-green'); } else { r += delta; spawnFly(battleCard, `+${delta}`, 'team-red'); } renderTeams(); }, 1300);
+        })();
+>>>>>>> Incoming (Background Agent changes)
     </script>
 </body>
 </html>
