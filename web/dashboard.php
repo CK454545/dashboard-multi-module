@@ -401,6 +401,7 @@ $token = $_GET['token'] ?? '';
             display: flex;
             align-items: center;
             gap: 1rem;
+            position: relative;
         }
 
         .user-info {
@@ -408,6 +409,12 @@ $token = $_GET['token'] ?? '';
             flex-direction: column;
             align-items: flex-end;
             gap: 0.2rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .user-info:hover {
+            transform: scale(1.05);
         }
 
         .welcome-text {
@@ -421,6 +428,145 @@ $token = $_GET['token'] ?? '';
             font-size: 1.2rem;
             color: var(--primary-blue);
             font-weight: 600;
+        }
+
+        /* ==================== PROFILE SYSTEM MFA CONNECT ==================== */
+        .profile-dropdown {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background: var(--bg-card);
+            border: 1px solid rgba(0, 128, 255, 0.3);
+            border-radius: 15px;
+            backdrop-filter: blur(20px);
+            padding: 1.5rem;
+            min-width: 280px;
+            box-shadow: var(--shadow-card);
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-10px);
+            transition: all 0.3s ease;
+            z-index: 1000;
+        }
+
+        .profile-dropdown.active {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .profile-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid rgba(0, 128, 255, 0.2);
+        }
+
+        .profile-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: var(--gradient-blue);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: white;
+            font-weight: 700;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .profile-avatar::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--gradient-red);
+            opacity: 0.3;
+            animation: avatarGlow 3s ease-in-out infinite;
+        }
+
+        @keyframes avatarGlow {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 0.6; }
+        }
+
+        .profile-details h3 {
+            font-family: var(--font-primary);
+            font-size: 1.1rem;
+            color: var(--text-primary);
+            margin-bottom: 0.2rem;
+        }
+
+        .profile-details p {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+
+        .profile-stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .profile-stat {
+            text-align: center;
+            padding: 0.8rem;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 10px;
+            border: 1px solid rgba(0, 128, 255, 0.2);
+        }
+
+        .profile-stat-value {
+            font-family: var(--font-primary);
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--primary-blue);
+            display: block;
+        }
+
+        .profile-stat-label {
+            font-size: 0.7rem;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .profile-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .profile-action {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            padding: 0.8rem 1rem;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(0, 128, 255, 0.2);
+            border-radius: 10px;
+            color: var(--text-primary);
+            text-decoration: none;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+        }
+
+        .profile-action:hover {
+            background: rgba(0, 128, 255, 0.1);
+            border-color: var(--primary-blue);
+            transform: translateX(5px);
+        }
+
+        .profile-action i {
+            color: var(--primary-blue);
+            width: 20px;
         }
 
         /* ==================== NAVIGATION TABS MFA CONNECT ==================== */
@@ -573,139 +719,7 @@ $token = $_GET['token'] ?? '';
             }
         }
 
-        /* ==================== HERO SECTION MFA CONNECT ==================== */
-        .hero-section {
-            margin-bottom: 4rem;
-            position: relative;
-            overflow: hidden;
-        }
 
-        .hero-bg-animation {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: -1;
-        }
-
-        .wave-animation {
-            position: absolute;
-            width: 200%;
-            height: 100%;
-            background: linear-gradient(90deg, 
-                transparent 0%, 
-                rgba(0, 128, 255, 0.1) 25%, 
-                rgba(255, 0, 64, 0.1) 50%, 
-                rgba(0, 128, 255, 0.1) 75%, 
-                transparent 100%);
-            animation: waveMove 8s linear infinite;
-        }
-
-        @keyframes waveMove {
-            0% { transform: translateX(-50%); }
-            100% { transform: translateX(0%); }
-        }
-
-        .hero-content {
-            text-align: center;
-            padding: 3rem 2rem;
-            position: relative;
-            z-index: 2;
-        }
-
-        .hero-title {
-            font-family: var(--font-primary);
-            font-size: 3.5rem;
-            font-weight: 900;
-            margin-bottom: 2rem;
-            line-height: 1.2;
-        }
-
-        .title-line-1 {
-            display: block;
-            background: var(--gradient-blue);
-            background-clip: text;
-            -webkit-background-clip: text;
-            color: transparent;
-            animation: titleGlow 3s ease-in-out infinite;
-        }
-
-        .title-line-2 {
-            display: block;
-            background: var(--gradient-red);
-            background-clip: text;
-            -webkit-background-clip: text;
-            color: transparent;
-            animation: titleGlow 3s ease-in-out infinite reverse;
-        }
-
-        @keyframes titleGlow {
-            0%, 100% { filter: brightness(1) drop-shadow(0 0 20px var(--primary-blue)); }
-            50% { filter: brightness(1.3) drop-shadow(0 0 40px var(--primary-blue)); }
-        }
-
-        .quick-stats {
-            display: flex;
-            justify-content: center;
-            gap: 2rem;
-            margin-top: 3rem;
-            flex-wrap: wrap;
-        }
-
-        .stat-card {
-            position: relative;
-            background: var(--bg-card);
-            border: 1px solid rgba(0, 128, 255, 0.3);
-            border-radius: 20px;
-            padding: 1.5rem 2rem;
-            text-align: center;
-            backdrop-filter: blur(20px);
-            transition: all 0.3s ease;
-            overflow: hidden;
-        }
-
-        .stat-card:hover {
-            transform: translateY(-5px);
-            box-shadow: var(--glow-blue);
-            border-color: var(--primary-blue);
-        }
-
-        .stat-icon {
-            font-size: 2rem;
-            color: var(--primary-blue);
-            margin-bottom: 0.5rem;
-        }
-
-        .stat-value {
-            font-family: var(--font-primary);
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: var(--text-primary);
-            margin-bottom: 0.3rem;
-        }
-
-        .stat-label {
-            font-size: 0.9rem;
-            color: var(--text-secondary);
-            font-weight: 400;
-        }
-
-        .stat-glow {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: var(--gradient-blue);
-            opacity: 0;
-            transition: opacity 0.3s ease;
-            z-index: -1;
-        }
-
-        .stat-card:hover .stat-glow {
-            opacity: 0.1;
-        }
 
         /* ==================== MODULES SECTION MFA CONNECT ==================== */
         .modules-section {
@@ -1232,21 +1246,19 @@ $token = $_GET['token'] ?? '';
         .token-display-wrapper {
             display: flex;
             align-items: center;
-            gap: 2rem;
-            margin-bottom: 2rem;
-            flex-wrap: wrap;
             justify-content: center;
+            margin-bottom: 2rem;
         }
 
         .token-display {
-            flex: 1;
-            min-width: 300px;
             background: rgba(0, 0, 0, 0.5);
             border-radius: 15px;
-            padding: 1.5rem;
+            padding: 2rem;
             border: 1px solid rgba(0, 128, 255, 0.3);
             position: relative;
             overflow: hidden;
+            max-width: 600px;
+            width: 100%;
         }
 
         .token-label {
@@ -1306,6 +1318,9 @@ $token = $_GET['token'] ?? '';
             align-items: center;
             gap: 0.5rem;
             box-shadow: var(--glow-blue);
+            margin-top: 1rem;
+            width: 100%;
+            justify-content: center;
         }
 
         .btn-copy:hover {
@@ -1313,54 +1328,7 @@ $token = $_GET['token'] ?? '';
             box-shadow: 0 15px 40px rgba(0, 128, 255, 0.4);
         }
 
-        .token-qr {
-            position: relative;
-            width: 120px;
-            height: 120px;
-            background: rgba(0, 0, 0, 0.5);
-            border-radius: 15px;
-            border: 1px solid rgba(0, 128, 255, 0.3);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
 
-        .qr-code {
-            width: 100px;
-            height: 100px;
-            background: #000;
-            border-radius: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-family: var(--font-mono);
-            font-size: 0.8rem;
-            text-align: center;
-            border: 1px solid rgba(0, 128, 255, 0.3);
-        }
-
-        .qr-code::before {
-            content: "QR CODE";
-            color: var(--primary-blue);
-            text-shadow: 0 0 10px var(--primary-blue);
-        }
-
-        .qr-scan-effect {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 2px;
-            background: var(--gradient-red);
-            animation: qrScan 2s ease-in-out infinite;
-            box-shadow: 0 0 10px var(--primary-red);
-        }
-
-        @keyframes qrScan {
-            0% { transform: translateY(-100%); }
-            100% { transform: translateY(100%); }
-        }
 
         .token-security {
             display: flex;
@@ -1969,9 +1937,52 @@ $token = $_GET['token'] ?? '';
                     </div>
                     
                     <div class="user-section">
-                        <div class="user-info">
+                        <div class="user-info" onclick="toggleProfile()">
                             <span class="welcome-text">Bienvenue</span>
                             <span class="user-name"><?php echo htmlspecialchars($user['name'] ?? 'Utilisateur'); ?></span>
+                        </div>
+                        
+                        <!-- Profile Dropdown -->
+                        <div class="profile-dropdown" id="profileDropdown">
+                            <div class="profile-header">
+                                <div class="profile-avatar">
+                                    <?php echo strtoupper(substr($user['name'] ?? 'U', 0, 1)); ?>
+                                </div>
+                                <div class="profile-details">
+                                    <h3><?php echo htmlspecialchars($user['name'] ?? 'Utilisateur'); ?></h3>
+                                    <p>Token: <?php echo substr($token, 0, 8) . '...'; ?></p>
+                                </div>
+                            </div>
+                            
+                            <div class="profile-stats">
+                                <div class="profile-stat">
+                                    <span class="profile-stat-value">3</span>
+                                    <span class="profile-stat-label">Modules</span>
+                                </div>
+                                <div class="profile-stat">
+                                    <span class="profile-stat-value">Active</span>
+                                    <span class="profile-stat-label">Status</span>
+                                </div>
+                            </div>
+                            
+                            <div class="profile-actions">
+                                <a href="#" class="profile-action" onclick="showNotification('Profil mis à jour', 'success')">
+                                    <i class="fas fa-user-edit"></i>
+                                    <span>Modifier Profil</span>
+                                </a>
+                                <a href="#" class="profile-action" onclick="showNotification('Paramètres ouverts', 'info')">
+                                    <i class="fas fa-cog"></i>
+                                    <span>Paramètres</span>
+                                </a>
+                                <a href="#" class="profile-action" onclick="showNotification('Historique consulté', 'info')">
+                                    <i class="fas fa-history"></i>
+                                    <span>Historique</span>
+                                </a>
+                                <a href="#" class="profile-action" onclick="showNotification('Déconnexion...', 'warning')">
+                                    <i class="fas fa-sign-out-alt"></i>
+                                    <span>Déconnexion</span>
+                                </a>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -2003,40 +2014,7 @@ $token = $_GET['token'] ?? '';
                 </div>
             </nav>
 
-            <!-- Hero Section MFA CONNECT -->
-            <section class="hero-section">
-                <div class="hero-bg-animation">
-                    <div class="wave-animation"></div>
-                </div>
-                
-                <div class="hero-content">
-                    <h2 class="hero-title">
-                        <span class="title-line-1">Centre de Contrôle</span>
-                        <span class="title-line-2">Nouvelle Génération</span>
-                    </h2>
-                    
-                    <div class="quick-stats">
-                        <div class="stat-card">
-                            <div class="stat-icon"><i class="fas fa-broadcast-tower"></i></div>
-                            <div class="stat-value">3</div>
-                            <div class="stat-label">Modules Actifs</div>
-                            <div class="stat-glow"></div>
-                        </div>
-                        <div class="stat-card">
-                            <div class="stat-icon"><i class="fas fa-fire"></i></div>
-                            <div class="stat-value">Ready</div>
-                            <div class="stat-label">Statut Système</div>
-                            <div class="stat-glow"></div>
-                        </div>
-                        <div class="stat-card">
-                            <div class="stat-icon"><i class="fas fa-link"></i></div>
-                            <div class="stat-value">Connected</div>
-                            <div class="stat-label">API Status</div>
-                            <div class="stat-glow"></div>
-                        </div>
-                    </div>
-                </div>
-            </section>
+
 
             <!-- Modules Section MFA CONNECT -->
             <section class="modules-section">
@@ -2206,11 +2184,6 @@ $token = $_GET['token'] ?? '';
                                 <i class="fas fa-copy"></i>
                                 <span>Copier</span>
                             </button>
-                        </div>
-                        
-                        <div class="token-qr">
-                            <div class="qr-code" id="qrCode"></div>
-                            <div class="qr-scan-effect"></div>
                         </div>
                     </div>
                     
@@ -2395,6 +2368,73 @@ $token = $_GET['token'] ?? '';
 
 
         // ==================== MFA CONNECT LOGIC ====================
+        
+        // Gestion du dropdown de profil
+        function toggleProfile() {
+            const dropdown = document.getElementById('profileDropdown');
+            dropdown.classList.toggle('active');
+            
+            // Charger les données du profil si pas encore fait
+            if (dropdown.classList.contains('active') && !dropdown.dataset.loaded) {
+                loadProfileData();
+            }
+            
+            // Fermer le dropdown en cliquant à l'extérieur
+            document.addEventListener('click', function closeProfile(e) {
+                if (!e.target.closest('.user-section')) {
+                    dropdown.classList.remove('active');
+                    document.removeEventListener('click', closeProfile);
+                }
+            });
+        }
+
+        // Charger les données du profil
+        async function loadProfileData() {
+            try {
+                const response = await fetch(`/modules/profile_manager.php?action=get_profile&token=${encodeURIComponent('<?= $token ?>')}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+                
+                if (response.ok) {
+                    const profileData = await response.json();
+                    updateProfileDisplay(profileData);
+                    document.getElementById('profileDropdown').dataset.loaded = 'true';
+                }
+            } catch (error) {
+                console.error('Erreur lors du chargement du profil:', error);
+            }
+        }
+
+        // Mettre à jour l'affichage du profil
+        function updateProfileDisplay(data) {
+            // Mettre à jour l'avatar
+            const avatar = document.querySelector('.profile-avatar');
+            if (avatar) {
+                avatar.textContent = data.display_name.charAt(0).toUpperCase();
+            }
+
+            // Mettre à jour les statistiques
+            const stats = document.querySelectorAll('.profile-stat-value');
+            if (stats.length >= 2) {
+                stats[0].textContent = data.stats.total_wins || 0;
+                stats[1].textContent = data.stats.favorite_module || 'wins';
+            }
+
+            // Mettre à jour le nom d'affichage
+            const displayName = document.querySelector('.profile-details h3');
+            if (displayName) {
+                displayName.textContent = data.display_name;
+            }
+
+            // Mettre à jour la bio
+            const bio = document.querySelector('.profile-details p');
+            if (bio) {
+                bio.textContent = data.bio || `Token: ${data.token ? data.token.substring(0, 8) + '...' : 'N/A'}`;
+            }
+        }
         
         // Copier le token avec effet futuriste
         function copyToken() {
