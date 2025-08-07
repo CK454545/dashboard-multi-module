@@ -662,10 +662,6 @@ checkTimerAccess($token);
         <div class="config-header">
             <h1 class="config-title">⏰ Configuration Timer</h1>
             <p class="config-subtitle">Personnalisez l'apparence de votre chronomètre</p>
-            <div style="background: linear-gradient(135deg, #f59e0b, #d97706); color: white; padding: 1rem; border-radius: 0.75rem; margin-top: 1rem; text-align: center;">
-                <i class="fas fa-tools"></i> <strong>Module en cours de réparation</strong><br>
-                <small>Accès réservé aux développeurs uniquement</small>
-            </div>
         </div>
 
         <!-- Preview -->

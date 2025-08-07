@@ -946,38 +946,20 @@ $token = $_GET['token'] ?? '';
                     </div>
                     <div class="module-info">
                         <h3>Timer Interactif</h3>
-                        <?php if ($token === 'dev_token_2024'): ?>
-                            <span class="module-status active">Actif</span>
-                        <?php else: ?>
-                            <span class="module-status maintenance">En maintenance</span>
-                        <?php endif; ?>
+                        <span class="module-status active">Actif</span>
                     </div>
                     <p class="module-description">
                         Chronomètre personnalisable avec contrôles avancés, idéal pour gérer vos sessions de stream et créer de l'engagement.
-                        <?php if ($token !== 'dev_token_2024'): ?>
-                            <br><strong style="color: #f59e0b;">⚠️ Module temporairement indisponible pour maintenance</strong>
-                        <?php endif; ?>
                     </p>
                     <div class="module-actions">
-                        <?php if ($token === 'dev_token_2024'): ?>
-                            <a href="/modules/timer.php?token=<?=$token?>&control=true" class="module-btn primary">
-                                <i class="fas fa-play"></i>
-                                Lancer
-                            </a>
-                            <a href="/modules/timer-config.php?token=<?=$token?>" class="module-btn secondary">
-                                <i class="fas fa-cog"></i>
-                                Configurer
-                            </a>
-                        <?php else: ?>
-                            <button class="module-btn primary disabled" onclick="showMaintenanceMessage()">
-                                <i class="fas fa-tools"></i>
-                                En maintenance
-                            </button>
-                            <button class="module-btn secondary disabled" onclick="showMaintenanceMessage()">
-                                <i class="fas fa-tools"></i>
-                                En maintenance
-                            </button>
-                        <?php endif; ?>
+                        <a href="/modules/timer.php?token=<?=$token?>&control=true" class="module-btn primary">
+                            <i class="fas fa-play"></i>
+                            Lancer
+                        </a>
+                        <a href="/modules/timer-config.php?token=<?=$token?>" class="module-btn secondary">
+                            <i class="fas fa-cog"></i>
+                            Configurer
+                        </a>
                     </div>
                 </div>
 
