@@ -3428,8 +3428,6 @@ $token = $_GET['token'] ?? '';
           }
           setInterval(pollTeams, 1200); pollTeams();
         })();
-<<<<<<< Current (Your changes)
-=======
 
         // ==================== DEMO PARTICLE SYSTEM (SANS API) ====================
         (function(){
@@ -3457,7 +3455,6 @@ $token = $_GET['token'] ?? '';
           let g=0, r=0; function renderTeams(){ if(battleValueEl) battleValueEl.textContent = `${g}-${r}`; }
           setInterval(()=>{ const team = Math.random()<0.5 ? 'g' : 'r'; const delta = [1,2,3][Math.floor(Math.random()*3)]; if(team==='g'){ g += delta; spawnFly(battleCard, `+${delta}`, 'team-green'); } else { r += delta; spawnFly(battleCard, `+${delta}`, 'team-red'); } renderTeams(); }, 1300);
         })();
->>>>>>> Incoming (Background Agent changes)
     </script>
 </body>
 </html>

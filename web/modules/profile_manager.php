@@ -14,14 +14,18 @@ class ProfileManager {
     public function __construct($token) {
         $this->token = $token;
         $this->db = new SQLite3(__DIR__ . '/../../database/database.db');
-<<<<<<< Current (Your changes)
+
+
 
 
         $this->ensureSchema();
 
-=======
+
         $this->ensureSchema();
->>>>>>> Incoming (Background Agent changes)
+
+
+        $this->ensureSchema();
+
         $this->user = requireValidToken();
     }
 
