@@ -2188,52 +2188,12 @@ $token = $_GET['token'] ?? '';
                     </div>
                     
                     <div class="user-section">
-                        <div class="user-info" onclick="toggleProfile()">
+                        <div class="user-info" onclick="openProfileModal()">
                             <span class="welcome-text">Bienvenue</span>
                             <span class="user-name"><?php echo htmlspecialchars($user['name'] ?? 'Utilisateur'); ?></span>
                         </div>
-                        
-                        <!-- Profile Dropdown -->
-                        <div class="profile-dropdown" id="profileDropdown">
-                            <div class="profile-header">
-                                                <div class="profile-avatar" id="profileAvatar">
-                    <?php echo strtoupper(substr($user['name'] ?? 'U', 0, 1)); ?>
-                </div>
-                                <div class="profile-details">
-                                    <h3><?php echo htmlspecialchars($user['name'] ?? 'Utilisateur'); ?></h3>
-                                    <p>Token: <?php echo substr($token, 0, 8) . '...'; ?></p>
-                                </div>
-                            </div>
-                            
-                            <div class="profile-stats">
-                                <div class="profile-stat">
-                                    <span class="profile-stat-value">3</span>
-                                    <span class="profile-stat-label">Modules</span>
-                                </div>
-                                <div class="profile-stat">
-                                    <span class="profile-stat-value">Active</span>
-                                    <span class="profile-stat-label">Status</span>
-                                </div>
-                            </div>
-                            
-                            <div class="profile-actions">
-                                <a href="#" class="profile-action" onclick="openProfileModal()">
-                                    <i class="fas fa-user-edit"></i>
-                                    <span>Modifier Profil</span>
-                                </a>
-                                <a href="#" class="profile-action" onclick="openSettings()">
-                                    <i class="fas fa-cog"></i>
-                                    <span>Paramètres</span>
-                                </a>
-                                <a href="#" class="profile-action" onclick="openHistoryModal()">
-                                    <i class="fas fa-history"></i>
-                                    <span>Historique</span>
-                                </a>
-                                <a href="#" class="profile-action" onclick="logoutUser()">
-                                    <i class="fas fa-sign-out-alt"></i>
-                                    <span>Déconnexion</span>
-                                </a>
-                            </div>
+                    </div>
+                    <!-- Profil: ouverture directe en modal, dropdown supprimé -->
                         </div>
                     </div>
                 </div>
