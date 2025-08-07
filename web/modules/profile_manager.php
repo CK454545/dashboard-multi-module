@@ -14,7 +14,64 @@ class ProfileManager {
     public function __construct($token) {
         $this->token = $token;
         $this->db = new SQLite3(__DIR__ . '/../../database/database.db');
+
+
+        $this->ensureSchema();
+
         $this->user = requireValidToken();
+    }
+
+    /**
+     * S’assure que le schéma minimal existe pour éviter les erreurs 500
+     */
+    private function ensureSchema(): void {
+        $this->db->exec('CREATE TABLE IF NOT EXISTS user_profiles (
+            token TEXT PRIMARY KEY,
+            display_name TEXT,
+            avatar_url TEXT,
+            bio TEXT,
+            theme_preference TEXT DEFAULT "default",
+            language TEXT DEFAULT "fr",
+            timezone TEXT DEFAULT "Europe/Paris",
+            notifications_enabled BOOLEAN DEFAULT 1,
+            last_login TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            login_count INTEGER DEFAULT 1,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )');
+        $this->db->exec('CREATE TABLE IF NOT EXISTS user_stats (
+            token TEXT PRIMARY KEY,
+            total_wins INTEGER DEFAULT 0,
+            total_timer_sessions INTEGER DEFAULT 0,
+            total_battle_sessions INTEGER DEFAULT 0,
+            total_streaming_time INTEGER DEFAULT 0,
+            favorite_module TEXT DEFAULT "wins",
+            achievements_unlocked INTEGER DEFAULT 0,
+            last_activity TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )');
+        $this->db->exec('CREATE TABLE IF NOT EXISTS user_preferences (
+            token TEXT PRIMARY KEY,
+            auto_save BOOLEAN DEFAULT 1,
+            auto_backup BOOLEAN DEFAULT 1,
+            sound_effects BOOLEAN DEFAULT 1,
+            animations_enabled BOOLEAN DEFAULT 1,
+            privacy_level TEXT DEFAULT "public",
+            dashboard_layout TEXT DEFAULT "default",
+            color_scheme TEXT DEFAULT "blue",
+            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )');
+        $this->db->exec('CREATE TABLE IF NOT EXISTS user_activity_log (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            token TEXT NOT NULL,
+            action TEXT NOT NULL,
+            module TEXT,
+            details TEXT,
+            ip_address TEXT,
+            user_agent TEXT,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )');
+        $this->db->exec('CREATE INDEX IF NOT EXISTS idx_uact_token ON user_activity_log(token)');
     }
 
     /**
@@ -129,7 +186,7 @@ class ProfileManager {
         $stmt->bindValue(':theme_preference', $data['theme_preference'] ?? 'default', SQLITE3_TEXT);
         $stmt->bindValue(':language', $data['language'] ?? 'fr', SQLITE3_TEXT);
         $stmt->bindValue(':timezone', $data['timezone'] ?? 'Europe/Paris', SQLITE3_TEXT);
-        $stmt->bindValue(':notifications_enabled', $data['notifications_enabled'] ?? 1, SQLITE3_INTEGER);
+        $stmt->bindValue(':notifications_enabled', isset($data['notifications_enabled']) ? (int)$data['notifications_enabled'] : 1, SQLITE3_INTEGER);
         
         return $stmt->execute();
     }
@@ -149,13 +206,13 @@ class ProfileManager {
         ');
         
         $stmt->bindValue(':token', $this->token, SQLITE3_TEXT);
-        $stmt->bindValue(':auto_save', $data['auto_save'] ?? 1, SQLITE3_INTEGER);
-        $stmt->bindValue(':auto_backup', $data['auto_backup'] ?? 1, SQLITE3_INTEGER);
-        $stmt->bindValue(':sound_effects', $data['sound_effects'] ?? 1, SQLITE3_INTEGER);
-        $stmt->bindValue(':animations_enabled', $data['animations_enabled'] ?? 1, SQLITE3_INTEGER);
+        $stmt->bindValue(':auto_save', isset($data['auto_save']) ? (int)$data['auto_save'] : 1, SQLITE3_INTEGER);
+        $stmt->bindValue(':auto_backup', isset($data['auto_backup']) ? (int)$data['auto_backup'] : 1, SQLITE3_INTEGER);
+        $stmt->bindValue(':sound_effects', isset($data['sound_effects']) ? (int)$data['sound_effects'] : 1, SQLITE3_INTEGER);
+        $stmt->bindValue(':animations_enabled', isset($data['animations_enabled']) ? (int)$data['animations_enabled'] : 1, SQLITE3_INTEGER);
         $stmt->bindValue(':privacy_level', $data['privacy_level'] ?? 'public', SQLITE3_TEXT);
         $stmt->bindValue(':dashboard_layout', $data['dashboard_layout'] ?? 'default', SQLITE3_TEXT);
-        $stmt->bindValue(':color_scheme', $data['color_scheme'] ?? 'blue_red', SQLITE3_TEXT);
+        $stmt->bindValue(':color_scheme', $data['color_scheme'] ?? 'blue', SQLITE3_TEXT);
         
         return $stmt->execute();
     }
