@@ -402,6 +402,7 @@ $token = $_GET['token'] ?? '';
             align-items: center;
             gap: 1rem;
             position: relative;
+            z-index: 1001;
         }
 
         .user-info {
@@ -446,7 +447,8 @@ $token = $_GET['token'] ?? '';
             visibility: hidden;
             transform: translateY(-10px);
             transition: all 0.3s ease;
-            z-index: 1000;
+            z-index: 1002;
+            margin-top: 0.5rem;
         }
 
         .profile-dropdown.active {
@@ -1422,6 +1424,203 @@ $token = $_GET['token'] ?? '';
             font-size: 0.8rem;
         }
 
+        /* ==================== FIRST-TIME PERSONALIZATION MODAL ==================== */
+        .first-time-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            backdrop-filter: blur(15px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10001;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.5s ease;
+        }
+
+        .first-time-modal.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .first-time-container {
+            background: var(--bg-card);
+            border: 2px solid var(--primary-blue);
+            border-radius: 20px;
+            padding: 2.5rem;
+            max-width: 500px;
+            width: 90%;
+            text-align: center;
+            position: relative;
+            transform: scale(0.8);
+            transition: transform 0.5s ease;
+            box-shadow: var(--glow-blue);
+        }
+
+        .first-time-modal.active .first-time-container {
+            transform: scale(1);
+        }
+
+        .first-time-header {
+            margin-bottom: 2rem;
+        }
+
+        .first-time-title {
+            font-family: var(--font-primary);
+            font-size: 2rem;
+            font-weight: 700;
+            background: var(--gradient-mixed);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.5rem;
+        }
+
+        .first-time-subtitle {
+            font-size: 1.1rem;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        .first-time-form {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .form-group {
+            text-align: left;
+        }
+
+        .form-label {
+            display: block;
+            font-family: var(--font-primary);
+            font-size: 0.9rem;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 1rem;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(0, 128, 255, 0.3);
+            border-radius: 10px;
+            color: var(--text-primary);
+            font-family: var(--font-secondary);
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--primary-blue);
+            box-shadow: var(--glow-blue);
+        }
+
+        .form-select {
+            width: 100%;
+            padding: 1rem;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(0, 128, 255, 0.3);
+            border-radius: 10px;
+            color: var(--text-primary);
+            font-family: var(--font-secondary);
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .form-select:focus {
+            outline: none;
+            border-color: var(--primary-blue);
+            box-shadow: var(--glow-blue);
+        }
+
+        .first-time-actions {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+        }
+
+        .btn-first-time {
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 10px;
+            font-family: var(--font-primary);
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-primary-first {
+            background: var(--gradient-blue);
+            color: white;
+            box-shadow: var(--glow-blue);
+        }
+
+        .btn-primary-first:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 0 40px rgba(0, 128, 255, 0.7);
+        }
+
+        .btn-secondary-first {
+            background: rgba(0, 0, 0, 0.3);
+            color: var(--text-secondary);
+            border: 1px solid rgba(0, 128, 255, 0.3);
+        }
+
+        .btn-secondary-first:hover {
+            background: rgba(0, 128, 255, 0.1);
+            color: var(--text-primary);
+        }
+
+        /* Responsive design pour le profile dropdown */
+        @media (max-width: 768px) {
+            .profile-dropdown {
+                position: fixed;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%) scale(0.8);
+                width: 90%;
+                max-width: 350px;
+                margin-top: 0;
+            }
+
+            .profile-dropdown.active {
+                transform: translate(-50%, -50%) scale(1);
+            }
+
+            .first-time-container {
+                padding: 2rem;
+                max-width: 400px;
+            }
+
+            .first-time-title {
+                font-size: 1.5rem;
+            }
+
+            .first-time-actions {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+
+            .btn-first-time {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+
         /* ==================== MODAL STYLES MFA CONNECT ==================== */
         .modal {
             display: none;
@@ -2214,6 +2413,61 @@ $token = $_GET['token'] ?? '';
             </section>
     </div>
 
+    <!-- First-Time Personalization Modal -->
+    <div id="firstTimeModal" class="first-time-modal">
+        <div class="first-time-container">
+            <div class="first-time-header">
+                <h1 class="first-time-title">Bienvenue sur MFA CONNECT</h1>
+                <p class="first-time-subtitle">Personnalisez votre expérience pour un contrôle optimal</p>
+            </div>
+            
+            <form class="first-time-form" id="personalizationForm">
+                <div class="form-group">
+                    <label class="form-label">Nom d'affichage</label>
+                    <input type="text" class="form-input" id="displayName" name="displayName" 
+                           value="<?php echo htmlspecialchars($user['name'] ?? ''); ?>" 
+                           placeholder="Votre nom d'affichage">
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Bio</label>
+                    <input type="text" class="form-input" id="bio" name="bio" 
+                           placeholder="Une courte description de vous">
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Thème préféré</label>
+                    <select class="form-select" id="theme" name="theme">
+                        <option value="blue">Bleu (Par défaut)</option>
+                        <option value="red">Rouge</option>
+                        <option value="purple">Violet</option>
+                        <option value="green">Vert</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Langue</label>
+                    <select class="form-select" id="language" name="language">
+                        <option value="fr">Français</option>
+                        <option value="en">English</option>
+                        <option value="es">Español</option>
+                    </select>
+                </div>
+            </form>
+            
+            <div class="first-time-actions">
+                <button class="btn-first-time btn-secondary-first" onclick="skipPersonalization()">
+                    <i class="fas fa-arrow-right"></i>
+                    Passer
+                </button>
+                <button class="btn-first-time btn-primary-first" onclick="savePersonalization()">
+                    <i class="fas fa-save"></i>
+                    Sauvegarder
+                </button>
+            </div>
+        </div>
+    </div>
+
     <!-- Modal Règlement MFA CONNECT -->
     <div id="rulesModal" class="modal">
         <div class="modal-backdrop"></div>
@@ -2343,6 +2597,8 @@ $token = $_GET['token'] ?? '';
                 // Supprimer complètement l'overlay après la transition
                 setTimeout(() => {
                     introOverlay.style.display = 'none';
+                    // Vérifier la première visite après l'affichage du dashboard
+                    checkFirstTime();
                 }, 1000);
             }
 
@@ -2434,6 +2690,78 @@ $token = $_GET['token'] ?? '';
             if (bio) {
                 bio.textContent = data.bio || `Token: ${data.token ? data.token.substring(0, 8) + '...' : 'N/A'}`;
             }
+        }
+
+        // ==================== FIRST-TIME PERSONALIZATION ====================
+        
+        // Vérifier si c'est la première visite
+        function checkFirstTime() {
+            const hasVisited = localStorage.getItem('mfa_connect_visited');
+            if (!hasVisited) {
+                // Afficher le modal de personnalisation
+                setTimeout(() => {
+                    showFirstTimeModal();
+                }, 1000);
+            }
+        }
+
+        // Afficher le modal de personnalisation
+        function showFirstTimeModal() {
+            const modal = document.getElementById('firstTimeModal');
+            modal.classList.add('active');
+        }
+
+        // Sauvegarder la personnalisation
+        async function savePersonalization() {
+            const form = document.getElementById('personalizationForm');
+            const formData = new FormData(form);
+            
+            try {
+                const response = await fetch('/modules/profile_manager.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        action: 'update_profile',
+                        token: '<?= $token ?>',
+                        display_name: formData.get('displayName'),
+                        bio: formData.get('bio'),
+                        theme: formData.get('theme'),
+                        language: formData.get('language')
+                    })
+                });
+                
+                if (response.ok) {
+                    showNotification('Profil personnalisé avec succès !', 'success');
+                    localStorage.setItem('mfa_connect_visited', 'true');
+                    closeFirstTimeModal();
+                    
+                    // Mettre à jour l'affichage du nom d'utilisateur
+                    const userName = document.querySelector('.user-name');
+                    if (userName) {
+                        userName.textContent = formData.get('displayName');
+                    }
+                } else {
+                    showNotification('Erreur lors de la sauvegarde', 'error');
+                }
+            } catch (error) {
+                console.error('Erreur lors de la personnalisation:', error);
+                showNotification('Erreur de connexion', 'error');
+            }
+        }
+
+        // Passer la personnalisation
+        function skipPersonalization() {
+            localStorage.setItem('mfa_connect_visited', 'true');
+            closeFirstTimeModal();
+            showNotification('Personnalisation ignorée', 'info');
+        }
+
+        // Fermer le modal de personnalisation
+        function closeFirstTimeModal() {
+            const modal = document.getElementById('firstTimeModal');
+            modal.classList.remove('active');
         }
         
         // Copier le token avec effet futuriste
