@@ -13,12 +13,47 @@ $token = $_GET['token'] ?? '';
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>StreamPro Studio - Dashboard</title>
+    <title>MFA CONNECT - Centre de Contrôle Streaming</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=Rajdhani:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
+        /* ==================== MFA CONNECT - VARIABLES CSS ==================== */
+        :root {
+            /* Couleurs principales */
+            --primary-blue: #0080FF;
+            --primary-red: #FF0040;
+            --dark-blue: #001633;
+            --darker-blue: #000A1A;
+            --light-blue: #00B4FF;
+            --light-red: #FF5570;
+            
+            /* Gradients */
+            --gradient-blue: linear-gradient(135deg, #0080FF, #00B4FF);
+            --gradient-red: linear-gradient(135deg, #FF0040, #FF5570);
+            --gradient-mixed: linear-gradient(135deg, #0080FF 0%, #FF0040 100%);
+            --gradient-dark: linear-gradient(180deg, #000A1A 0%, #001633 100%);
+            
+            /* Backgrounds et textes */
+            --bg-primary: #000A1A;
+            --bg-secondary: #001633;
+            --bg-card: rgba(0, 22, 51, 0.6);
+            --text-primary: #FFFFFF;
+            --text-secondary: #94A3B8;
+            --text-muted: #64748B;
+            
+            /* Effets et ombres */
+            --glow-blue: 0 0 30px rgba(0, 128, 255, 0.5);
+            --glow-red: 0 0 30px rgba(255, 0, 64, 0.5);
+            --shadow-card: 0 10px 40px rgba(0, 0, 0, 0.5);
+            
+            /* Typographie */
+            --font-primary: 'Orbitron', sans-serif;
+            --font-secondary: 'Rajdhani', sans-serif;
+            --font-mono: 'JetBrains Mono', monospace;
+        }
+
         /* ==================== GLOBAL STYLES ==================== */
         * {
             margin: 0;
@@ -27,12 +62,13 @@ $token = $_GET['token'] ?? '';
         }
 
         body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-            background: #0a0e1b;
-            color: #ffffff;
+            font-family: var(--font-secondary);
+            background: var(--bg-primary);
+            color: var(--text-primary);
             min-height: 100vh;
             overflow-x: hidden;
             position: relative;
+            background: var(--gradient-dark);
         }
 
         /* ==================== INTRO VIDEO STYLES ==================== */
@@ -95,54 +131,67 @@ $token = $_GET['token'] ?? '';
             opacity: 1;
         }
 
-        /* ==================== ANIMATED BACKGROUND ==================== */
-        body::before {
-            content: '';
+        /* ==================== BACKGROUND FUTURISTE MFA CONNECT ==================== */
+        .background-container {
             position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            overflow: hidden;
+        }
+
+        /* Grille 3D animée */
+        .grid-3d {
+            position: absolute;
             width: 200%;
             height: 200%;
             top: -50%;
             left: -50%;
-            background: 
-                radial-gradient(circle at 20% 50%, #ff006e 0%, transparent 50%),
-                radial-gradient(circle at 80% 50%, #8b00ff 0%, transparent 50%),
-                radial-gradient(circle at 50% 100%, #00d4ff 0%, transparent 50%);
-            animation: backgroundRotate 30s linear infinite;
-            opacity: 0.15;
-            z-index: -1;
+            background-image: 
+                linear-gradient(rgba(0, 128, 255, 0.1) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 128, 255, 0.1) 1px, transparent 1px);
+            background-size: 50px 50px;
+            animation: gridMove 20s linear infinite;
+            transform: perspective(1000px) rotateX(60deg);
         }
 
-        @keyframes backgroundRotate {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+        @keyframes gridMove {
+            0% { transform: perspective(1000px) rotateX(60deg) translateY(0); }
+            100% { transform: perspective(1000px) rotateX(60deg) translateY(50px); }
         }
 
-        /* ==================== PARTICLES ==================== */
-        .particles {
-            position: fixed;
+        /* Particules futuristes */
+        .particles-container {
+            position: absolute;
             width: 100%;
             height: 100%;
             overflow: hidden;
-            z-index: 0;
-            pointer-events: none;
         }
 
         .particle {
             position: absolute;
-            width: 4px;
-            height: 4px;
-            background: linear-gradient(135deg, #00d4ff, #ff006e);
+            width: 3px;
+            height: 3px;
+            background: var(--gradient-blue);
             border-radius: 50%;
             opacity: 0;
-            animation: particleFloat 15s linear infinite;
+            animation: particleFloat 20s linear infinite;
+            box-shadow: 0 0 10px var(--primary-blue);
+        }
+
+        .particle:nth-child(odd) {
+            background: var(--gradient-red);
+            box-shadow: 0 0 10px var(--primary-red);
         }
 
         .particle:nth-child(1) { left: 10%; animation-delay: 0s; }
-        .particle:nth-child(2) { left: 25%; animation-delay: 3s; }
-        .particle:nth-child(3) { left: 40%; animation-delay: 6s; }
-        .particle:nth-child(4) { left: 55%; animation-delay: 9s; }
-        .particle:nth-child(5) { left: 70%; animation-delay: 12s; }
-        .particle:nth-child(6) { left: 85%; animation-delay: 15s; }
+        .particle:nth-child(2) { left: 25%; animation-delay: 4s; }
+        .particle:nth-child(3) { left: 40%; animation-delay: 8s; }
+        .particle:nth-child(4) { left: 55%; animation-delay: 12s; }
+        .particle:nth-child(5) { left: 70%; animation-delay: 16s; }
+        .particle:nth-child(6) { left: 85%; animation-delay: 20s; }
 
         @keyframes particleFloat {
             0% {
@@ -161,6 +210,48 @@ $token = $_GET['token'] ?? '';
                 transform: translateY(0) translateX(0) scale(0);
                 opacity: 0;
             }
+        }
+
+        /* Lignes de connexion néon */
+        .neon-lines {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+        }
+
+        .neon-line {
+            position: absolute;
+            height: 1px;
+            background: var(--gradient-blue);
+            box-shadow: 0 0 10px var(--primary-blue);
+            animation: neonFlow 8s linear infinite;
+        }
+
+        .neon-line:nth-child(1) {
+            top: 20%;
+            width: 30%;
+            left: 10%;
+            animation-delay: 0s;
+        }
+
+        .neon-line:nth-child(2) {
+            top: 60%;
+            width: 40%;
+            right: 10%;
+            animation-delay: 2s;
+        }
+
+        .neon-line:nth-child(3) {
+            top: 80%;
+            width: 25%;
+            left: 50%;
+            animation-delay: 4s;
+        }
+
+        @keyframes neonFlow {
+            0% { opacity: 0; transform: scaleX(0); }
+            50% { opacity: 1; transform: scaleX(1); }
+            100% { opacity: 0; transform: scaleX(0); }
         }
 
         /* ==================== MAIN CONTAINER ==================== */
@@ -184,108 +275,254 @@ $token = $_GET['token'] ?? '';
             }
         }
 
-        /* ==================== HEADER (Sans box) ==================== */
-        .header {
-            text-align: center;
-            margin-bottom: 2rem;
-            padding: 2rem 0;
+        /* ==================== HEADER MFA CONNECT ==================== */
+        .main-header {
+            position: relative;
+            background: var(--bg-card);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(0, 128, 255, 0.3);
+            padding: 1.5rem 0;
+            margin-bottom: 3rem;
+            overflow: hidden;
+        }
+
+        .header-bg-effect {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, 
+                transparent 0%, 
+                rgba(0, 128, 255, 0.1) 50%, 
+                transparent 100%);
+            animation: headerScan 3s ease-in-out infinite;
+        }
+
+        @keyframes headerScan {
+            0%, 100% { transform: translateX(-100%); }
+            50% { transform: translateX(100%); }
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            position: relative;
+            z-index: 2;
+        }
+
+        .logo-section {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
         }
 
         .logo-container {
-            margin-bottom: 1.5rem;
-            display: inline-block;
             position: relative;
+            display: inline-block;
         }
 
-        .logo-img {
-            width: 150px;
-            height: 150px;
+        .logo-3d {
+            width: 80px;
+            height: 80px;
             object-fit: contain;
-            border-radius: 25px;
-            animation: glow 3s ease-in-out infinite;
-            border: none;
-            outline: none;
-            background: transparent;
+            border-radius: 15px;
+            animation: logoBreath 4s ease-in-out infinite;
             transition: all 0.3s ease;
+            filter: drop-shadow(0 0 20px var(--primary-blue));
         }
 
-        .logo-img:hover {
-            transform: translateY(-5px) scale(1.1);
+        .logo-3d:hover {
+            transform: translateY(-5px) rotateY(15deg);
+            filter: drop-shadow(0 0 30px var(--primary-blue));
         }
 
-        @keyframes glow {
+        @keyframes logoBreath {
             0%, 100% { 
-                filter: brightness(1) drop-shadow(0 0 20px rgba(139, 0, 255, 0.5));
-                transform: scale(1);
+                transform: scale(1); 
+                filter: drop-shadow(0 0 20px var(--primary-blue));
             }
             50% { 
-                filter: brightness(1.2) drop-shadow(0 0 40px rgba(139, 0, 255, 0.8));
-                transform: scale(1.05);
+                transform: scale(1.05); 
+                filter: drop-shadow(0 0 30px var(--primary-blue));
             }
         }
 
-        h1 {
-            font-size: 3rem;
-            font-weight: 700;
-            margin-bottom: 0.5rem;
-            background: linear-gradient(135deg, #ff006e, #8b00ff, #00d4ff);
+        .brand-text {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .brand-name {
+            font-family: var(--font-primary);
+            font-size: 2.5rem;
+            font-weight: 800;
+            background: var(--gradient-mixed);
             background-clip: text;
             -webkit-background-clip: text;
             color: transparent;
-            animation: textShimmer 4s ease-in-out infinite;
+            animation: textGlitch 4s ease-in-out infinite;
+            letter-spacing: 2px;
         }
 
-        @keyframes textShimmer {
-            0%, 100% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
+        @keyframes textGlitch {
+            0%, 100% { 
+                background-position: 0% 50%; 
+                transform: translateX(0);
+            }
+            25% { 
+                background-position: 100% 50%; 
+                transform: translateX(-1px);
+            }
+            50% { 
+                background-position: 0% 50%; 
+                transform: translateX(1px);
+            }
+            75% { 
+                background-position: 100% 50%; 
+                transform: translateX(0);
+            }
         }
 
-        .subtitle {
-            font-size: 1.2rem;
-            color: #a0a0a0;
+        .brand-tagline {
+            font-family: var(--font-secondary);
+            font-size: 1rem;
+            color: var(--text-secondary);
+            font-weight: 400;
+            letter-spacing: 1px;
+        }
+
+        .user-section {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .user-info {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 0.2rem;
+        }
+
+        .welcome-text {
+            font-size: 0.8rem;
+            color: var(--text-muted);
             font-weight: 300;
         }
 
-        /* ==================== NAVIGATION TABS ==================== */
-        .navigation {
+        .user-name {
+            font-family: var(--font-primary);
+            font-size: 1.2rem;
+            color: var(--primary-blue);
+            font-weight: 600;
+        }
+
+        /* ==================== NAVIGATION TABS MFA CONNECT ==================== */
+        .navigation-tabs {
+            margin-bottom: 3rem;
+            position: relative;
+        }
+
+        .nav-container {
             display: flex;
             justify-content: center;
             gap: 1rem;
-            margin-bottom: 3rem;
             flex-wrap: wrap;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 2rem;
         }
 
         .nav-tab {
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            color: #ffffff;
-            padding: 0.8rem 1.5rem;
-            border-radius: 12px;
+            position: relative;
+            background: var(--bg-card);
+            border: 1px solid rgba(0, 128, 255, 0.2);
+            color: var(--text-primary);
+            padding: 1rem 1.5rem;
+            border-radius: 15px;
             text-decoration: none;
             font-weight: 500;
-            transition: all 0.3s ease;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             display: flex;
             align-items: center;
-            gap: 0.5rem;
-            backdrop-filter: blur(10px);
+            gap: 0.8rem;
+            backdrop-filter: blur(20px);
             cursor: pointer;
+            overflow: hidden;
+            font-family: var(--font-secondary);
+            font-size: 0.9rem;
+            letter-spacing: 0.5px;
+        }
+
+        .nav-tab::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: var(--gradient-blue);
+            transition: left 0.4s ease;
+            z-index: -1;
+        }
+
+        .nav-tab:hover::before {
+            left: 0;
         }
 
         .nav-tab:hover {
-            background: linear-gradient(135deg, rgba(255, 0, 110, 0.2), rgba(139, 0, 255, 0.2));
-            border-color: rgba(139, 0, 255, 0.5);
-            transform: translateY(-2px);
-            box-shadow: 0 10px 30px rgba(139, 0, 255, 0.3);
-        }
-
-        .nav-tab.active {
-            background: linear-gradient(135deg, #ff006e, #8b00ff);
-            border-color: transparent;
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: var(--glow-blue);
+            border-color: var(--primary-blue);
             color: white;
         }
 
-        .nav-tab i {
-            font-size: 1rem;
+        .nav-tab.active {
+            background: var(--gradient-blue);
+            border-color: transparent;
+            color: white;
+            box-shadow: var(--glow-blue);
+        }
+
+        .nav-tab.active::before {
+            left: 0;
+        }
+
+        .tab-icon {
+            font-size: 1.1rem;
+            transition: transform 0.3s ease;
+        }
+
+        .nav-tab:hover .tab-icon {
+            transform: rotate(15deg) scale(1.2);
+        }
+
+        .tab-text {
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .tab-indicator {
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            width: 0;
+            height: 3px;
+            background: var(--gradient-red);
+            transform: translateX(-50%);
+            transition: width 0.3s ease;
+        }
+
+        .nav-tab:hover .tab-indicator,
+        .nav-tab.active .tab-indicator {
+            width: 80%;
         }
 
         /* ==================== WEBSITE TAB & NEW BADGE ==================== */
@@ -336,242 +573,737 @@ $token = $_GET['token'] ?? '';
             }
         }
 
-        /* ==================== MODULES SECTION ==================== */
+        /* ==================== HERO SECTION MFA CONNECT ==================== */
+        .hero-section {
+            margin-bottom: 4rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-bg-animation {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+        }
+
+        .wave-animation {
+            position: absolute;
+            width: 200%;
+            height: 100%;
+            background: linear-gradient(90deg, 
+                transparent 0%, 
+                rgba(0, 128, 255, 0.1) 25%, 
+                rgba(255, 0, 64, 0.1) 50%, 
+                rgba(0, 128, 255, 0.1) 75%, 
+                transparent 100%);
+            animation: waveMove 8s linear infinite;
+        }
+
+        @keyframes waveMove {
+            0% { transform: translateX(-50%); }
+            100% { transform: translateX(0%); }
+        }
+
+        .hero-content {
+            text-align: center;
+            padding: 3rem 2rem;
+            position: relative;
+            z-index: 2;
+        }
+
+        .hero-title {
+            font-family: var(--font-primary);
+            font-size: 3.5rem;
+            font-weight: 900;
+            margin-bottom: 2rem;
+            line-height: 1.2;
+        }
+
+        .title-line-1 {
+            display: block;
+            background: var(--gradient-blue);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+            animation: titleGlow 3s ease-in-out infinite;
+        }
+
+        .title-line-2 {
+            display: block;
+            background: var(--gradient-red);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+            animation: titleGlow 3s ease-in-out infinite reverse;
+        }
+
+        @keyframes titleGlow {
+            0%, 100% { filter: brightness(1) drop-shadow(0 0 20px var(--primary-blue)); }
+            50% { filter: brightness(1.3) drop-shadow(0 0 40px var(--primary-blue)); }
+        }
+
+        .quick-stats {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin-top: 3rem;
+            flex-wrap: wrap;
+        }
+
+        .stat-card {
+            position: relative;
+            background: var(--bg-card);
+            border: 1px solid rgba(0, 128, 255, 0.3);
+            border-radius: 20px;
+            padding: 1.5rem 2rem;
+            text-align: center;
+            backdrop-filter: blur(20px);
+            transition: all 0.3s ease;
+            overflow: hidden;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--glow-blue);
+            border-color: var(--primary-blue);
+        }
+
+        .stat-icon {
+            font-size: 2rem;
+            color: var(--primary-blue);
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-value {
+            font-family: var(--font-primary);
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 0.3rem;
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            font-weight: 400;
+        }
+
+        .stat-glow {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--gradient-blue);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            z-index: -1;
+        }
+
+        .stat-card:hover .stat-glow {
+            opacity: 0.1;
+        }
+
+        /* ==================== MODULES SECTION MFA CONNECT ==================== */
         .modules-section {
+            margin-bottom: 4rem;
+            position: relative;
+        }
+
+        .section-header {
+            text-align: center;
             margin-bottom: 3rem;
         }
 
         .section-title {
-            font-size: 2rem;
-            margin-bottom: 2rem;
-            text-align: center;
-            color: #00d4ff;
-            font-weight: 600;
+            font-family: var(--font-primary);
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 1rem;
+            position: relative;
+            display: inline-block;
+        }
+
+        .title-decoration {
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 3px;
+            background: var(--gradient-mixed);
+            border-radius: 2px;
         }
 
         .modules-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-            gap: 2rem;
-            margin-bottom: 3rem;
+            grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
+            gap: 2.5rem;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 2rem;
         }
 
-        /* ==================== MODULE CARD ==================== */
+        /* ==================== MODULE CARD FUTURISTE ==================== */
         .module-card {
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 20px;
-            padding: 2rem;
-            backdrop-filter: blur(20px);
-            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             position: relative;
+            background: var(--bg-card);
+            border: 1px solid rgba(0, 128, 255, 0.2);
+            border-radius: 25px;
+            padding: 2.5rem;
+            backdrop-filter: blur(25px);
+            transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             overflow: hidden;
+            transform-style: preserve-3d;
         }
 
-        .module-card::before {
-            content: '';
+        .module-bg-pattern {
             position: absolute;
             top: 0;
             left: 0;
-            right: 0;
-            height: 3px;
-            background: linear-gradient(90deg, #ff006e, #8b00ff, #00d4ff);
-            transform: scaleX(0);
-            transition: transform 0.4s ease;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                radial-gradient(circle at 20% 80%, rgba(0, 128, 255, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(255, 0, 64, 0.1) 0%, transparent 50%);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .module-card:hover .module-bg-pattern {
+            opacity: 1;
+        }
+
+        .module-glow {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--gradient-blue);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            z-index: -1;
+        }
+
+        .module-card:hover .module-glow {
+            opacity: 0.1;
         }
 
         .module-card:hover {
-            transform: translateY(-10px) rotateX(5deg);
+            transform: translateY(-15px) rotateX(10deg) rotateY(5deg);
             box-shadow: 
-                0 20px 40px rgba(139, 0, 255, 0.3),
-                0 0 60px rgba(255, 0, 110, 0.2) inset;
-            border-color: rgba(139, 0, 255, 0.5);
+                0 25px 50px rgba(0, 0, 0, 0.5),
+                0 0 80px rgba(0, 128, 255, 0.3);
+            border-color: var(--primary-blue);
         }
 
-        .module-card:hover::before {
-            transform: scaleX(1);
+        /* ==================== MODULE HEADER & ICONS ==================== */
+        .module-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 2rem;
         }
 
-        /* Module Icons avec dégradés */
-        .module-icon {
-            width: 80px;
-            height: 80px;
-            margin: 0 auto 1.5rem;
-            border-radius: 20px;
+        .module-icon-wrapper {
+            position: relative;
+            width: 90px;
+            height: 90px;
+            border-radius: 25px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 2.5rem;
-            position: relative;
             overflow: hidden;
+            transition: all 0.3s ease;
         }
 
-        .module-icon.wins {
-            background: linear-gradient(135deg, #ff006e, #ff4081);
-        }
-
-        .module-icon.timer {
-            background: linear-gradient(135deg, #8b00ff, #b300ff);
-        }
-
-        .module-icon.battle {
-            background: linear-gradient(135deg, #00d4ff, #00a8cc);
-        }
-
-        .module-icon i {
-            position: relative;
-            z-index: 1;
-            filter: drop-shadow(0 2px 10px rgba(0, 0, 0, 0.3));
-        }
-
-        /* Effet de brillance animé */
-        .module-icon::after {
-            content: '';
+        .icon-bg {
             position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: linear-gradient(
-                45deg,
-                transparent 30%,
-                rgba(255, 255, 255, 0.3) 50%,
-                transparent 70%
-            );
-            transform: rotate(45deg) translateY(100%);
-            animation: shine 3s ease-in-out infinite;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--gradient-blue);
+            opacity: 0.8;
+            transition: all 0.3s ease;
         }
 
-        @keyframes shine {
-            0% { transform: rotate(45deg) translateY(100%); }
-            50%, 100% { transform: rotate(45deg) translateY(-100%); }
+        .module-card[data-module="wins"] .icon-bg {
+            background: var(--gradient-red);
         }
 
-        .module-info h3 {
-            font-size: 1.5rem;
-            margin-bottom: 0.5rem;
-            color: #ffffff;
+        .module-card[data-module="timer"] .icon-bg {
+            background: var(--gradient-blue);
+        }
+
+        .module-card[data-module="battle"] .icon-bg {
+            background: var(--gradient-mixed);
+        }
+
+        .module-icon {
+            font-size: 2.5rem;
+            color: white;
+            position: relative;
+            z-index: 2;
+            filter: drop-shadow(0 2px 10px rgba(0, 0, 0, 0.5));
+            transition: all 0.3s ease;
+        }
+
+        .module-card:hover .module-icon {
+            transform: scale(1.1) rotate(5deg);
+        }
+
+        .icon-particles {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
+
+        .icon-particle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: white;
+            border-radius: 50%;
+            opacity: 0;
+            animation: iconParticle 2s ease-in-out infinite;
+        }
+
+        @keyframes iconParticle {
+            0% { 
+                opacity: 0; 
+                transform: translate(0, 0) scale(0);
+            }
+            50% { 
+                opacity: 1; 
+                transform: translate(var(--x), var(--y)) scale(1);
+            }
+            100% { 
+                opacity: 0; 
+                transform: translate(var(--x), var(--y)) scale(0);
+            }
         }
 
         .module-status {
-            display: inline-block;
-            padding: 0.3rem 0.8rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
             border-radius: 20px;
-            font-size: 0.85rem;
+            font-size: 0.8rem;
             font-weight: 600;
-            margin-bottom: 1rem;
-        }
-
-        .module-status.active {
             background: rgba(16, 185, 129, 0.2);
             color: #10b981;
             border: 1px solid rgba(16, 185, 129, 0.5);
         }
 
-        .module-status.coming-soon {
-            background: rgba(245, 158, 11, 0.2);
-            color: #f59e0b;
-            border: 1px solid rgba(245, 158, 11, 0.5);
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            background: #10b981;
+            border-radius: 50%;
+            animation: statusPulse 2s ease-in-out infinite;
         }
 
-        .module-status.maintenance {
-            background: rgba(239, 68, 68, 0.2);
-            color: #ef4444;
-            border: 1px solid rgba(239, 68, 68, 0.5);
+        @keyframes statusPulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.5; transform: scale(1.2); }
+        }
+
+        .status-text {
+            font-family: var(--font-secondary);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* ==================== MODULE BODY ==================== */
+        .module-body {
+            margin-bottom: 2rem;
+        }
+
+        .module-title {
+            font-family: var(--font-primary);
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 1rem;
+            line-height: 1.2;
         }
 
         .module-description {
-            color: #a0a0a0;
-            margin-bottom: 1.5rem;
+            color: var(--text-secondary);
+            margin-bottom: 2rem;
             line-height: 1.6;
+            font-size: 0.95rem;
         }
 
-        /* ==================== ACTION BUTTONS ==================== */
-        .module-actions {
+        .module-preview {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 15px;
+            padding: 1.5rem;
+            text-align: center;
+            border: 1px solid rgba(0, 128, 255, 0.2);
+            margin-bottom: 2rem;
+        }
+
+        .preview-screen {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .preview-value {
+            font-family: var(--font-mono);
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--primary-blue);
+            text-shadow: 0 0 10px var(--primary-blue);
+        }
+
+        .preview-label {
+            font-family: var(--font-secondary);
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* ==================== MODULE FOOTER & BUTTONS ==================== */
+        .module-footer {
             display: flex;
             gap: 1rem;
             margin-top: auto;
         }
 
-        .module-btn {
+        .btn-module {
             flex: 1;
-            padding: 0.8rem 1.5rem;
-            border-radius: 12px;
+            padding: 1rem 1.5rem;
+            border-radius: 15px;
             text-decoration: none;
             font-weight: 600;
-            transition: all 0.3s ease;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             text-align: center;
             position: relative;
             overflow: hidden;
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            gap: 0.5rem;
+            gap: 0.8rem;
+            font-family: var(--font-secondary);
+            font-size: 0.9rem;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
         }
 
-        .module-btn.primary {
-            background: linear-gradient(135deg, #ff006e, #8b00ff);
+        .btn-module::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: var(--gradient-blue);
+            transition: left 0.4s ease;
+            z-index: -1;
+        }
+
+        .btn-module:hover::before {
+            left: 0;
+        }
+
+        .btn-primary {
+            background: var(--gradient-blue);
             color: white;
             border: none;
+            box-shadow: var(--glow-blue);
         }
 
-        .module-btn.secondary {
-            background: rgba(255, 255, 255, 0.1);
-            color: white;
-            border: 1px solid rgba(255, 255, 255, 0.2);
+        .btn-primary:hover {
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 15px 40px rgba(0, 128, 255, 0.4);
         }
 
-        .module-btn:hover {
+        .btn-secondary {
+            background: var(--bg-card);
+            color: var(--text-primary);
+            border: 1px solid rgba(0, 128, 255, 0.3);
+            backdrop-filter: blur(20px);
+        }
+
+        .btn-secondary:hover {
             transform: translateY(-2px);
-            box-shadow: 0 10px 30px rgba(139, 0, 255, 0.4);
+            border-color: var(--primary-blue);
+            box-shadow: 0 10px 30px rgba(0, 128, 255, 0.3);
+            color: white;
         }
 
-        .module-btn.disabled {
+        .btn-secondary:hover::before {
+            left: 0;
+        }
+
+        .btn-glow {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--gradient-blue);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            z-index: -1;
+        }
+
+        .btn-module:hover .btn-glow {
+            opacity: 0.2;
+        }
+
+        .btn-module.disabled {
             opacity: 0.5;
             cursor: not-allowed;
             background: rgba(107, 114, 128, 0.3) !important;
-            color: #9ca3af !important;
+            color: var(--text-muted) !important;
             border-color: rgba(107, 114, 128, 0.3) !important;
         }
 
-        .module-btn.disabled:hover {
+        .btn-module.disabled:hover {
             transform: none;
             box-shadow: none;
         }
 
-        /* ==================== TOKEN INFO (Sous les modules) ==================== */
+        .btn-module.disabled::before {
+            display: none;
+        }
+
+        /* ==================== TOKEN SECTION CYBERPUNK ==================== */
         .token-section {
-            text-align: center;
             margin-top: 4rem;
             padding-top: 3rem;
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            border-top: 1px solid rgba(0, 128, 255, 0.2);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .token-bg-circuit {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                linear-gradient(90deg, rgba(0, 128, 255, 0.1) 1px, transparent 1px),
+                linear-gradient(rgba(0, 128, 255, 0.1) 1px, transparent 1px);
+            background-size: 30px 30px;
+            animation: circuitFlow 10s linear infinite;
+        }
+
+        @keyframes circuitFlow {
+            0% { transform: translateX(0) translateY(0); }
+            100% { transform: translateX(30px) translateY(30px); }
         }
 
         .token-container {
-            display: inline-block;
-            padding: 2rem 3rem;
-            background: rgba(139, 0, 255, 0.1);
-            border-radius: 20px;
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(139, 0, 255, 0.3);
-            animation: float 3s ease-in-out infinite;
+            position: relative;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 3rem;
+            background: var(--bg-card);
+            border-radius: 25px;
+            backdrop-filter: blur(25px);
+            border: 1px solid rgba(0, 128, 255, 0.3);
+            box-shadow: var(--shadow-card);
+            overflow: hidden;
         }
 
-        /* ==================== COPYRIGHT SECTION ==================== */
+        .token-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--gradient-blue);
+            opacity: 0.05;
+            z-index: -1;
+        }
+
+        .token-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .token-title {
+            font-family: var(--font-primary);
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--primary-blue);
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1rem;
+        }
+
+        .token-subtitle {
+            font-family: var(--font-secondary);
+            font-size: 1rem;
+            color: var(--text-secondary);
+            font-weight: 400;
+        }
+
+        .token-display-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .token-display {
+            flex: 1;
+            min-width: 300px;
+            background: rgba(0, 0, 0, 0.5);
+            border-radius: 15px;
+            padding: 1.5rem;
+            border: 1px solid rgba(0, 128, 255, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .token-label {
+            font-family: var(--font-mono);
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 0.5rem;
+        }
+
+        .token-value-container {
+            position: relative;
+            background: rgba(0, 0, 0, 0.8);
+            border-radius: 10px;
+            padding: 1rem;
+            border: 1px solid rgba(0, 128, 255, 0.5);
+        }
+
+        .token-value {
+            font-family: var(--font-mono);
+            font-size: 1rem;
+            color: var(--primary-blue);
+            word-break: break-all;
+            text-shadow: 0 0 10px var(--primary-blue);
+        }
+
+        .token-scan-line {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: var(--gradient-blue);
+            animation: scanLine 3s ease-in-out infinite;
+            box-shadow: 0 0 10px var(--primary-blue);
+        }
+
+        @keyframes scanLine {
+            0% { transform: translateY(-100%); }
+            100% { transform: translateY(100%); }
+        }
+
+        .btn-copy {
+            background: var(--gradient-blue);
+            border: none;
+            color: white;
+            padding: 1rem 2rem;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+            font-family: var(--font-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            box-shadow: var(--glow-blue);
+        }
+
+        .btn-copy:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 40px rgba(0, 128, 255, 0.4);
+        }
+
+        .token-qr {
+            position: relative;
+            width: 120px;
+            height: 120px;
+            background: rgba(0, 0, 0, 0.5);
+            border-radius: 15px;
+            border: 1px solid rgba(0, 128, 255, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .qr-code {
+            width: 100px;
+            height: 100px;
+            background: white;
+            border-radius: 10px;
+        }
+
+        .qr-scan-effect {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: var(--gradient-red);
+            animation: qrScan 2s ease-in-out infinite;
+            box-shadow: 0 0 10px var(--primary-red);
+        }
+
+        @keyframes qrScan {
+            0% { transform: translateY(-100%); }
+            100% { transform: translateY(100%); }
+        }
+
+        .token-security {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            font-family: var(--font-secondary);
+        }
+
+        /* ==================== COPYRIGHT SECTION MFA CONNECT ==================== */
         .copyright-section {
             margin-top: 3rem;
             padding-top: 2rem;
-            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            border-top: 1px solid rgba(0, 128, 255, 0.2);
         }
 
         .copyright-container {
             max-width: 800px;
             margin: 0 auto;
-            padding: 1.5rem 2rem;
-            background: rgba(255, 255, 255, 0.03);
-            border-radius: 15px;
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.05);
+            padding: 2rem;
+            background: var(--bg-card);
+            border-radius: 20px;
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(0, 128, 255, 0.2);
         }
 
         .copyright-content {
@@ -588,13 +1320,14 @@ $token = $_GET['token'] ?? '';
         }
 
         .copyright-text {
-            color: #a0a0a0;
+            color: var(--text-secondary);
             font-size: 0.9rem;
             font-weight: 400;
+            font-family: var(--font-secondary);
         }
 
         .copyright-text i {
-            color: #8b00ff;
+            color: var(--primary-blue);
             margin-right: 0.3rem;
         }
 
@@ -605,84 +1338,40 @@ $token = $_GET['token'] ?? '';
         }
 
         .dev-text {
-            color: #a0a0a0;
+            color: var(--text-secondary);
             font-size: 0.9rem;
             font-weight: 400;
+            font-family: var(--font-secondary);
         }
 
         .dev-link {
-            color: #00d4ff;
+            color: var(--primary-blue);
             text-decoration: none;
             font-weight: 600;
             font-size: 0.9rem;
-            padding: 0.3rem 0.8rem;
-            border-radius: 8px;
-            background: rgba(0, 212, 255, 0.1);
-            border: 1px solid rgba(0, 212, 255, 0.2);
+            padding: 0.5rem 1rem;
+            border-radius: 10px;
+            background: rgba(0, 128, 255, 0.1);
+            border: 1px solid rgba(0, 128, 255, 0.3);
             transition: all 0.3s ease;
             display: flex;
             align-items: center;
             gap: 0.3rem;
+            font-family: var(--font-secondary);
         }
 
         .dev-link:hover {
-            background: rgba(0, 212, 255, 0.2);
-            border-color: rgba(0, 212, 255, 0.4);
-            transform: translateY(-1px);
-            box-shadow: 0 5px 15px rgba(0, 212, 255, 0.3);
+            background: rgba(0, 128, 255, 0.2);
+            border-color: var(--primary-blue);
+            transform: translateY(-2px);
+            box-shadow: var(--glow-blue);
         }
 
         .dev-link i {
             font-size: 0.8rem;
         }
 
-        @keyframes float {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-10px); }
-        }
-
-        .token-title {
-            color: #00d4ff;
-            margin-bottom: 1rem;
-            font-size: 1.5rem;
-            font-weight: 600;
-        }
-
-        .token-display {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            justify-content: center;
-        }
-
-        .token-value {
-            font-family: monospace;
-            background: rgba(0, 0, 0, 0.3);
-            padding: 0.8rem 1.5rem;
-            border-radius: 10px;
-            font-size: 0.9rem;
-            color: #00d4ff;
-            word-break: break-all;
-            max-width: 500px;
-        }
-
-        .copy-button {
-            background: linear-gradient(135deg, #ff006e, #8b00ff);
-            border: none;
-            color: white;
-            padding: 0.8rem 1.5rem;
-            border-radius: 10px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            font-weight: 600;
-        }
-
-        .copy-button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 30px rgba(255, 0, 110, 0.4);
-        }
-
-        /* ==================== MODAL STYLES ==================== */
+        /* ==================== MODAL STYLES MFA CONNECT ==================== */
         .modal {
             display: none;
             position: fixed;
@@ -691,8 +1380,8 @@ $token = $_GET['token'] ?? '';
             top: 0;
             width: 100%;
             height: 100%;
-            background-color: rgba(0, 0, 0, 0.8);
-            backdrop-filter: blur(10px);
+            background-color: rgba(0, 10, 26, 0.9);
+            backdrop-filter: blur(20px);
         }
 
         .modal.show {
@@ -701,28 +1390,53 @@ $token = $_GET['token'] ?? '';
             justify-content: center;
         }
 
-        .modal-content {
-            background: rgba(20, 25, 40, 0.95);
-            backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 20px;
-            padding: 3rem;
-            max-width: 700px;
-            max-height: 80vh;
-            overflow-y: auto;
+        .modal-backdrop {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--gradient-dark);
+            opacity: 0.8;
+        }
+
+        .modal-container {
             position: relative;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
-            animation: modalSlideIn 0.3s ease;
+            background: var(--bg-card);
+            backdrop-filter: blur(30px);
+            border: 1px solid rgba(0, 128, 255, 0.3);
+            border-radius: 25px;
+            padding: 3rem;
+            max-width: 800px;
+            max-height: 85vh;
+            overflow-y: auto;
+            box-shadow: 
+                0 25px 60px rgba(0, 0, 0, 0.6),
+                0 0 100px rgba(0, 128, 255, 0.2);
+            animation: modalSlideIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            overflow: hidden;
+        }
+
+        .modal-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--gradient-blue);
+            opacity: 0.05;
+            z-index: -1;
         }
 
         @keyframes modalSlideIn {
             from {
                 opacity: 0;
-                transform: translateY(30px);
+                transform: translateY(50px) scale(0.9);
             }
             to {
                 opacity: 1;
-                transform: translateY(0);
+                transform: translateY(0) scale(1);
             }
         }
 
@@ -730,87 +1444,203 @@ $token = $_GET['token'] ?? '';
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 2rem;
-            padding-bottom: 1rem;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            margin-bottom: 2.5rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid rgba(0, 128, 255, 0.3);
+        }
+
+        .modal-title-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .modal-icon {
+            width: 50px;
+            height: 50px;
+            background: var(--gradient-blue);
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: white;
+            box-shadow: var(--glow-blue);
         }
 
         .modal-title {
-            font-size: 1.8rem;
-            font-weight: 600;
-            background: linear-gradient(135deg, #ff006e, #8b00ff);
+            font-family: var(--font-primary);
+            font-size: 2rem;
+            font-weight: 700;
+            background: var(--gradient-mixed);
             background-clip: text;
             -webkit-background-clip: text;
             color: transparent;
         }
 
-        .close-btn {
+        .modal-close {
             background: none;
             border: none;
-            color: #ffffff;
+            color: var(--text-primary);
             font-size: 1.5rem;
             cursor: pointer;
-            padding: 0.5rem;
-            border-radius: 10px;
+            padding: 0.8rem;
+            border-radius: 12px;
             transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
         }
 
-        .close-btn:hover {
-            background: rgba(255, 0, 110, 0.2);
-            color: #ff006e;
+        .modal-close:hover {
+            background: rgba(255, 0, 64, 0.2);
+            color: var(--primary-red);
+            transform: rotate(90deg);
         }
 
         .modal-body {
-            color: #a0a0a0;
+            color: var(--text-secondary);
             line-height: 1.8;
+            font-family: var(--font-secondary);
+            font-size: 1rem;
         }
 
         .modal-body h3 {
-            color: #00d4ff;
+            color: var(--primary-blue);
             margin: 2rem 0 1rem 0;
-            font-size: 1.3rem;
+            font-size: 1.4rem;
+            font-family: var(--font-primary);
+            font-weight: 600;
         }
 
         .modal-body p {
-            margin-bottom: 1rem;
+            margin-bottom: 1.2rem;
         }
 
-        /* ==================== RESPONSIVE ==================== */
+        .modal-footer {
+            margin-top: 2rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid rgba(0, 128, 255, 0.2);
+            text-align: center;
+        }
+
+        .btn-modal-action {
+            background: var(--gradient-blue);
+            border: none;
+            color: white;
+            padding: 1rem 2rem;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+            font-family: var(--font-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            box-shadow: var(--glow-blue);
+        }
+
+        .btn-modal-action:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 40px rgba(0, 128, 255, 0.4);
+        }
+
+        /* ==================== RESPONSIVE MFA CONNECT ==================== */
+        @media (max-width: 1200px) {
+            .modules-grid {
+                grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+                gap: 2rem;
+            }
+            
+            .hero-title {
+                font-size: 3rem;
+            }
+        }
+
+        @media (max-width: 992px) {
+            .header-content {
+                flex-direction: column;
+                gap: 1.5rem;
+                text-align: center;
+            }
+            
+            .brand-name {
+                font-size: 2rem;
+            }
+            
+            .quick-stats {
+                gap: 1.5rem;
+            }
+            
+            .stat-card {
+                padding: 1rem 1.5rem;
+            }
+        }
+
         @media (max-width: 768px) {
             .dashboard-container {
                 padding: 1rem;
             }
 
-            h1 {
-                font-size: 2rem;
+            .main-header {
+                padding: 1rem 0;
             }
 
-            .logo-img {
-                width: 100px;
-                height: 100px;
+            .header-content {
+                padding: 0 1rem;
             }
 
-            .navigation {
+            .brand-name {
+                font-size: 1.8rem;
+            }
+
+            .logo-3d {
+                width: 60px;
+                height: 60px;
+            }
+
+            .nav-container {
                 gap: 0.5rem;
+                padding: 0 1rem;
             }
 
             .nav-tab {
-                padding: 0.6rem 1rem;
-                font-size: 0.9rem;
+                padding: 0.8rem 1rem;
+                font-size: 0.8rem;
+            }
+
+            .hero-title {
+                font-size: 2.5rem;
+            }
+
+            .quick-stats {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .stat-card {
+                width: 100%;
+                max-width: 300px;
             }
 
             .modules-grid {
                 grid-template-columns: 1fr;
                 gap: 1.5rem;
+                padding: 0 1rem;
             }
 
             .module-card {
                 padding: 1.5rem;
             }
 
+            .token-display-wrapper {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .token-display {
+                min-width: auto;
+            }
+
             .token-value {
-                font-size: 0.8rem;
-                padding: 0.6rem 1rem;
+                font-size: 0.9rem;
             }
 
             .copyright-content {
@@ -820,7 +1650,7 @@ $token = $_GET['token'] ?? '';
             }
 
             .copyright-container {
-                padding: 1rem 1.5rem;
+                padding: 1rem;
             }
 
             .copyright-text,
@@ -828,23 +1658,178 @@ $token = $_GET['token'] ?? '';
             .dev-link {
                 font-size: 0.8rem;
             }
+
+            .modal-container {
+                margin: 1rem;
+                padding: 2rem;
+            }
         }
 
-        /* ==================== LOADING BAR ==================== */
+        @media (max-width: 576px) {
+            .brand-name {
+                font-size: 1.5rem;
+            }
+            
+            .hero-title {
+                font-size: 2rem;
+            }
+            
+            .section-title {
+                font-size: 2rem;
+            }
+            
+            .module-title {
+                font-size: 1.5rem;
+            }
+            
+            .token-title {
+                font-size: 1.5rem;
+            }
+        }
+
+        /* ==================== ANIMATIONS MFA CONNECT ==================== */
+        @keyframes logoBreath {
+            0%, 100% { 
+                transform: scale(1); 
+                filter: drop-shadow(0 0 20px var(--primary-blue));
+            }
+            50% { 
+                transform: scale(1.05); 
+                filter: drop-shadow(0 0 30px var(--primary-blue));
+            }
+        }
+
+        @keyframes textGlitch {
+            0%, 100% { 
+                background-position: 0% 50%; 
+                transform: translateX(0);
+            }
+            25% { 
+                background-position: 100% 50%; 
+                transform: translateX(-1px);
+            }
+            50% { 
+                background-position: 0% 50%; 
+                transform: translateX(1px);
+            }
+            75% { 
+                background-position: 100% 50%; 
+                transform: translateX(0);
+            }
+        }
+
+        @keyframes titleGlow {
+            0%, 100% { 
+                filter: brightness(1) drop-shadow(0 0 20px var(--primary-blue)); 
+            }
+            50% { 
+                filter: brightness(1.3) drop-shadow(0 0 40px var(--primary-blue)); 
+            }
+        }
+
+        @keyframes headerScan {
+            0%, 100% { transform: translateX(-100%); }
+            50% { transform: translateX(100%); }
+        }
+
+        @keyframes waveMove {
+            0% { transform: translateX(-50%); }
+            100% { transform: translateX(0%); }
+        }
+
+        @keyframes gridMove {
+            0% { transform: perspective(1000px) rotateX(60deg) translateY(0); }
+            100% { transform: perspective(1000px) rotateX(60deg) translateY(50px); }
+        }
+
+        @keyframes particleFloat {
+            0% {
+                transform: translateY(100vh) translateX(0) scale(0);
+                opacity: 0;
+            }
+            10% {
+                opacity: 1;
+                transform: translateY(90vh) translateX(10px) scale(1);
+            }
+            90% {
+                opacity: 1;
+                transform: translateY(10vh) translateX(-10px) scale(1);
+            }
+            100% {
+                transform: translateY(0) translateX(0) scale(0);
+                opacity: 0;
+            }
+        }
+
+        @keyframes neonFlow {
+            0% { opacity: 0; transform: scaleX(0); }
+            50% { opacity: 1; transform: scaleX(1); }
+            100% { opacity: 0; transform: scaleX(0); }
+        }
+
+        @keyframes iconParticle {
+            0% { 
+                opacity: 0; 
+                transform: translate(0, 0) scale(0);
+            }
+            50% { 
+                opacity: 1; 
+                transform: translate(var(--x), var(--y)) scale(1);
+            }
+            100% { 
+                opacity: 0; 
+                transform: translate(var(--x), var(--y)) scale(0);
+            }
+        }
+
+        @keyframes statusPulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.5; transform: scale(1.2); }
+        }
+
+        @keyframes scanLine {
+            0% { transform: translateY(-100%); }
+            100% { transform: translateY(100%); }
+        }
+
+        @keyframes qrScan {
+            0% { transform: translateY(-100%); }
+            100% { transform: translateY(100%); }
+        }
+
+        @keyframes circuitFlow {
+            0% { transform: translateX(0) translateY(0); }
+            100% { transform: translateX(30px) translateY(30px); }
+        }
+
+        @keyframes modalSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(50px) scale(0.9);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        /* ==================== LOADING BAR MFA CONNECT ==================== */
         .loading-bar {
             width: 100%;
-            height: 3px;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 3px;
+            height: 4px;
+            background: rgba(0, 128, 255, 0.2);
+            border-radius: 4px;
             overflow: hidden;
             margin: 1rem 0;
+            position: relative;
         }
 
         .loading-progress {
             height: 100%;
-            background: linear-gradient(90deg, #ff006e, #8b00ff, #00d4ff);
+            background: var(--gradient-blue);
             width: 75%;
             animation: loading 2s ease-in-out infinite;
+            box-shadow: 0 0 10px var(--primary-blue);
         }
 
         @keyframes loading {
@@ -854,6 +1839,24 @@ $token = $_GET['token'] ?? '';
     </style>
 </head>
 <body>
+    <!-- Background Container -->
+    <div class="background-container">
+        <div class="grid-3d"></div>
+        <div class="particles-container">
+            <div class="particle"></div>
+            <div class="particle"></div>
+            <div class="particle"></div>
+            <div class="particle"></div>
+            <div class="particle"></div>
+            <div class="particle"></div>
+        </div>
+        <div class="neon-lines">
+            <div class="neon-line"></div>
+            <div class="neon-line"></div>
+            <div class="neon-line"></div>
+        </div>
+    </div>
+
     <!-- Intro Video Overlay -->
     <div class="intro-overlay" id="introOverlay">
         <video class="intro-video" id="introVideo" muted autoplay playsinline>
@@ -867,174 +1870,311 @@ $token = $_GET['token'] ?? '';
 
     <!-- Dashboard Content (masqué initialement) -->
     <div class="dashboard-content" id="dashboardContent">
-        <!-- Particles Background -->
-        <div class="particles">
-            <div class="particle"></div>
-            <div class="particle"></div>
-            <div class="particle"></div>
-            <div class="particle"></div>
-            <div class="particle"></div>
-            <div class="particle"></div>
-        </div>
-
         <div class="dashboard-container">
-        <!-- Header (sans box) -->
-        <header class="header">
-            <div class="logo-container">
-                <img src="https://i.goopics.net/g93k7n.png" alt="StreamPro Studio" class="logo-img">
-            </div>
-            <h1>StreamPro Studio</h1>
-            <p class="subtitle">Centre de Contrôle Créateur</p>
-        </header>
-
-        <!-- Navigation Tabs -->
-        <nav class="navigation">
-            <a href="#" class="nav-tab active">
-                <i class="fas fa-tachometer-alt"></i>
-                Dashboard
-            </a>
-
-            <a href="#" class="nav-tab" onclick="openModal('rules'); return false;">
-                <i class="fas fa-scroll"></i>
-                Règlement
-            </a>
-            <a href="#" class="nav-tab" onclick="openModal('prereq'); return false;">
-                <i class="fas fa-clipboard-check"></i>
-                Prérequis
-            </a>
-            <a href="https://discord.gg/TbXYYsEgqz" target="_blank" class="nav-tab">
-                <i class="fab fa-discord"></i>
-                Discord
-            </a>
-        </nav>
-
-        <!-- Active Modules -->
-        <section class="modules-section">
-            <h2 class="section-title">
-                <i class="fas fa-rocket"></i> Modules Actifs
-            </h2>
-            
-            <div class="modules-grid">
-                <!-- Wins Counter Module -->
-                <div class="module-card">
-                    <div class="module-icon wins">
-                        <i class="fas fa-trophy"></i>
+            <!-- Header MFA CONNECT -->
+            <header class="main-header">
+                <div class="header-bg-effect"></div>
+                <div class="header-content">
+                    <div class="logo-section">
+                        <div class="logo-container">
+                            <img src="https://i.goopics.net/g93k7n.png" alt="MFA CONNECT" class="logo-3d">
+                        </div>
+                        <div class="brand-text">
+                            <h1 class="brand-name">MFA CONNECT</h1>
+                            <p class="brand-tagline">Streaming Control Center</p>
+                        </div>
                     </div>
-                    <div class="module-info">
-                        <h3>Compteur de Wins</h3>
-                        <span class="module-status active">Actif</span>
-                    </div>
-                    <p class="module-description">
-                        Widget interactif pour compter les victoires en temps réel avec système de multiplicateur et effets visuels spectaculaires.
-                    </p>
-                    <div class="module-actions">
-                        <a href="/modules/win.php?token=<?=$token?>&control=true" class="module-btn primary">
-                            <i class="fas fa-play"></i>
-                            Lancer
-                        </a>
-                        <a href="/modules/wins-config.php?token=<?=$token?>" class="module-btn secondary">
-                            <i class="fas fa-cog"></i>
-                            Configurer
-                        </a>
+                    
+                    <div class="user-section">
+                        <div class="user-info">
+                            <span class="welcome-text">Bienvenue</span>
+                            <span class="user-name"><?php echo htmlspecialchars($user['name'] ?? 'Utilisateur'); ?></span>
+                        </div>
                     </div>
                 </div>
+            </header>
 
-                <!-- Timer Module -->
-                <div class="module-card">
-                    <div class="module-icon timer">
-                        <i class="fas fa-clock"></i>
-                    </div>
-                    <div class="module-info">
-                        <h3>Timer Interactif</h3>
-                        <span class="module-status active">Actif</span>
-                    </div>
-                    <p class="module-description">
-                        Chronomètre personnalisable avec contrôles avancés, idéal pour gérer vos sessions de stream et créer de l'engagement.
-                    </p>
-                    <div class="module-actions">
-                        <a href="/modules/timer.php?token=<?=$token?>&control=true" class="module-btn primary">
-                            <i class="fas fa-play"></i>
-                            Lancer
-                        </a>
-                        <a href="/modules/timer-config.php?token=<?=$token?>" class="module-btn secondary">
-                            <i class="fas fa-cog"></i>
-                            Configurer
-                        </a>
+            <!-- Navigation Tabs MFA CONNECT -->
+            <nav class="navigation-tabs">
+                <div class="nav-container">
+                    <a href="#" class="nav-tab active" data-tab="dashboard">
+                        <span class="tab-icon"><i class="fas fa-th-large"></i></span>
+                        <span class="tab-text">Dashboard</span>
+                        <div class="tab-indicator"></div>
+                    </a>
+                    <a href="#" class="nav-tab" onclick="openModal('rules'); return false;" data-tab="rules">
+                        <span class="tab-icon"><i class="fas fa-scroll"></i></span>
+                        <span class="tab-text">Règlement</span>
+                        <div class="tab-indicator"></div>
+                    </a>
+                    <a href="#" class="nav-tab" onclick="openModal('prereq'); return false;" data-tab="prereq">
+                        <span class="tab-icon"><i class="fas fa-clipboard-check"></i></span>
+                        <span class="tab-text">Prérequis</span>
+                        <div class="tab-indicator"></div>
+                    </a>
+                    <a href="https://discord.gg/TbXYYsEgqz" target="_blank" class="nav-tab" data-tab="discord">
+                        <span class="tab-icon"><i class="fab fa-discord"></i></span>
+                        <span class="tab-text">Discord</span>
+                        <div class="tab-indicator"></div>
+                    </a>
+                </div>
+            </nav>
+
+            <!-- Hero Section MFA CONNECT -->
+            <section class="hero-section">
+                <div class="hero-bg-animation">
+                    <div class="wave-animation"></div>
+                </div>
+                
+                <div class="hero-content">
+                    <h2 class="hero-title">
+                        <span class="title-line-1">Centre de Contrôle</span>
+                        <span class="title-line-2">Nouvelle Génération</span>
+                    </h2>
+                    
+                    <div class="quick-stats">
+                        <div class="stat-card">
+                            <div class="stat-icon"><i class="fas fa-broadcast-tower"></i></div>
+                            <div class="stat-value">3</div>
+                            <div class="stat-label">Modules Actifs</div>
+                            <div class="stat-glow"></div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon"><i class="fas fa-fire"></i></div>
+                            <div class="stat-value">Ready</div>
+                            <div class="stat-label">Statut Système</div>
+                            <div class="stat-glow"></div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon"><i class="fas fa-link"></i></div>
+                            <div class="stat-value">Connected</div>
+                            <div class="stat-label">API Status</div>
+                            <div class="stat-glow"></div>
+                        </div>
                     </div>
                 </div>
+            </section>
 
-                <!-- Team Battle Module -->
-                <div class="module-card">
-                    <div class="module-icon battle">
-                        <i class="fas fa-users-cog"></i>
+            <!-- Modules Section MFA CONNECT -->
+            <section class="modules-section">
+                <div class="section-header">
+                    <h2 class="section-title">
+                        <span class="title-text">Modules de Streaming</span>
+                        <div class="title-decoration"></div>
+                    </h2>
+                </div>
+                
+                <div class="modules-grid">
+                    <!-- Module Wins Counter -->
+                    <div class="module-card" data-module="wins">
+                        <div class="module-bg-pattern"></div>
+                        <div class="module-glow"></div>
+                        
+                        <div class="module-header">
+                            <div class="module-icon-wrapper">
+                                <div class="icon-bg"></div>
+                                <i class="fas fa-trophy module-icon"></i>
+                                <div class="icon-particles"></div>
+                            </div>
+                            <div class="module-status">
+                                <span class="status-dot"></span>
+                                <span class="status-text">Opérationnel</span>
+                            </div>
+                        </div>
+                        
+                        <div class="module-body">
+                            <h3 class="module-title">Compteur de Wins</h3>
+                            <p class="module-description">
+                                Système de comptage en temps réel avec effets visuels spectaculaires et multiplicateurs
+                            </p>
+                            
+                            <div class="module-preview">
+                                <div class="preview-screen">
+                                    <span class="preview-value">0</span>
+                                    <span class="preview-label">WINS</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="module-footer">
+                            <a href="/modules/win.php?token=<?=$token?>&control=true" class="btn-module btn-primary">
+                                <i class="fas fa-play"></i>
+                                <span>Lancer</span>
+                                <div class="btn-glow"></div>
+                            </a>
+                            <a href="/modules/wins-config.php?token=<?=$token?>" class="btn-module btn-secondary">
+                                <i class="fas fa-cog"></i>
+                                <span>Config</span>
+                            </a>
+                        </div>
                     </div>
-                    <div class="module-info">
-                        <h3>Team VS Team</h3>
-                        <span class="module-status active">Actif</span>
+
+                    <!-- Module Timer -->
+                    <div class="module-card" data-module="timer">
+                        <div class="module-bg-pattern"></div>
+                        <div class="module-glow"></div>
+                        
+                        <div class="module-header">
+                            <div class="module-icon-wrapper">
+                                <div class="icon-bg"></div>
+                                <i class="fas fa-clock module-icon"></i>
+                                <div class="icon-particles"></div>
+                            </div>
+                            <div class="module-status">
+                                <span class="status-dot"></span>
+                                <span class="status-text">Opérationnel</span>
+                            </div>
+                        </div>
+                        
+                        <div class="module-body">
+                            <h3 class="module-title">Timer Interactif</h3>
+                            <p class="module-description">
+                                Chronomètre personnalisable avec contrôles avancés pour gérer vos sessions de stream
+                            </p>
+                            
+                            <div class="module-preview">
+                                <div class="preview-screen">
+                                    <span class="preview-value">00:00</span>
+                                    <span class="preview-label">TIMER</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="module-footer">
+                            <a href="/modules/timer.php?token=<?=$token?>&control=true" class="btn-module btn-primary">
+                                <i class="fas fa-play"></i>
+                                <span>Lancer</span>
+                                <div class="btn-glow"></div>
+                            </a>
+                            <a href="/modules/timer-config.php?token=<?=$token?>" class="btn-module btn-secondary">
+                                <i class="fas fa-cog"></i>
+                                <span>Config</span>
+                            </a>
+                        </div>
                     </div>
-                    <p class="module-description">
-                        Système de bataille d'équipes avec scores en temps réel, effets visuels personnalisables et contrôles avancés.
-                    </p>
-                    <div class="module-actions">
-                        <a href="/modules/team-battle.php?token=<?=$token?>&control=true" class="module-btn primary">
-                            <i class="fas fa-play"></i>
-                            Lancer
-                        </a>
-                        <a href="/modules/teams-config.php?token=<?=$token?>" class="module-btn secondary">
-                            <i class="fas fa-cog"></i>
-                            Configurer
-                        </a>
+
+                    <!-- Module Team Battle -->
+                    <div class="module-card" data-module="battle">
+                        <div class="module-bg-pattern"></div>
+                        <div class="module-glow"></div>
+                        
+                        <div class="module-header">
+                            <div class="module-icon-wrapper">
+                                <div class="icon-bg"></div>
+                                <i class="fas fa-users-cog module-icon"></i>
+                                <div class="icon-particles"></div>
+                            </div>
+                            <div class="module-status">
+                                <span class="status-dot"></span>
+                                <span class="status-text">Opérationnel</span>
+                            </div>
+                        </div>
+                        
+                        <div class="module-body">
+                            <h3 class="module-title">Team VS Team</h3>
+                            <p class="module-description">
+                                Système de bataille d'équipes avec scores en temps réel et effets visuels
+                            </p>
+                            
+                            <div class="module-preview">
+                                <div class="preview-screen">
+                                    <span class="preview-value">0-0</span>
+                                    <span class="preview-label">SCORE</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="module-footer">
+                            <a href="/modules/team-battle.php?token=<?=$token?>&control=true" class="btn-module btn-primary">
+                                <i class="fas fa-play"></i>
+                                <span>Lancer</span>
+                                <div class="btn-glow"></div>
+                            </a>
+                            <a href="/modules/teams-config.php?token=<?=$token?>" class="btn-module btn-secondary">
+                                <i class="fas fa-cog"></i>
+                                <span>Config</span>
+                            </a>
+                        </div>
                     </div>
                 </div>
-            </div>
-        </section>
+            </section>
 
-        <!-- Token Section (sous les modules) -->
-        <section class="token-section">
-            <div class="token-container">
-                <h2 class="token-title">
-                    <i class="fas fa-key"></i> Ton Token Personnel
-                </h2>
-                <div class="token-display">
-                    <span class="token-value" id="tokenValue"><?= htmlspecialchars($token) ?></span>
-                    <button class="copy-button" onclick="copyToken()">
-                        <i class="fas fa-copy"></i> Copier
-                    </button>
+            <!-- Token Section Cyberpunk MFA CONNECT -->
+            <section class="token-section">
+                <div class="token-bg-circuit"></div>
+                
+                <div class="token-container">
+                    <div class="token-header">
+                        <h2 class="token-title">
+                            <i class="fas fa-key"></i>
+                            Clé d'Authentification
+                        </h2>
+                        <p class="token-subtitle">Votre accès sécurisé aux modules</p>
+                    </div>
+                    
+                    <div class="token-display-wrapper">
+                        <div class="token-display">
+                            <div class="token-label">API TOKEN</div>
+                            <div class="token-value-container">
+                                <code class="token-value" id="tokenValue"><?= htmlspecialchars($token) ?></code>
+                                <div class="token-scan-line"></div>
+                            </div>
+                            <button class="btn-copy" onclick="copyToken()">
+                                <i class="fas fa-copy"></i>
+                                <span>Copier</span>
+                            </button>
+                        </div>
+                        
+                        <div class="token-qr">
+                            <div class="qr-code" id="qrCode"></div>
+                            <div class="qr-scan-effect"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="token-security">
+                        <i class="fas fa-shield-alt"></i>
+                        <span>Token sécurisé - Ne pas partager</span>
+                    </div>
                 </div>
-            </div>
-        </section>
+            </section>
 
-        <!-- Copyright Section -->
-        <section class="copyright-section">
-            <div class="copyright-container">
-                <div class="copyright-content">
-                    <div class="copyright-left">
-                        <span class="copyright-text">
-                            <i class="fas fa-copyright"></i> 2024 MyFull Agency (MFA)
-                        </span>
-                    </div>
-                    <div class="copyright-right">
-                        <span class="dev-text">Développement & Design par</span>
-                        <a href="mailto:gaetanck.pro@gmail.com" class="dev-link">
-                            <i class="fas fa-code"></i> CK
-                        </a>
+            <!-- Copyright Section MFA CONNECT -->
+            <section class="copyright-section">
+                <div class="copyright-container">
+                    <div class="copyright-content">
+                        <div class="copyright-left">
+                            <span class="copyright-text">
+                                <i class="fas fa-copyright"></i> 2024 MyFull Agency (MFA)
+                            </span>
+                        </div>
+                        <div class="copyright-right">
+                            <span class="dev-text">Développement & Design par</span>
+                            <a href="mailto:gaetanck.pro@gmail.com" class="dev-link">
+                                <i class="fas fa-code"></i> CK
+                            </a>
+                        </div>
                     </div>
                 </div>
-            </div>
-        </section>
+            </section>
     </div>
 
-    <!-- Modal Règlement -->
+    <!-- Modal Règlement MFA CONNECT -->
     <div id="rulesModal" class="modal">
-        <div class="modal-content">
+        <div class="modal-backdrop"></div>
+        <div class="modal-container">
             <div class="modal-header">
-                <h2 class="modal-title">📜 Règlement MyFull Agency</h2>
-                <button class="close-btn" onclick="closeModal('rules')">
+                <div class="modal-title-wrapper">
+                    <div class="modal-icon">
+                        <i class="fas fa-scroll"></i>
+                    </div>
+                    <h2 class="modal-title">Règlement MFA</h2>
+                </div>
+                <button class="modal-close" onclick="closeModal('rules')">
                     <i class="fas fa-times"></i>
                 </button>
             </div>
             <div class="modal-body">
-                <p style="text-align: center; color: #00d4ff; font-size: 1.1rem; margin-bottom: 2rem;">
+                <p style="text-align: center; color: var(--primary-blue); font-size: 1.1rem; margin-bottom: 2rem;">
                     Bienvenue à bord du vaisseau MyFull ! 🚀<br>
                     Quelques règles cosmiques avant le décollage...
                 </p>
@@ -1051,50 +2191,59 @@ $token = $_GET['token'] ?? '';
                 <h3>🛰️ Garde tes coordonnées secrètes</h3>
                 <p>Ne partage pas tes infos perso (même pas ton mot de passe interstellaire). La confidentialité, c'est sacré dans notre orbite 🔒</p>
 
-                <div style="background: rgba(139, 0, 255, 0.1); border-radius: 15px; padding: 1.5rem; margin-top: 2rem; text-align: center;">
-                    <strong style="color: #ff006e; font-size: 1.2rem;">🎙️ Prêt(e) à décoller avec la team MyFull ?</strong><br>
-                    <span style="color: #ffffff;">Alors attache ta ceinture, active ta caméra, et que le live commence ! 🌌</span>
+                <div style="background: rgba(0, 128, 255, 0.1); border-radius: 15px; padding: 1.5rem; margin-top: 2rem; text-align: center;">
+                    <strong style="color: var(--primary-red); font-size: 1.2rem;">🎙️ Prêt(e) à décoller avec la team MyFull ?</strong><br>
+                    <span style="color: var(--text-primary);">Alors attache ta ceinture, active ta caméra, et que le live commence ! 🌌</span>
                 </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-modal-action">J'ai compris</button>
             </div>
         </div>
     </div>
 
-    <!-- Modal Prérequis -->
+    <!-- Modal Prérequis MFA CONNECT -->
     <div id="prereqModal" class="modal">
-        <div class="modal-content">
+        <div class="modal-backdrop"></div>
+        <div class="modal-container">
             <div class="modal-header">
-                <h2 class="modal-title">📋 Prérequis - Avant Setup</h2>
-                <button class="close-btn" onclick="closeModal('prereq')">
+                <div class="modal-title-wrapper">
+                    <div class="modal-icon">
+                        <i class="fas fa-clipboard-check"></i>
+                    </div>
+                    <h2 class="modal-title">Prérequis - Avant Setup</h2>
+                </div>
+                <button class="modal-close" onclick="closeModal('prereq')">
                     <i class="fas fa-times"></i>
                 </button>
             </div>
             <div class="modal-body">
-                <div style="background: linear-gradient(135deg, rgba(255, 0, 110, 0.2), rgba(245, 158, 11, 0.2)); border-radius: 15px; padding: 1.5rem; margin-bottom: 2rem; text-align: center;">
-                    <strong style="color: #ff006e; font-size: 1.1rem;">
+                <div style="background: linear-gradient(135deg, rgba(0, 128, 255, 0.2), rgba(255, 0, 64, 0.2)); border-radius: 15px; padding: 1.5rem; margin-bottom: 2rem; text-align: center;">
+                    <strong style="color: var(--primary-red); font-size: 1.1rem;">
                         🔒 AVANT DE CONFIGURER UN JEU INTERACTIF, INSTALLEZ CES OUTILS :
                     </strong>
                 </div>
 
                 <h3><i class="fab fa-tiktok"></i> TikTok Live Studio</h3>
                 <p>Installez l'application officielle :</p>
-                <a href="https://www.tiktok.com/studio/download" target="_blank" style="color: #00d4ff; text-decoration: underline;">
+                <a href="https://www.tiktok.com/studio/download" target="_blank" style="color: var(--primary-blue); text-decoration: underline;">
                     <i class="fas fa-download"></i> Télécharger TikTok Live Studio
                 </a>
 
                 <h3>📱 Tikfinity Connect</h3>
-                <p><strong style="color: #f59e0b;">Profitez de notre partenariat pour une réduction !</strong></p>
+                <p><strong style="color: var(--primary-red);">Profitez de notre partenariat pour une réduction !</strong></p>
                 <p>Créez votre compte :</p>
-                <a href="https://tikfinity.zerody.one/?agency=g_myfullagency" target="_blank" style="color: #00d4ff; text-decoration: underline;">
+                <a href="https://tikfinity.zerody.one/?agency=g_myfullagency" target="_blank" style="color: var(--primary-blue); text-decoration: underline;">
                     <i class="fas fa-user-plus"></i> S'inscrire sur Tikfinity
                 </a>
 
                 <h3>🚗 GTA V</h3>
                 <p>Pour jouer à GTA V en interactif :</p>
                 <ul style="list-style: none; padding: 0;">
-                    <li><a href="https://www.instant-gaming.com/?igr=MyFullAgencyMFA" target="_blank" style="color: #00d4ff;">
+                    <li><a href="https://www.instant-gaming.com/?igr=MyFullAgencyMFA" target="_blank" style="color: var(--primary-blue);">
                         <i class="fas fa-shopping-cart"></i> Acheter GTA V
                     </a></li>
-                    <li><a href="https://www.rockstargames.com/fr/newswire/article/89k8a554534523/Download-The-Rockstar-Games-Launcher" target="_blank" style="color: #00d4ff;">
+                    <li><a href="https://www.rockstargames.com/fr/newswire/article/89k8a554534523/Download-The-Rockstar-Games-Launcher" target="_blank" style="color: var(--primary-blue);">
                         <i class="fas fa-download"></i> Télécharger Rockstar Launcher
                     </a></li>
                 </ul>
@@ -1102,20 +2251,21 @@ $token = $_GET['token'] ?? '';
                 <h3>⛏️ Minecraft</h3>
                 <p>Pour Minecraft interactif :</p>
                 <ul style="list-style: none; padding: 0;">
-                    <li><a href="https://www.instant-gaming.com/fr/442-acheter-minecraft-java-bedrock-edition-pc-jeu/" target="_blank" style="color: #00d4ff;">
+                    <li><a href="https://www.instant-gaming.com/fr/442-acheter-minecraft-java-bedrock-edition-pc-jeu/" target="_blank" style="color: var(--primary-blue);">
                         <i class="fas fa-shopping-cart"></i> Acheter Minecraft
                     </a></li>
-                    <li><a href="https://www.minecraft.net/fr-fr/download" target="_blank" style="color: #00d4ff;">
+                    <li><a href="https://www.minecraft.net/fr-fr/download" target="_blank" style="color: var(--primary-blue);">
                         <i class="fas fa-download"></i> Télécharger Minecraft
                     </a></li>
                 </ul>
 
-                <div style="background: rgba(0, 212, 255, 0.1); border-radius: 15px; padding: 1.5rem; margin-top: 2rem; text-align: center;">
-                    <i class="fas fa-headset" style="color: #00d4ff; font-size: 2rem;"></i><br>
-                    <strong style="color: #ffffff;">Besoin d'aide ? Contactez-nous sur Discord !</strong>
+                <div style="background: rgba(0, 128, 255, 0.1); border-radius: 15px; padding: 1.5rem; margin-top: 2rem; text-align: center;">
+                    <i class="fas fa-headset" style="color: var(--primary-blue); font-size: 2rem;"></i><br>
+                    <strong style="color: var(--text-primary);">Besoin d'aide ? Contactez-nous sur Discord !</strong>
                 </div>
-                
-
+            </div>
+            <div class="modal-footer">
+                <button class="btn-modal-action">J'ai compris</button>
             </div>
         </div>
     </div>
@@ -1161,63 +2311,76 @@ $token = $_GET['token'] ?? '';
 
 
 
-        // ==================== DASHBOARD LOGIC ====================
-        // Copier le token
+        // ==================== MFA CONNECT LOGIC ====================
+        
+        // Copier le token avec effet futuriste
         function copyToken() {
             const tokenValue = document.getElementById('tokenValue').textContent;
             navigator.clipboard.writeText(tokenValue).then(() => {
-                showNotification('Token copié !');
+                showNotification('Token copié avec succès !', 'success');
+                createCopyEffect();
             });
         }
 
-        // Notification
-        function showNotification(message) {
-            const notification = document.createElement('div');
-            notification.style.cssText = `
-                position: fixed;
-                top: 20px;
-                right: 20px;
-                background: linear-gradient(135deg, #ff006e, #8b00ff);
-                color: white;
-                padding: 1rem 2rem;
-                border-radius: 12px;
-                font-weight: 600;
-                box-shadow: 0 10px 30px rgba(139, 0, 255, 0.4);
-                z-index: 9999;
-                animation: slideIn 0.3s ease-out;
-            `;
-            notification.textContent = message;
-            document.body.appendChild(notification);
-
+        // Créer un effet de copie Matrix style
+        function createCopyEffect() {
+            const tokenContainer = document.querySelector('.token-value-container');
+            const particles = [];
+            
+            for (let i = 0; i < 10; i++) {
+                const particle = document.createElement('div');
+                particle.style.cssText = `
+                    position: absolute;
+                    width: 4px;
+                    height: 4px;
+                    background: var(--primary-blue);
+                    border-radius: 50%;
+                    pointer-events: none;
+                    animation: copyParticle 1s ease-out forwards;
+                `;
+                
+                const x = Math.random() * 100;
+                const y = Math.random() * 100;
+                particle.style.left = x + '%';
+                particle.style.top = y + '%';
+                particle.style.setProperty('--x', (Math.random() - 0.5) * 200 + 'px');
+                particle.style.setProperty('--y', (Math.random() - 0.5) * 200 + 'px');
+                
+                tokenContainer.appendChild(particle);
+                particles.push(particle);
+            }
+            
             setTimeout(() => {
-                notification.style.animation = 'slideOut 0.3s ease-out';
-                setTimeout(() => notification.remove(), 300);
-            }, 2000);
+                particles.forEach(particle => particle.remove());
+            }, 1000);
         }
 
-        // Message de maintenance
-        function showMaintenanceMessage() {
+        // Notification améliorée
+        function showNotification(message, type = 'info') {
             const notification = document.createElement('div');
+            const colors = {
+                success: 'var(--primary-blue)',
+                error: 'var(--primary-red)',
+                info: 'var(--gradient-mixed)'
+            };
+            
             notification.style.cssText = `
                 position: fixed;
                 top: 20px;
                 right: 20px;
-                background: linear-gradient(135deg, #f59e0b, #d97706);
+                background: ${colors[type]};
                 color: white;
                 padding: 1rem 2rem;
-                border-radius: 12px;
+                border-radius: 15px;
                 font-weight: 600;
-                box-shadow: 0 10px 30px rgba(245, 158, 11, 0.4);
+                font-family: var(--font-secondary);
+                box-shadow: 0 10px 30px rgba(0, 128, 255, 0.4);
                 z-index: 9999;
                 animation: slideIn 0.3s ease-out;
-                max-width: 400px;
-                text-align: center;
+                backdrop-filter: blur(10px);
+                border: 1px solid rgba(255, 255, 255, 0.2);
             `;
-            notification.innerHTML = `
-                <i class="fas fa-tools" style="margin-right: 0.5rem;"></i>
-                Module en cours de réparation<br>
-                <small>Seuls les développeurs peuvent y accéder</small>
-            `;
+            notification.textContent = message;
             document.body.appendChild(notification);
 
             setTimeout(() => {
@@ -1226,15 +2389,34 @@ $token = $_GET['token'] ?? '';
             }, 3000);
         }
 
-        // Gestion des modals
+        // Gestion des modals améliorée
         function openModal(modalName) {
-            document.getElementById(modalName + 'Modal').classList.add('show');
+            const modal = document.getElementById(modalName + 'Modal');
+            modal.classList.add('show');
             document.body.style.overflow = 'hidden';
+            
+            // Animation d'entrée
+            const container = modal.querySelector('.modal-container');
+            container.style.transform = 'translateY(50px) scale(0.9)';
+            container.style.opacity = '0';
+            
+            setTimeout(() => {
+                container.style.transform = 'translateY(0) scale(1)';
+                container.style.opacity = '1';
+            }, 10);
         }
 
         function closeModal(modalName) {
-            document.getElementById(modalName + 'Modal').classList.remove('show');
-            document.body.style.overflow = 'auto';
+            const modal = document.getElementById(modalName + 'Modal');
+            const container = modal.querySelector('.modal-container');
+            
+            container.style.transform = 'translateY(50px) scale(0.9)';
+            container.style.opacity = '0';
+            
+            setTimeout(() => {
+                modal.classList.remove('show');
+                document.body.style.overflow = 'auto';
+            }, 300);
         }
 
         // Fermer modal en cliquant à l'extérieur
@@ -1257,6 +2439,83 @@ $token = $_GET['token'] ?? '';
             }
         });
 
+        // Effet 3D sur les cartes de modules
+        document.querySelectorAll('.module-card').forEach(card => {
+            card.addEventListener('mousemove', (e) => {
+                const rect = card.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                
+                const centerX = rect.width / 2;
+                const centerY = rect.height / 2;
+                
+                const rotateX = (y - centerY) / 10;
+                const rotateY = (centerX - x) / 10;
+                
+                card.style.transform = `translateY(-15px) rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
+            });
+            
+            card.addEventListener('mouseleave', () => {
+                card.style.transform = 'translateY(0) rotateX(0) rotateY(0)';
+            });
+        });
+
+        // Animation des particules d'icônes
+        function createIconParticles() {
+            document.querySelectorAll('.module-icon-wrapper').forEach(icon => {
+                const particles = icon.querySelector('.icon-particles');
+                
+                for (let i = 0; i < 5; i++) {
+                    const particle = document.createElement('div');
+                    particle.className = 'icon-particle';
+                    particle.style.setProperty('--x', (Math.random() - 0.5) * 100 + 'px');
+                    particle.style.setProperty('--y', (Math.random() - 0.5) * 100 + 'px');
+                    particle.style.animationDelay = Math.random() * 2 + 's';
+                    particles.appendChild(particle);
+                }
+            });
+        }
+
+        // Effet parallax amélioré
+        document.addEventListener('mousemove', (e) => {
+            const x = e.clientX / window.innerWidth;
+            const y = e.clientY / window.innerHeight;
+            
+            // Déplacer les particules
+            const particles = document.querySelectorAll('.particle');
+            particles.forEach((particle, index) => {
+                const speed = (index + 1) * 0.3;
+                particle.style.transform = `translate(${x * speed}px, ${y * speed}px)`;
+            });
+            
+            // Animer la grille 3D
+            const grid = document.querySelector('.grid-3d');
+            if (grid) {
+                grid.style.transform = `perspective(1000px) rotateX(60deg) translateY(${y * 20}px) translateX(${x * 10}px)`;
+            }
+        });
+
+        // Initialisation
+        document.addEventListener('DOMContentLoaded', function() {
+            createIconParticles();
+            
+            // Animation des stats
+            const stats = document.querySelectorAll('.stat-value');
+            stats.forEach(stat => {
+                const finalValue = stat.textContent;
+                if (finalValue === '3' || finalValue === 'Ready' || finalValue === 'Connected') {
+                    stat.style.opacity = '0';
+                    stat.style.transform = 'translateY(20px)';
+                    
+                    setTimeout(() => {
+                        stat.style.transition = 'all 0.5s ease';
+                        stat.style.opacity = '1';
+                        stat.style.transform = 'translateY(0)';
+                    }, 500);
+                }
+            });
+        });
+
         // Animations CSS pour les notifications
         const style = document.createElement('style');
         style.textContent = `
@@ -1268,20 +2527,19 @@ $token = $_GET['token'] ?? '';
                 from { transform: translateX(0); opacity: 1; }
                 to { transform: translateX(100%); opacity: 0; }
             }
+            @keyframes copyParticle {
+                0% { 
+                    opacity: 1; 
+                    transform: translate(0, 0) scale(1);
+                }
+                100% { 
+                    opacity: 0; 
+                    transform: translate(var(--x), var(--y)) scale(0);
+                }
+            }
         `;
         document.head.appendChild(style);
-
-        // Effet parallax sur les particules
-        document.addEventListener('mousemove', (e) => {
-            const particles = document.querySelectorAll('.particle');
-            const x = e.clientX / window.innerWidth;
-            const y = e.clientY / window.innerHeight;
-            
-            particles.forEach((particle, index) => {
-                const speed = (index + 1) * 0.5;
-                particle.style.transform = `translate(${x * speed}px, ${y * speed}px)`;
-            });
-        });
     </script>
 </body>
+</html>
 </html>
