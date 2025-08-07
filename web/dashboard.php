@@ -803,6 +803,7 @@ $token = $_GET['token'] ?? '';
             overflow: hidden;
             transform-style: preserve-3d;
             z-index: 1;
+            perspective: 800px;
         }
 
         .module-bg-pattern {
@@ -2134,6 +2135,18 @@ $token = $_GET['token'] ?? '';
         .lock-card h3{ font-family: var(--font-primary); margin-bottom: 8px; }
         .lock-card p{ color: var(--text-secondary); margin-bottom: 16px; }
         .lock-card .btn{ display:inline-flex; align-items:center; gap:8px; padding:10px 16px; border-radius:10px; border:1px solid rgba(0,128,255,.3); background: var(--bg-card); color:#fff; text-decoration:none; }
+
+        /* Couche pour particules/chiffres volants dans les cartes */
+        .module-card { perspective: 800px; }
+        .module-card .fly-layer{ position:absolute; inset:0; pointer-events:none; overflow:visible; }
+        .fly-number{ position:absolute; font-family: var(--font-primary); font-weight:800; color:#fff; text-shadow:0 6px 18px rgba(0,0,0,.5); transform: translate3d(0,0,0) scale(1); opacity:1; will-change: transform, opacity; }
+        .fly-number.win-pos{ color:#00ffa0; }
+        .fly-number.win-neg{ color:#ff5b5b; }
+        .fly-number.win-multi{ color:#FFD700; filter: drop-shadow(0 0 8px rgba(255,215,0,.6)); }
+        .fly-number.timer{ color:#60a5fa; }
+        .fly-number.team-green{ color:#34d399; }
+        .fly-number.team-red{ color:#f87171; }
+        @keyframes flyUp3D{ 0%{ transform: translate3d(var(--x,0px), var(--y,0px), 0) rotateZ(0deg) scale(1); opacity:1; } 70%{ opacity:1; } 100%{ transform: translate3d(calc(var(--x,0px) + var(--dx,0px)), calc(var(--y,0px) - 120px), 0) rotateZ(var(--rot,15deg)) scale(0.8); opacity:0; }}
     </style>
 </head>
 <body>
@@ -3318,6 +3331,102 @@ $token = $_GET['token'] ?? '';
           // Marquer actif au chargement selon classe
             if (document.body.classList.contains('theme-red')) setActive('red');
   else setActive('blue');
+        })();
+
+        // ==================== REALTIME PARTICLE SYSTEM FOR DASHBOARD CARDS ====================
+        (function(){
+          const token = '<?= $token ?>';
+          const winsCard = document.querySelector(".module-card[data-module='wins']");
+          const timerCard = document.querySelector(".module-card[data-module='timer']");
+          const battleCard = document.querySelector(".module-card[data-module='battle']");
+
+          // Add fly layers if not present
+          [winsCard, timerCard, battleCard].forEach(card=>{ if(!card) return; if(!card.querySelector('.fly-layer')){ const l=document.createElement('div'); l.className='fly-layer'; card.appendChild(l);} });
+
+          function spawnFly(card, text, cls){
+            if(!card) return;
+            const layer = card.querySelector('.fly-layer');
+            if(!layer) return;
+            const el = document.createElement('div');
+            el.className = `fly-number ${cls||''}`;
+            el.textContent = text;
+            const rect = layer.getBoundingClientRect();
+            const x = Math.random() * (rect.width - 60) + 30;
+            const y = Math.random() * (rect.height - 60) + 30;
+            const dx = (Math.random()*60 - 30);
+            const rot = (Math.random()*40 - 20) + 'deg';
+            el.style.setProperty('--x', `${x}px`);
+            el.style.setProperty('--y', `${y}px`);
+            el.style.setProperty('--dx', `${dx}px`);
+            el.style.setProperty('--rot', rot);
+            el.style.left = 0; el.style.top = 0;
+            el.style.animation = 'flyUp3D 1.2s ease-out forwards';
+            layer.appendChild(el);
+            setTimeout(()=> el.remove(), 1400);
+          }
+
+          // WINS realtime
+          let lastWins = null, lastMult = null, lastMultActive = null;
+          const winsValueEl = document.getElementById('winsPreviewValue');
+          async function pollWins(){
+            try{
+              const r = await fetch(`/api.php?token=${encodeURIComponent(token)}&module=wins&action=get`);
+              const j = await r.json();
+              if(!j.success || !j.data) return;
+              const {count, multiplier, multiplier_active} = j.data;
+              if(winsValueEl) winsValueEl.textContent = String(count);
+              if(lastWins !== null && count !== lastWins){
+                const delta = count - lastWins;
+                spawnFly(winsCard, `${delta>0?'+':''}${delta} WIN`, delta>=0 ? 'win-pos' : 'win-neg');
+              }
+              if(lastMult !== null && (multiplier !== lastMult || multiplier_active !== lastMultActive)){
+                if(multiplier_active) spawnFly(winsCard, `x${multiplier} ACTIF`, 'win-multi');
+              }
+              lastWins = count; lastMult = multiplier; lastMultActive = multiplier_active;
+            }catch(e){}
+          }
+          setInterval(pollWins, 1200); pollWins();
+
+          // TIMER realtime (preview + particules +1s quand en cours)
+          let timerState = {endTime:null, isRunning:false, duration:0};
+          const timerValueEl = document.querySelector(".module-card[data-module='timer'] .preview-value");
+          function fmtMMSS(total){ const m=Math.floor(total/60), s=total%60; return `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`; }
+          function tickLocal(){
+            if(timerState.isRunning && timerState.endTime){
+              const left = Math.max(0, Math.round(timerState.endTime - Date.now()/1000));
+              if(timerValueEl) timerValueEl.textContent = fmtMMSS(left);
+              spawnFly(timerCard, '+1s', 'timer');
+            }
+          }
+          async function pollTimer(){
+            try{
+              const r = await fetch(`/api.php?token=${encodeURIComponent(token)}&module=timer&action=get`);
+              const j = await r.json(); if(!j.success || !j.data) return;
+              const {duration, endTime, isRunning} = j.data;
+              timerState.isRunning = !!isRunning;
+              timerState.endTime = endTime ? Number(endTime) : null;
+              timerState.duration = Number(duration)||0;
+              const left = timerState.isRunning && timerState.endTime ? Math.max(0, Math.round(timerState.endTime - Date.now()/1000)) : timerState.duration;
+              if(timerValueEl) timerValueEl.textContent = fmtMMSS(left);
+            }catch(e){}
+          }
+          setInterval(pollTimer, 1200); pollTimer(); setInterval(tickLocal, 1000);
+
+          // TEAMS realtime (scores et particules par équipe)
+          let lastGreen = null, lastRed = null;
+          const battleValueEl = document.querySelector(".module-card[data-module='battle'] .preview-value");
+          async function pollTeams(){
+            try{
+              const r = await fetch(`/api.php?token=${encodeURIComponent(token)}&module=teams&action=get`);
+              const j = await r.json(); if(!j.success || !j.data) return;
+              const g = Number(j.data.green.score)||0; const rd = Number(j.data.red.score)||0;
+              if(battleValueEl) battleValueEl.textContent = `${g}-${rd}`;
+              if(lastGreen!==null && g!==lastGreen){ const d=g-lastGreen; spawnFly(battleCard, `${d>0?'+':''}${d}`, 'team-green'); }
+              if(lastRed!==null && rd!==lastRed){ const d=rd-lastRed; spawnFly(battleCard, `${d>0?'+':''}${d}`, 'team-red'); }
+              lastGreen=g; lastRed=rd;
+            }catch(e){}
+          }
+          setInterval(pollTeams, 1200); pollTeams();
         })();
     </script>
 </body>
