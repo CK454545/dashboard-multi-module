@@ -953,6 +953,13 @@ $token = $_GET['token'] ?? '';
             text-align: center;
             border: 1px solid rgba(0, 128, 255, 0.2);
             margin-bottom: 2rem;
+            transition: all 0.3s ease;
+        }
+
+        .module-card:hover .module-preview {
+            background: rgba(0, 128, 255, 0.1);
+            border-color: var(--primary-blue);
+            box-shadow: 0 0 20px rgba(0, 128, 255, 0.3);
         }
 
         .preview-screen {
@@ -960,6 +967,8 @@ $token = $_GET['token'] ?? '';
             flex-direction: column;
             align-items: center;
             gap: 0.5rem;
+            position: relative;
+            overflow: hidden;
         }
 
         .preview-value {
@@ -968,6 +977,24 @@ $token = $_GET['token'] ?? '';
             font-weight: 700;
             color: var(--primary-blue);
             text-shadow: 0 0 10px var(--primary-blue);
+            transition: all 0.3s ease;
+        }
+
+        .module-card:hover .preview-value {
+            transform: scale(1.1);
+            text-shadow: 0 0 20px var(--primary-blue);
+            animation: valueGlow 0.5s ease-in-out infinite alternate;
+        }
+
+        @keyframes valueGlow {
+            0% { 
+                text-shadow: 0 0 20px var(--primary-blue);
+                transform: scale(1.1);
+            }
+            100% { 
+                text-shadow: 0 0 30px var(--primary-blue), 0 0 40px var(--primary-blue);
+                transform: scale(1.15);
+            }
         }
 
         .preview-label {
@@ -976,6 +1003,48 @@ $token = $_GET['token'] ?? '';
             color: var(--text-muted);
             text-transform: uppercase;
             letter-spacing: 1px;
+            transition: all 0.3s ease;
+        }
+
+        .module-card:hover .preview-label {
+            color: var(--primary-blue);
+        }
+
+        /* Animation spécifique pour chaque module */
+        .module-card[data-module="wins"]:hover .preview-value {
+            animation: countUp 2s ease-in-out infinite;
+        }
+
+        .module-card[data-module="timer"]:hover .preview-value {
+            animation: timerCount 2s ease-in-out infinite;
+        }
+
+        .module-card[data-module="battle"]:hover .preview-value {
+            animation: scoreBattle 2s ease-in-out infinite;
+        }
+
+        @keyframes countUp {
+            0% { content: "0"; }
+            25% { content: "5"; }
+            50% { content: "12"; }
+            75% { content: "23"; }
+            100% { content: "42"; }
+        }
+
+        @keyframes timerCount {
+            0% { content: "00:00"; }
+            25% { content: "00:15"; }
+            50% { content: "00:30"; }
+            75% { content: "00:45"; }
+            100% { content: "01:00"; }
+        }
+
+        @keyframes scoreBattle {
+            0% { content: "0-0"; }
+            25% { content: "2-1"; }
+            50% { content: "5-3"; }
+            75% { content: "8-6"; }
+            100% { content: "12-9"; }
         }
 
         /* ==================== MODULE FOOTER & BUTTONS ==================== */
@@ -1259,8 +1328,22 @@ $token = $_GET['token'] ?? '';
         .qr-code {
             width: 100px;
             height: 100px;
-            background: white;
+            background: #000;
             border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-family: var(--font-mono);
+            font-size: 0.8rem;
+            text-align: center;
+            border: 1px solid rgba(0, 128, 255, 0.3);
+        }
+
+        .qr-code::before {
+            content: "QR CODE";
+            color: var(--primary-blue);
+            text-shadow: 0 0 10px var(--primary-blue);
         }
 
         .qr-scan-effect {
@@ -2439,8 +2522,13 @@ $token = $_GET['token'] ?? '';
             }
         });
 
-        // Effet 3D sur les cartes de modules
+        // Effet 3D sur les cartes de modules avec animation des valeurs
         document.querySelectorAll('.module-card').forEach(card => {
+            const moduleType = card.getAttribute('data-module');
+            const previewValue = card.querySelector('.preview-value');
+            let animationInterval;
+            let particleInterval;
+            
             card.addEventListener('mousemove', (e) => {
                 const rect = card.getBoundingClientRect();
                 const x = e.clientX - rect.left;
@@ -2455,8 +2543,82 @@ $token = $_GET['token'] ?? '';
                 card.style.transform = `translateY(-15px) rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
             });
             
+            card.addEventListener('mouseenter', () => {
+                // Démarrer l'animation des valeurs
+                let counter = 0;
+                const originalValue = previewValue.textContent;
+                
+                // Créer des particules autour de la preview
+                const previewScreen = card.querySelector('.preview-screen');
+                particleInterval = setInterval(() => {
+                    const particle = document.createElement('div');
+                    particle.style.cssText = `
+                        position: absolute;
+                        width: 3px;
+                        height: 3px;
+                        background: var(--primary-blue);
+                        border-radius: 50%;
+                        pointer-events: none;
+                        animation: particleFloat 1s ease-out forwards;
+                        z-index: 10;
+                    `;
+                    
+                    const x = Math.random() * previewScreen.offsetWidth;
+                    const y = Math.random() * previewScreen.offsetHeight;
+                    particle.style.left = x + 'px';
+                    particle.style.top = y + 'px';
+                    
+                    previewScreen.appendChild(particle);
+                    
+                    setTimeout(() => particle.remove(), 1000);
+                }, 100);
+                
+                animationInterval = setInterval(() => {
+                    counter++;
+                    
+                    switch(moduleType) {
+                        case 'wins':
+                            const winsValues = ['0', '5', '12', '23', '42', '67', '89', '156'];
+                            previewValue.textContent = winsValues[counter % winsValues.length];
+                            break;
+                        case 'timer':
+                            const timerValues = ['00:00', '00:15', '00:30', '00:45', '01:00', '01:15', '01:30', '01:45'];
+                            previewValue.textContent = timerValues[counter % timerValues.length];
+                            break;
+                        case 'battle':
+                            const battleValues = ['0-0', '2-1', '5-3', '8-6', '12-9', '15-12', '18-15', '21-18'];
+                            previewValue.textContent = battleValues[counter % battleValues.length];
+                            break;
+                    }
+                }, 200);
+            });
+            
             card.addEventListener('mouseleave', () => {
                 card.style.transform = 'translateY(0) rotateX(0) rotateY(0)';
+                
+                // Arrêter toutes les animations
+                if (animationInterval) {
+                    clearInterval(animationInterval);
+                }
+                if (particleInterval) {
+                    clearInterval(particleInterval);
+                }
+                
+                // Remettre la valeur originale avec un effet de transition
+                previewValue.style.transition = 'all 0.3s ease';
+                setTimeout(() => {
+                    switch(moduleType) {
+                        case 'wins':
+                            previewValue.textContent = '0';
+                            break;
+                        case 'timer':
+                            previewValue.textContent = '00:00';
+                            break;
+                        case 'battle':
+                            previewValue.textContent = '0-0';
+                            break;
+                    }
+                }, 100);
             });
         });
 
@@ -2527,16 +2689,27 @@ $token = $_GET['token'] ?? '';
                 from { transform: translateX(0); opacity: 1; }
                 to { transform: translateX(100%); opacity: 0; }
             }
-            @keyframes copyParticle {
-                0% { 
-                    opacity: 1; 
-                    transform: translate(0, 0) scale(1);
-                }
-                100% { 
-                    opacity: 0; 
-                    transform: translate(var(--x), var(--y)) scale(0);
-                }
+                    @keyframes copyParticle {
+            0% { 
+                opacity: 1; 
+                transform: translate(0, 0) scale(1);
             }
+            100% { 
+                opacity: 0; 
+                transform: translate(var(--x), var(--y)) scale(0);
+            }
+        }
+
+        @keyframes particleFloat {
+            0% { 
+                opacity: 1; 
+                transform: translateY(0) scale(1);
+            }
+            100% { 
+                opacity: 0; 
+                transform: translateY(-20px) scale(0);
+            }
+        }
         `;
         document.head.appendChild(style);
     </script>
