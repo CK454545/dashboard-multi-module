@@ -1036,5 +1036,21 @@ window.addEventListener('beforeunload', function() {
     }
 });
 </script>
+<script>
+// Tracking de durée d'utilisation du module Timer
+(function(){
+    const token = '<?= htmlspecialchars($token, ENT_QUOTES) ?>';
+    let sessionStartTs = Date.now();
+    fetch(`/modules/profile_manager.php?action=timer_session_start&token=${encodeURIComponent(token)}`, {method: 'POST'}).catch(()=>{});
+    function sendDuration(){
+        const seconds = Math.max(0, Math.round((Date.now() - sessionStartTs)/1000));
+        navigator.sendBeacon ?
+            navigator.sendBeacon(`/modules/profile_manager.php?action=timer_session_end&token=${encodeURIComponent(token)}`, new Blob([JSON.stringify({duration: seconds})], {type:'application/json'}))
+            : fetch(`/modules/profile_manager.php?action=timer_session_end&token=${encodeURIComponent(token)}`, {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({duration: seconds})}).catch(()=>{});
+    }
+    window.addEventListener('beforeunload', sendDuration);
+    document.addEventListener('visibilitychange', ()=>{ if(document.visibilityState==='hidden'){ sendDuration(); } });
+})();
+</script>
 </body>
 </html> 
