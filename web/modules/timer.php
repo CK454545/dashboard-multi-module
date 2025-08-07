@@ -750,855 +750,513 @@ checkTimerAccess($token);
     </div>
 
 <script>
-  // ==================== LOGIQUE TIMER ====================
-  // Cette logique fonctionne parfaitement sur TikTok Live Studio
-  
-  const token = '<?php echo htmlspecialchars($token); ?>';
-  const userId = '<?php echo htmlspecialchars($user['discord_id'] ?? ''); ?>';
-  const isRealtime = <?php echo isset($_GET['realtime']) && $_GET['realtime'] === 'true' ? 'true' : 'false'; ?>;
+// ==================== CONFIGURATION ====================
+const TIMER_CONFIG = {
+  token: '<?php echo htmlspecialchars($token); ?>',
+  userId: '<?php echo htmlspecialchars($user['discord_id'] ?? ''); ?>',
+  isRealtime: <?php echo isset($_GET['realtime']) && $_GET['realtime'] === 'true' ? 'true' : 'false'; ?>,
+  useAlkaMode: true, // Mettre à true pour utiliser la logique Alka
+  pollingInterval: 1000, // Interval de synchronisation en ms
+  animateChanges: true // Activer les animations lors des changements
+};
 
-  // Variables Timer
-  let timerState = {
-    endTime: null,        // Timestamp UNIX de fin
-    duration: 0,          // Durée initiale en secondes
-    isRunning: false,
-    isPaused: false
-  };
+// ==================== ÉTAT DU TIMER ====================
+let timerState = {
+  endTime: null,        // Timestamp UNIX de fin
+  duration: 0,          // Durée initiale en secondes
+  isRunning: false,
+  isPaused: false,
+  lastSyncTime: 0,      // Dernier timestamp de sync
+  lastEndTime: null     // Pour détecter les changements
+};
 
-  let interval = null;
+let interval = null;
+let syncInterval = null;
+
+// ==================== INITIALISATION ====================
+document.addEventListener('DOMContentLoaded', () => {
+  console.log('🚀 Timer initialisé - Mode:', TIMER_CONFIG.useAlkaMode ? 'Alka' : 'Standard');
   
-  // Initialiser le timer à 00:00:00
-  function initializeTimer() {
-    timerState.endTime = null;
-    timerState.duration = 0;
-    timerState.isRunning = false;
-    timerState.isPaused = false;
-    forceDisplay();
+  // Initialiser selon le mode
+  if (TIMER_CONFIG.useAlkaMode) {
+    initializeAlkaMode();
+  } else {
+    initializeStandardMode();
   }
+  
+  // Toujours démarrer l'affichage
+  startDisplayUpdate();
+  
+  // Charger les styles
+  setTimeout(loadStyles, 100);
+  setTimeout(loadStyles, 500);
+});
 
-  // Debounce pour styles
-  let pendingStyleApply = null;
-  let lastStyleTimestamp = 0;
-  let lastForceUpdate = null;
+// ==================== MODE ALKA (SIMPLE) ====================
+function initializeAlkaMode() {
+  console.log('📡 Mode Alka activé - Synchronisation simple');
+  
+  // Créer le badge de pause si nécessaire
+  createPauseBadge();
+  
+  // Démarrer la synchronisation Alka
+  startAlkaSync();
+  
+  // Première synchronisation immédiate
+  fetchAlkaTime();
+}
 
-  // Chargement initial
-  document.addEventListener('DOMContentLoaded', () => {
-    // Initialiser le timer à 00:00:00
-    initializeTimer();
+function createPauseBadge() {
+  if (!document.getElementById('pause-badge')) {
+    const badge = document.createElement('div');
+    badge.id = 'pause-badge';
+    badge.className = 'paused-badge';
+    badge.innerHTML = '⏸ EN PAUSE';
+    badge.style.cssText = `
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      margin-top: 80px;
+      background: rgba(255, 0, 0, 0.85);
+      padding: 12px 20px;
+      border-radius: 8px;
+      font-size: 1.5rem;
+      font-weight: bold;
+      color: white;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+      z-index: 9999;
+      display: none;
+      animation: pulse 2s ease-in-out infinite;
+    `;
+    document.body.appendChild(badge);
     
-    loadConfig().then(() => {
-          // Initialiser le timer après le chargement
+    // Ajouter l'animation pulse
+    if (!document.getElementById('pause-badge-styles')) {
+      const style = document.createElement('style');
+      style.id = 'pause-badge-styles';
+      style.innerHTML = `
+        @keyframes pulse {
+          0%, 100% { transform: translate(-50%, -50%) scale(1); }
+          50% { transform: translate(-50%, -50%) scale(1.05); }
+        }
+        .timer-change-animation {
+          animation: flashChange 0.4s ease-out;
+        }
+        @keyframes flashChange {
+          0% { transform: scale(1); filter: brightness(2); }
+          50% { transform: scale(1.07); filter: brightness(1.4); }
+          100% { transform: scale(1); filter: brightness(1); }
+        }
+      `;
+      document.head.appendChild(style);
+    }
+  }
+}
+
+async function fetchAlkaTime() {
+  try {
+    const response = await fetch(`get_time.php?token=${TIMER_CONFIG.token}`, {
+      cache: 'no-store',
+      headers: {
+        'Accept': 'application/json'
+      }
+    });
+    
+    const data = await response.json();
+    
+    if (data.success) {
+      // Détecter les changements
+      const hasChanged = (data.end_at !== timerState.lastEndTime) || 
+                        (data.paused !== timerState.isPaused);
+      
+      // Mettre à jour l'état
+      timerState.endTime = data.end_at;
+      timerState.isPaused = data.paused;
+      timerState.duration = data.duration || 0;
+      timerState.isRunning = !data.paused && data.end_at !== null;
+      timerState.lastEndTime = data.end_at;
+      timerState.lastSyncTime = Date.now();
+      
+      // Animer si changement
+      if (hasChanged && TIMER_CONFIG.animateChanges) {
+        animateTimerChange();
+      }
+      
+      // Gérer le badge de pause
+      updatePauseBadge(data.paused);
+      
+      // Forcer la mise à jour de l'affichage
+      updateDisplay();
+      
+      console.log('✅ Sync Alka:', {
+        endTime: data.end_at,
+        paused: data.paused,
+        remaining: data.end_at ? Math.max(0, data.end_at - Math.floor(Date.now() / 1000)) : 0
+      });
+    }
+  } catch (err) {
+    console.error('❌ Erreur sync Alka:', err);
+  }
+}
+
+function startAlkaSync() {
+  // Synchronisation toutes les secondes (comme Alka)
+  if (syncInterval) clearInterval(syncInterval);
+  syncInterval = setInterval(fetchAlkaTime, TIMER_CONFIG.pollingInterval);
+}
+
+function updatePauseBadge(isPaused) {
+  const badge = document.getElementById('pause-badge');
+  if (badge) {
+    badge.style.display = isPaused ? 'block' : 'none';
+  }
+}
+
+function animateTimerChange() {
+  const timerEl = document.getElementById('timer-display');
+  if (timerEl) {
+    timerEl.classList.remove('timer-change-animation');
+    void timerEl.offsetWidth; // Force le reflow
+    timerEl.classList.add('timer-change-animation');
+  }
+}
+
+// ==================== MODE STANDARD (VOTRE SYSTÈME ACTUEL) ====================
+function initializeStandardMode() {
+  console.log('⚙️ Mode Standard activé');
+  
+  // Initialiser à 00:00:00
+  initializeTimer();
+  
+  // Charger la configuration
+  loadConfig().then(() => {
     setTimeout(initializeForTikTok, 1000);
-    });
-    setTimeout(loadStyles, 100);
-    setTimeout(loadStyles, 500);
-    startRealtimeSyncs();
-    
-    // Toujours mettre à jour l'affichage chaque seconde
-    setInterval(updateDisplay, 1000);
-    
-    // Forcer une mise à jour immédiate
-    forceDisplay();
-    
-    // S'assurer que le timer se met à jour même dans TikTok
-    let forceUpdateCounter = 0;
-    setInterval(() => {
-        forceUpdateCounter++;
-        if (forceUpdateCounter % 5 === 0) {
-            // Toutes les 5 secondes, forcer une mise à jour complète
-            forceDisplay(); // Forcer l'affichage même en pause
-        }
-    }, 200); // Vérifier 5 fois par seconde
-    
-    // Debug : vérifier que les fonctions sont bien exposées
-    console.log('Timer functions loaded:', {
-        startTimerAction: typeof window.startTimerAction,
-        pauseTimerAction: typeof window.pauseTimerAction,
-        handleTimeAction: typeof window.handleTimeAction,
-        resetTimer: typeof window.resetTimer
-    });
   });
-
-  // ---------- CONFIGURATION & STYLES ----------
-
-  async function loadConfig() {
-    try {
-      const response = await fetch(`/api.php?token=${encodeURIComponent(token)}&module=timer&action=get`, { cache: 'no-store' });
-      const data = await response.json();
-      if (data.success && data.data) {
-        console.log('Timer config loaded:', data.data);
-        
-        // Charger les données avec valeurs par défaut
-        timerState.endTime = data.data.endTime || null;
-        timerState.duration = parseInt(data.data.duration) || 0;
-        timerState.isRunning = !!data.data.isRunning;
-        timerState.isPaused = !!data.data.isPaused;
-        
-        // Si pas de duration mais ancien format avec seconds
-        if (!timerState.duration && data.data.seconds) {
-            timerState.duration = parseInt(data.data.seconds) || 0;
-        }
-        
-        forceDisplay(); // Forcer l'affichage initial
-        
-        if (timerState.isRunning && timerState.endTime) {
-            // Redémarrer l'interval pour l'affichage
-            if (interval) clearInterval(interval);
-            interval = setInterval(updateDisplay, 1000);
-        }
-      }
-    } catch (err) {
-      console.error('Erreur lors du chargement de la config:', err);
-    }
+  
+  // Démarrer la synchronisation si realtime
+  if (TIMER_CONFIG.isRealtime) {
+    startRealtimeSync();
   }
+}
 
-  async function loadStyles() {
-    try {
-      const response = await fetch(`/api.php?token=${encodeURIComponent(token)}&module=timer-style&action=get`, { cache: 'no-store' });
-      const data = await response.json();
-      console.log('Styles API response:', data);
-      
-      if (data.success) {
-        let styles = null;
-        
-        // Gérer différents formats de réponse
-        if (data.data && typeof data.data === 'object') {
-          styles = data.data;
-        } else if (data.style && typeof data.style === 'string') {
-          try {
-            styles = JSON.parse(data.style);
-          } catch (e) {
-            console.error('Erreur parsing styles:', e);
-          }
-        } else if (data.style && typeof data.style === 'object') {
-          styles = data.style;
-        }
-        
-        if (styles) {
-          console.log('Applying styles:', styles);
-          scheduleStyleApply(styles, true);
-        }
-      }
-    } catch (err) {
-      console.error('Erreur lors du chargement des styles:', err);
-    }
-  }
+function initializeTimer() {
+  timerState.endTime = null;
+  timerState.duration = 0;
+  timerState.isRunning = false;
+  timerState.isPaused = false;
+  forceDisplay();
+}
 
-  async function debugTimerState() {
-    console.group('🔍 Timer Debug Info');
-    console.log('Current state:', timerState);
-    console.log('Token:', token);
-    console.log('Is Realtime:', isRealtime);
-    
-    // Tester l'API
-    try {
-        const response = await fetch(`/api.php?token=${encodeURIComponent(token)}&module=timer&action=get`, { cache: 'no-store' });
-        const data = await response.json();
-        console.log('API Response:', data);
-    } catch (err) {
-        console.error('API Error:', err);
-    }
-    
-    // Vérifier les styles
-    const dynamicStyles = document.getElementById('dynamic-styles');
-    if (dynamicStyles) {
-        console.log('Applied CSS:', dynamicStyles.innerHTML);
-    }
-    
-    console.groupEnd();
-  }
-
-  // Exposer la fonction pour debug depuis la console
-  window.debugTimer = debugTimerState;
-
-  // Fonction de test pour vérifier l'API
-  async function testAPI() {
-    console.group('🧪 API Test');
-    
-    try {
-      // Test timer API
-      console.log('Testing timer API...');
-      const timerResponse = await fetch(`/api.php?token=${encodeURIComponent(token)}&module=timer&action=get`, { cache: 'no-store' });
-      const timerData = await timerResponse.json();
-      console.log('Timer API response:', timerData);
-      
-      // Test styles API
-      console.log('Testing styles API...');
-      const stylesResponse = await fetch(`/api.php?token=${encodeURIComponent(token)}&module=timer-style&action=get`, { cache: 'no-store' });
-      const stylesData = await stylesResponse.json();
-      console.log('Styles API response:', stylesData);
-      
-      // Test localStorage
-      console.log('LocalStorage timerStyles:', localStorage.getItem('realtimeTimerStyles'));
-      console.log('LocalStorage forceUpdate:', localStorage.getItem('forceTimerStyleUpdate'));
-      
-    } catch (err) {
-      console.error('API Test Error:', err);
-    }
-    
-    console.groupEnd();
-  }
-
-  // Exposer la fonction de test
-  window.testAPI = testAPI;
-
-  function scheduleStyleApply(styles, force = false) {
-    const now = Date.now();
-    if (!force && now - lastStyleTimestamp < 300) {
-      return;
-    }
-    lastStyleTimestamp = now;
-    if (pendingStyleApply) clearTimeout(pendingStyleApply);
-    pendingStyleApply = setTimeout(() => {
-      applyStyle(styles);
-      pendingStyleApply = null;
-    }, force ? 0 : 100);
-  }
-
-  function applyStyle(styles) {
-    if (!styles || typeof styles !== 'object') {
-      console.warn('Styles invalides reçus:', styles);
-      return;
-    }
-
-    let css = '';
-
-    // 1. Général
-    if (styles.general) {
-      const general = styles.general;
-      if (general.transparent === true || general.transparent === 'true' || general.transparent === 1) {
-        css += 'body, html, .widget-container, .display { background: transparent !important; } ';
-
-      } else if (general.background) {
-        css += `body, html { background: ${general.background} !important; } `;
-      }
-      if (general['font-family']) {
-        css += `#timer-display { font-family: ${general['font-family']} !important; } `;
-      }
-      if (general['text-position']) {
-        const margin = general['text-margin'] || '0';
-        css += generatePositionCSS(general['text-position'], margin);
-      }
-      if (general['vertical-offset']) {
-        const offset = parseInt(general['vertical-offset']) || 0;
-        if (offset !== 0) {
-          css += `.display { transform: translateY(${offset}px) !important; } `;
-        }
-      }
-    }
-
-    // 2. Options
-    if (styles.options) {
-      const options = styles.options;
-      if (options['hide-controls'] === true || options['hide-controls'] === 'true' || options['hide-controls'] === 1) {
-        css += '.timer-action-bar, .timer-action-bar-config, .config-btn-small, .config-button-fixed { display: none !important; } ';
-      }
-    }
-
-    // 3. Timer
-    if (styles.timer) {
-      const timer = styles.timer;
-      if (timer.color) {
-        css += `#timer-display { color: ${timer.color} !important; } `;
-      }
-      if (timer.size) {
-        css += `#timer-display { font-size: ${timer.size}px !important; } `;
-      }
-      if (timer.stroke) {
-        css += `#timer-display { -webkit-text-stroke: 2px ${timer.stroke} !important; text-stroke: 2px ${timer.stroke} !important; } `;
-      }
-      if (timer.shadow === true || timer.shadow === 'true' || timer.shadow === 1) {
-        css += '#timer-display { text-shadow: 3px 3px 6px rgba(0,0,0,0.8) !important; } ';
-      }
-      if ((timer.showBackground === true || timer.showBackground === 'true' || timer.showBackground === 1) && timer.background) {
-        css += `#timer-display { background: ${timer.background} !important; padding: 20px 40px !important; border-radius: 12px !important; } `;
-      }
-    }
-
-
-
-    // Ajuster pour la barre de contrôles si elle est visible
-    if (!styles.options || !styles.options['hide-controls']) {
-        css += '.display { padding-bottom: 250px !important; } ';
-    }
-
-    applyCSS(css);
-  }
-
-  function generatePositionCSS(position, margin) {
-    const positions = {
-      'top-left': `.display { justify-content: flex-start !important; align-items: flex-start !important; padding: ${margin}px !important; }`,
-      'top-center': `.display { justify-content: flex-start !important; align-items: center !important; padding-top: ${margin}px !important; }`,
-      'top-right': `.display { justify-content: flex-start !important; align-items: flex-end !important; padding: ${margin}px !important; }`,
-      'center-left': `.display { justify-content: center !important; align-items: flex-start !important; padding-left: ${margin}px !important; }`,
-      'center-right': `.display { justify-content: flex-end !important; align-items: flex-end !important; padding-right: ${margin}px !important; }`,
-      'bottom-left': `.display { justify-content: flex-end !important; align-items: flex-start !important; padding: ${margin}px !important; }`,
-      'bottom-center': `.display { justify-content: flex-end !important; align-items: center !important; padding-bottom: ${margin}px !important; }`,
-      'bottom-right': `.display { justify-content: flex-end !important; align-items: flex-end !important; padding: ${margin}px !important; }`,
-      'center': `.display { justify-content: center !important; align-items: center !important; }`
-    };
-    return positions[position] || positions['center'];
-  }
-
-  function applyCSS(css) {
-    let existing = document.getElementById('dynamic-styles');
-    if (existing) existing.remove();
-    if (css.trim()) {
-      const styleEl = document.createElement('style');
-      styleEl.id = 'dynamic-styles';
-      styleEl.innerHTML = css;
-      document.head.appendChild(styleEl);
-    }
-  }
-
-  // BroadcastChannel pour styles en temps réel
-  if (window.BroadcastChannel) {
-    const channel = new BroadcastChannel('timer_styles_channel');
-    channel.addEventListener('message', (event) => {
-      if (event.data && event.data.type === 'timerStylesUpdate') {
-        scheduleStyleApply(event.data.styles, true);
-      }
+async function loadConfig() {
+  try {
+    const response = await fetch(`/api.php?token=${encodeURIComponent(TIMER_CONFIG.token)}&module=timer&action=get`, { 
+      cache: 'no-store' 
     });
+    const data = await response.json();
+    
+    if (data.success && data.data) {
+      console.log('📋 Config chargée:', data.data);
+      
+      timerState.endTime = data.data.endTime || null;
+      timerState.duration = parseInt(data.data.duration) || 0;
+      timerState.isRunning = !!data.data.isRunning;
+      timerState.isPaused = !!data.data.isPaused;
+      
+      // Support ancien format
+      if (!timerState.duration && data.data.seconds) {
+        timerState.duration = parseInt(data.data.seconds) || 0;
+      }
+      
+      forceDisplay();
+      
+      if (timerState.isRunning && timerState.endTime) {
+        if (interval) clearInterval(interval);
+        interval = setInterval(updateDisplay, 1000);
+      }
+    }
+  } catch (err) {
+    console.error('❌ Erreur config:', err);
   }
+}
 
-  // La logique de calcul du temps restant est maintenant directement dans updateDisplay() et forceDisplay()
+function startRealtimeSync() {
+  setInterval(syncState, 1000);
+  syncState();
+}
 
-  // Polling modéré pour styles via localStorage (tous les 500ms)
+async function syncState() {
+  if (!TIMER_CONFIG.isRealtime) return;
+  
+  try {
+    const response = await fetch(`/api.php?token=${encodeURIComponent(TIMER_CONFIG.token)}&module=timer&action=get`, { 
+      cache: 'no-store' 
+    });
+    const data = await response.json();
+    
+    if (data.success && data.data) {
+      timerState.endTime = data.data.endTime || null;
+      timerState.duration = data.data.duration || 0;
+      timerState.isRunning = !!data.data.isRunning;
+      timerState.isPaused = !!data.data.isPaused;
+      
+      forceDisplay();
+      
+      if (timerState.isRunning && !interval) {
+        interval = setInterval(updateDisplay, 1000);
+      } else if (!timerState.isRunning && interval) {
+        clearInterval(interval);
+        interval = null;
+      }
+    }
+  } catch (err) {
+    console.error('❌ Erreur sync:', err);
+  }
+}
+
+// ==================== AFFICHAGE COMMUN ====================
+function startDisplayUpdate() {
+  // Mise à jour de l'affichage chaque seconde
+  setInterval(updateDisplay, 1000);
+  
+  // Forcer une mise à jour immédiate
+  updateDisplay();
+  
+  // Assurance de mise à jour pour TikTok
+  let forceUpdateCounter = 0;
   setInterval(() => {
-    try {
-        // Vérifier le forceUpdate
-        const forceUpdate = localStorage.getItem('forceTimerStyleUpdate');
-        if (forceUpdate && forceUpdate !== lastForceUpdate) {
-            lastForceUpdate = forceUpdate;
-            const stylesStr = localStorage.getItem('realtimeTimerStyles');
-            if (stylesStr) {
-                try {
-                    const styles = JSON.parse(stylesStr);
-                    console.log('Force update styles:', styles);
-                    scheduleStyleApply(styles, true);
-                    // Le style MFA Premium est maintenant géré automatiquement dans updateDisplay()
-                    // Pas besoin de mise à jour manuelle - tout est synchronisé
-                } catch (e) {
-                    console.error('Error parsing localStorage styles:', e);
-                }
-            }
-            return;
-        }
-        
-        // Vérifier le timestamp normal
-        const stylesTimestamp = localStorage.getItem('timerStylesTimestamp');
-        if (stylesTimestamp && parseInt(stylesTimestamp) > (window.lastTimerStylesTimestamp || 0)) {
-            const stylesStr = localStorage.getItem('realtimeTimerStyles');
-            if (stylesStr) {
-                try {
-                    const styles = JSON.parse(stylesStr);
-                    console.log('Timestamp update styles:', styles);
-                    scheduleStyleApply(styles);
-                    // Le style MFA Premium est maintenant géré automatiquement dans updateDisplay()
-                    // Pas besoin de mise à jour manuelle - tout est synchronisé
-                    window.lastTimerStylesTimestamp = parseInt(stylesTimestamp);
-                } catch (e) {
-                    console.error('Error parsing localStorage styles:', e);
-                }
-            }
-        }
-    } catch (err) {
-        console.error('LocalStorage polling error:', err);
+    forceUpdateCounter++;
+    if (forceUpdateCounter % 5 === 0) {
+      forceDisplay();
     }
-  }, 500);
+  }, 200);
+}
 
-  // ---------- LOGIQUE TIMER ----------
-
-  function formatTime(totalSeconds) {
-    // S'assurer qu'on a un nombre valide
-    totalSeconds = parseInt(totalSeconds) || 0;
-    totalSeconds = Math.max(0, totalSeconds); // Jamais négatif
+function updateDisplay() {
+  let remaining = 0;
+  
+  if (timerState.isRunning && timerState.endTime) {
+    const now = Math.floor(Date.now() / 1000);
+    remaining = Math.max(0, timerState.endTime - now);
     
-    const hours = Math.floor(totalSeconds / 3600);
-    const minutes = Math.floor((totalSeconds % 3600) / 60);
-    const seconds = totalSeconds % 60;
-    
-    return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
-  }
-
-  function formatParts(num) {
-    return num.toString().padStart(2, '0').split('');
-  }
-
-  function initializeForTikTok() {
-    // Forcer une valeur initiale si tout est à 0
-    if (timerState.duration === 0 && !timerState.isRunning) {
-        timerState.duration = 0; // 00:00:00 par défaut
-        forceDisplay(); // Forcer l'affichage
-        saveState();
+    if (remaining === 0 && !TIMER_CONFIG.useAlkaMode) {
+      pauseTimer();
+      return;
     }
+  } else {
+    remaining = timerState.duration;
   }
+  
+  const el = document.getElementById('timer-display');
+  if (el) {
+    el.textContent = formatTime(remaining);
+  }
+}
 
-  function forceDisplay() {
-    let remaining = 0;
-    
+function forceDisplay() {
+  let remaining = 0;
+  
+  if (timerState.isRunning && timerState.endTime) {
+    const now = Math.floor(Date.now() / 1000);
+    remaining = Math.max(0, timerState.endTime - now);
+  } else {
+    remaining = timerState.duration;
+  }
+  
+  const el = document.getElementById('timer-display');
+  if (el) {
+    el.textContent = formatTime(remaining);
+  }
+}
+
+function formatTime(totalSeconds) {
+  totalSeconds = parseInt(totalSeconds) || 0;
+  totalSeconds = Math.max(0, totalSeconds);
+  
+  const hours = Math.floor(totalSeconds / 3600);
+  const minutes = Math.floor((totalSeconds % 3600) / 60);
+  const seconds = totalSeconds % 60;
+  
+  return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+}
+
+// ==================== ACTIONS TIMER ====================
+async function startTimer(save = true) {
+  if (timerState.isRunning) return;
+  
+  const now = Math.floor(Date.now() / 1000);
+  
+  if (timerState.isPaused && timerState.endTime) {
+    timerState.isRunning = true;
+    timerState.isPaused = false;
+  } else {
+    timerState.endTime = now + timerState.duration;
+    timerState.isRunning = true;
+    timerState.isPaused = false;
+  }
+  
+  if (save) await saveState();
+  
+  if (interval) clearInterval(interval);
+  interval = setInterval(updateDisplay, 1000);
+  updateDisplay();
+}
+
+async function pauseTimer() {
+  if (!timerState.isRunning) return;
+  
+  timerState.isRunning = false;
+  timerState.isPaused = true;
+  
+  if (interval) {
+    clearInterval(interval);
+    interval = null;
+  }
+  
+  updateDisplay();
+  await saveState();
+}
+
+async function resetTimer() {
+  timerState.endTime = null;
+  timerState.duration = 0;
+  timerState.isRunning = false;
+  timerState.isPaused = false;
+  
+  if (interval) {
+    clearInterval(interval);
+    interval = null;
+  }
+  
+  updateDisplay();
+  await saveState();
+}
+
+async function handleTimeAction(event, action, seconds) {
+  event?.preventDefault();
+  
+  if (action === 'add') {
+    timerState.duration += seconds;
     if (timerState.isRunning && timerState.endTime) {
-        const now = Math.floor(Date.now() / 1000);
-        remaining = Math.max(0, timerState.endTime - now);
-    } else {
-        remaining = timerState.duration;
+      timerState.endTime += seconds;
     }
-    
-    // Mettre à jour l'affichage normal
-    const el = document.getElementById('timer-display');
-    if (el) {
-        el.textContent = formatTime(remaining);
-    }
-  }
-
-
-
-  function debugTikTok() {
-    console.log('=== TikTok Debug ===');
-    console.log('Timer State:', timerState);
-    console.log('Current Time:', new Date().toLocaleTimeString());
-    console.log('Date.now():', Date.now());
-    console.log('Math.floor(Date.now() / 1000):', Math.floor(Date.now() / 1000));
-    console.log('Display Element:', document.getElementById('timer-display'));
-    console.log('Display Text:', document.getElementById('timer-display')?.textContent);
-    
-    // Tester manuellement
-    const testTime = formatTime(123);
-    console.log('Test formatTime(123):', testTime);
-    
-    // Forcer une mise à jour
-    timerState.duration = 180; // 3 minutes
-    forceDisplay(); // Forcer l'affichage
-    console.log('After force update:', document.getElementById('timer-display')?.textContent);
-  }
-
-  window.debugTikTok = debugTikTok;
-
-
-
-
-
-
-
-  // Fonction de debug pour vérifier l'interval
-  function debugInterval() {
-    console.log('=== Interval Debug ===');
-    console.log('Interval exists:', !!interval);
-    console.log('Timer state:', timerState);
-    console.log('Current time:', new Date().toLocaleTimeString());
-    console.log('End time:', timerState.endTime ? new Date(timerState.endTime * 1000).toLocaleTimeString() : 'null');
-    
+  } else if (action === 'subtract') {
+    timerState.duration = Math.max(0, timerState.duration - seconds);
     if (timerState.isRunning && timerState.endTime) {
       const now = Math.floor(Date.now() / 1000);
-      const remaining = Math.max(0, timerState.endTime - now);
-      console.log('Remaining time:', remaining, 'seconds');
-      console.log('Formatted:', formatTime(remaining));
-    }
-  }
-
-  window.debugInterval = debugInterval;
-
-  // Fonction de test pour le timer
-  function testTimer() {
-    console.log('=== Test Timer ===');
-    console.log('Current state:', timerState);
-    console.log('Interval exists:', !!interval);
-    
-    // Tester le démarrage manuel
-    if (!timerState.isRunning) {
-      console.log('Starting timer manually...');
-      timerState.duration = 10; // 10 secondes
-      timerState.isRunning = true;
-      timerState.isPaused = false;
-      timerState.endTime = Math.floor(Date.now() / 1000) + 10;
-      
-      // Démarrer l'interval
-      if (interval) clearInterval(interval);
-      interval = setInterval(updateDisplay, 1000);
-      updateDisplay();
-      
-      console.log('Timer started manually - endTime:', timerState.endTime);
-    } else {
-      console.log('Timer already running');
-    }
-  }
-
-  window.testTimer = testTimer;
-
-
-
-  function updateDisplay() {
-    let remaining = 0;
-    
-    if (timerState.isRunning && timerState.endTime) {
-        // Timer en cours : calculer le temps restant
-        const now = Math.floor(Date.now() / 1000);
-        remaining = Math.max(0, timerState.endTime - now);
-        
-        // Si on arrive à 0, arrêter le timer
-        if (remaining === 0) {
-            pauseTimer();
-            return;
-        }
-    } else {
-        // Timer pas démarré : afficher la durée
-        remaining = timerState.duration;
-    }
-    
-    // Mettre à jour l'affichage normal
-    const el = document.getElementById('timer-display');
-    if (el) {
-        el.textContent = formatTime(remaining);
-    }
-  }
-
-  async function startTimer(save = true) {
-    if (timerState.isRunning) return;
-    
-    const now = Math.floor(Date.now() / 1000);
-    
-    if (timerState.isPaused && timerState.endTime) {
-        // Reprendre depuis l'état pause : garder l'endTime existant
-        timerState.isRunning = true;
-        timerState.isPaused = false;
-    } else {
-        // Démarrer un nouveau timer : calculer le nouveau endTime
-        timerState.endTime = now + timerState.duration;
-        timerState.isRunning = true;
-        timerState.isPaused = false;
-    }
-    
-    if (save) await saveState();
-    
-    // Un seul interval simple pour l'affichage
-    if (interval) clearInterval(interval);
-    interval = setInterval(updateDisplay, 1000);
-    updateDisplay(); // Utiliser updateDisplay (même logique que le timer normal)
-  }
-
-  async function pauseTimer() {
-    if (!timerState.isRunning) return;
-    
-    // Ne pas modifier endTime ni duration, juste mettre en pause
-    timerState.isRunning = false;
-    timerState.isPaused = true;
-    
-    if (interval) {
-      clearInterval(interval);
-      interval = null;
-    }
-    
-    updateDisplay(); // Utiliser updateDisplay (même logique que le timer normal)
-    await saveState();
-  }
-
-  async function resetTimer() {
-    timerState.endTime = null;
-    timerState.duration = 0;
-    timerState.isRunning = false;
-    timerState.isPaused = false;
-    
-    if (interval) {
-      clearInterval(interval);
-      interval = null;
-    }
-    
-    // Utiliser updateDisplay pour la cohérence
-    updateDisplay();
-    
-    await saveState();
-  }
-
-  async function handleTimeAction(event, action, seconds) {
-    event?.preventDefault();
-    
-    // Toujours ajuster la duration (même logique que le timer normal)
-    if (action === 'add') {
-        timerState.duration += seconds;
-        if (timerState.isRunning && timerState.endTime) {
-            timerState.endTime += seconds;
-        }
-    } else if (action === 'subtract') {
-        timerState.duration = Math.max(0, timerState.duration - seconds);
-        if (timerState.isRunning && timerState.endTime) {
-            const now = Math.floor(Date.now() / 1000);
-            const newEndTime = timerState.endTime - seconds;
-            if (newEndTime > now) {
-                timerState.endTime = newEndTime;
-            } else {
-                // Si on soustrait trop, arrêter le timer
-                await pauseTimer();
-            }
-        }
-    }
-    
-    // Utiliser updateDisplay pour la cohérence
-    updateDisplay();
-    
-    await saveState();
-  }
-
-  function addManualTime() {
-    const hours = parseInt(document.getElementById('manual-hours').value) || 0;
-    const minutes = parseInt(document.getElementById('manual-minutes').value) || 0;
-    const seconds = parseInt(document.getElementById('manual-seconds').value) || 0;
-    const totalSeconds = hours * 3600 + minutes * 60 + seconds;
-    
-    if (totalSeconds > 0) {
-      if (timerState.isRunning) {
-        timerState.endTime += totalSeconds;
+      const newEndTime = timerState.endTime - seconds;
+      if (newEndTime > now) {
+        timerState.endTime = newEndTime;
       } else {
-        timerState.duration += totalSeconds;
-      }
-      // Utiliser updateDisplay pour la cohérence
-      updateDisplay();
-      
-      saveState();
-    }
-  }
-
-  function subtractManualTime() {
-    const hours = parseInt(document.getElementById('manual-hours').value) || 0;
-    const minutes = parseInt(document.getElementById('manual-minutes').value) || 0;
-    const seconds = parseInt(document.getElementById('manual-seconds').value) || 0;
-    const totalSeconds = hours * 3600 + minutes * 60 + seconds;
-    
-    if (totalSeconds > 0) {
-      if (timerState.isRunning) {
-        timerState.endTime -= totalSeconds;
-      } else {
-        timerState.duration = Math.max(0, timerState.duration - totalSeconds);
-      }
-      // Utiliser updateDisplay pour la cohérence
-      updateDisplay();
-      
-      saveState();
-    }
-  }
-
-  // Sauvegarde de l'état
-  async function saveState() {
-    try {
-      const stateData = {
-        endTime: timerState.endTime,
-        duration: timerState.duration,
-        isRunning: timerState.isRunning,
-        isPaused: timerState.isPaused
-      };
-      await fetch(`/api.php?token=${encodeURIComponent(token)}&module=timer&action=set&value=${encodeURIComponent(JSON.stringify(stateData))}`, {
-        method: 'GET',
-        cache: 'no-store'
-      });
-    } catch (err) {
-      console.error('Erreur lors de la sauvegarde:', err);
-    }
-  }
-
-  // Synchronisation (mode realtime)
-  async function syncState() {
-    if (!isRealtime) return;
-    
-    try {
-      const response = await fetch(`/api.php?token=${encodeURIComponent(token)}&module=timer&action=get`, { 
-        cache: 'no-store' 
-      });
-      const data = await response.json();
-      
-      if (data.success && data.data) {
-        timerState.endTime = data.data.endTime || null;
-        timerState.duration = data.data.duration || 0;
-        timerState.isRunning = !!data.data.isRunning;
-        timerState.isPaused = !!data.data.isPaused;
-        
-        forceDisplay(); // Forcer l'affichage
-        
-        // Gérer le démarrage/arrêt du timer
-        if (timerState.isRunning && !interval) {
-          interval = setInterval(updateDisplay, 1000);
-        } else if (!timerState.isRunning && interval) {
-          clearInterval(interval);
-          interval = null;
-        }
-      }
-    } catch (err) {
-      console.error('Erreur sync:', err);
-    }
-  }
-
-  // Synchronisation simple toutes les secondes
-  function startRealtimeSyncs() {
-    if (isRealtime) {
-      setInterval(syncState, 1000);
-      syncState();
-    }
-  }
-
-  // Actions liées aux boutons (exposées globalement comme avant)
-  window.startTimerAction = async function () {
-    if (!timerState.isRunning) {
-      await startTimer(true);
-      
-      // Forcer la mise à jour immédiate de l'affichage
-      updateDisplay();
-      
-      // Vérifier que l'état a bien été mis à jour
-      if (!timerState.isRunning) {
-        forceStartTimer();
+        await pauseTimer();
       }
     }
-  };
-  
-  window.pauseTimerAction = async function () {
-    if (timerState.isRunning) {
-      await pauseTimer();
-      
-      // Forcer la mise à jour immédiate de l'affichage
-      updateDisplay();
-    }
-  };
-  
-  // Exposer les fonctions globalement
-  window.handleTimeAction = handleTimeAction;
-  window.addManualTime = addManualTime;
-  window.subtractManualTime = subtractManualTime;
-  window.resetTimer = resetTimer;
-
-  // Affichage initial
-  forceDisplay();
-  
-
-
-  // Fonction de diagnostic spécifique pour TikTok Live Studio
-  async function diagnoseTikTokLive() {
-    console.group('🔍 TikTok Live Studio Diagnostic');
-    
-    // 1. Vérifier l'environnement
-    console.log('Environment:', {
-      userAgent: navigator.userAgent,
-      platform: navigator.platform,
-      language: navigator.language,
-      cookieEnabled: navigator.cookieEnabled,
-      onLine: navigator.onLine
-    });
-    
-    // 2. Vérifier les éléments DOM
-    console.log('DOM Elements:', {
-      timerDisplay: !!document.getElementById('timer-display'),
-      actionBar: !!document.querySelector('.timer-action-bar'),
-      control: <?= $control ? 'true' : 'false' ?>
-    });
-    
-    // 3. Tester l'API
-    try {
-      console.log('Testing API endpoints...');
-      
-      // Test API timer
-      const timerResponse = await fetch(`/api.php?token=${encodeURIComponent(token)}&module=timer&action=get`, { 
-        cache: 'no-store',
-        headers: {
-          'Accept': 'application/json',
-          'X-Requested-With': 'XMLHttpRequest'
-        }
-      });
-      
-      console.log('Timer API Status:', timerResponse.status);
-      console.log('Timer API Headers:', Object.fromEntries(timerResponse.headers.entries()));
-      
-      const timerData = await timerResponse.json();
-      console.log('Timer API Response:', timerData);
-      
-      // Test API styles
-      const stylesResponse = await fetch(`/api.php?token=${encodeURIComponent(token)}&module=timer-style&action=get`, { 
-        cache: 'no-store',
-        headers: {
-          'Accept': 'application/json',
-          'X-Requested-With': 'XMLHttpRequest'
-        }
-      });
-      
-      console.log('Styles API Status:', stylesResponse.status);
-      const stylesData = await stylesResponse.json();
-      console.log('Styles API Response:', stylesData);
-      
-    } catch (err) {
-      console.error('API Test Error:', err);
-    }
-    
-    // 4. Vérifier l'état du timer
-    console.log('Timer State:', timerState);
-    console.log('Interval Status:', !!interval);
-    
-    // 5. Test de performance
-    const startTime = performance.now();
-    updateDisplay();
-    const endTime = performance.now();
-    console.log('Display Update Performance:', `${(endTime - startTime).toFixed(2)}ms`);
-    
-    // 6. Vérifier les styles appliqués
-    const dynamicStyles = document.getElementById('dynamic-styles');
-    if (dynamicStyles) {
-      console.log('Applied CSS Length:', dynamicStyles.innerHTML.length);
-      console.log('Applied CSS Preview:', dynamicStyles.innerHTML.substring(0, 200) + '...');
-    }
-    
-    // 7. Test de compatibilité TikTok
-    console.log('TikTok Compatibility:', {
-      fetchSupported: typeof fetch !== 'undefined',
-      setIntervalSupported: typeof setInterval !== 'undefined',
-      localStorageSupported: typeof localStorage !== 'undefined',
-      broadcastChannelSupported: typeof BroadcastChannel !== 'undefined'
-    });
-    
-    console.groupEnd();
   }
   
-  // Exposer la fonction de diagnostic
-  window.diagnoseTikTokLive = diagnoseTikTokLive;
+  updateDisplay();
+  await saveState();
+}
+
+async function saveState() {
+  if (TIMER_CONFIG.useAlkaMode) {
+    // En mode Alka, on ne sauvegarde pas localement
+    // La synchronisation se fait via get_time.php
+    return;
+  }
   
-  // Fonction pour forcer la compatibilité TikTok
-  function forceTikTokCompatibility() {
-    console.log('🔧 Forcing TikTok Live Studio compatibility...');
-    
-    // 1. Forcer les headers CORS
-    const originalFetch = window.fetch;
-    window.fetch = function(url, options = {}) {
-      const newOptions = {
-        ...options,
-        headers: {
-          'Accept': 'application/json',
-          'X-Requested-With': 'XMLHttpRequest',
-          ...options.headers
-        },
-        cache: 'no-store'
-      };
-      return originalFetch(url, newOptions);
+  try {
+    const stateData = {
+      endTime: timerState.endTime,
+      duration: timerState.duration,
+      isRunning: timerState.isRunning,
+      isPaused: timerState.isPaused
     };
     
-    // 2. Améliorer la gestion des erreurs
-    window.addEventListener('error', (event) => {
-      console.error('Global error caught:', event.error);
+    await fetch(`/api.php?token=${encodeURIComponent(TIMER_CONFIG.token)}&module=timer&action=set&value=${encodeURIComponent(JSON.stringify(stateData))}`, {
+      method: 'GET',
+      cache: 'no-store'
     });
-    
-    // 3. Forcer l'affichage initial
-    setTimeout(() => {
-      forceDisplay();
-      console.log('Forced initial display');
-    }, 100);
-    
-    // 4. Polling de sécurité pour TikTok
-    setInterval(() => {
-      const timerDisplay = document.getElementById('timer-display');
-      if (timerDisplay && !timerDisplay.textContent) {
-        console.log('Timer display empty, forcing update...');
-        forceDisplay();
-      }
-    }, 5000);
-    
-    console.log('TikTok compatibility mode activated');
+  } catch (err) {
+    console.error('❌ Erreur sauvegarde:', err);
   }
+}
+
+// ==================== FONCTIONS GLOBALES ====================
+window.startTimerAction = async function() {
+  await startTimer(true);
+  updateDisplay();
+};
+
+window.pauseTimerAction = async function() {
+  await pauseTimer();
+  updateDisplay();
+};
+
+window.handleTimeAction = handleTimeAction;
+window.resetTimer = resetTimer;
+
+window.addManualTime = function() {
+  const hours = parseInt(document.getElementById('manual-hours')?.value) || 0;
+  const minutes = parseInt(document.getElementById('manual-minutes')?.value) || 0;
+  const seconds = parseInt(document.getElementById('manual-seconds')?.value) || 0;
+  const totalSeconds = hours * 3600 + minutes * 60 + seconds;
   
-  // Activer la compatibilité TikTok automatiquement
-  forceTikTokCompatibility();
+  if (totalSeconds > 0) {
+    if (timerState.isRunning) {
+      timerState.endTime += totalSeconds;
+    } else {
+      timerState.duration += totalSeconds;
+    }
+    updateDisplay();
+    saveState();
+  }
+};
+
+window.subtractManualTime = function() {
+  const hours = parseInt(document.getElementById('manual-hours')?.value) || 0;
+  const minutes = parseInt(document.getElementById('manual-minutes')?.value) || 0;
+  const seconds = parseInt(document.getElementById('manual-seconds')?.value) || 0;
+  const totalSeconds = hours * 3600 + minutes * 60 + seconds;
+  
+  if (totalSeconds > 0) {
+    if (timerState.isRunning) {
+      timerState.endTime -= totalSeconds;
+    } else {
+      timerState.duration = Math.max(0, timerState.duration - totalSeconds);
+    }
+    updateDisplay();
+    saveState();
+  }
+};
+
+// ==================== DEBUG & DIAGNOSTICS ====================
+window.debugTimer = function() {
+  console.group('🔍 Timer Debug');
+  console.log('Mode:', TIMER_CONFIG.useAlkaMode ? 'Alka' : 'Standard');
+  console.log('État:', timerState);
+  console.log('Config:', TIMER_CONFIG);
+  console.log('Interval actif:', !!interval);
+  console.log('Sync actif:', !!syncInterval);
+  console.log('Affichage:', document.getElementById('timer-display')?.textContent);
+  console.groupEnd();
+};
+
+window.switchToAlkaMode = function() {
+  console.log('🔄 Passage en mode Alka...');
+  TIMER_CONFIG.useAlkaMode = true;
+  if (syncInterval) clearInterval(syncInterval);
+  initializeAlkaMode();
+};
+
+window.switchToStandardMode = function() {
+  console.log('🔄 Passage en mode Standard...');
+  TIMER_CONFIG.useAlkaMode = false;
+  if (syncInterval) clearInterval(syncInterval);
+  initializeStandardMode();
+};
+
+console.log('✨ Timer chargé - Mode:', TIMER_CONFIG.useAlkaMode ? 'Alka' : 'Standard');
+console.log('💡 Commandes debug: debugTimer(), switchToAlkaMode(), switchToStandardMode()');
 </script>
 </body>
 </html> 
