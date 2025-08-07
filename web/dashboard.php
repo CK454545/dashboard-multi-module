@@ -60,6 +60,7 @@ $token = $_GET['token'] ?? '';
             padding: 0;
             box-sizing: border-box;
         }
+        html { overflow-x: hidden; }
 
         body {
             font-family: var(--font-secondary);
@@ -69,6 +70,7 @@ $token = $_GET['token'] ?? '';
             overflow-x: hidden;
             position: relative;
             background: var(--gradient-dark);
+            width: 100%;
         }
 
         /* ==================== INTRO VIDEO STYLES ==================== */
@@ -283,7 +285,7 @@ $token = $_GET['token'] ?? '';
             border-bottom: 1px solid rgba(0, 128, 255, 0.3);
             padding: 1.5rem 0;
             margin-bottom: 3rem;
-            overflow: visible;
+            overflow: hidden;
             z-index: 10;
         }
 
@@ -298,6 +300,8 @@ $token = $_GET['token'] ?? '';
                 rgba(0, 128, 255, 0.1) 50%, 
                 transparent 100%);
             animation: headerScan 3s ease-in-out infinite;
+            overflow: hidden;
+            will-change: transform;
         }
 
         @keyframes headerScan {
@@ -314,6 +318,7 @@ $token = $_GET['token'] ?? '';
             padding: 0 2rem;
             position: relative;
             z-index: 2;
+            overflow: hidden;
         }
         .theme-switcher {
             display: flex;
