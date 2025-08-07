@@ -72,6 +72,9 @@ $token = $_GET['token'] ?? '';
             background: var(--gradient-dark);
             width: 100%;
         }
+        /* Color tokens qui s'adaptent automatiquement au thème (rouge/bleu) */
+        .brand-name, .modal-title, .section-title { background: var(--gradient-blue); -webkit-background-clip: text; color: transparent; }
+        .section-underline, .module-card[data-module="battle"] .icon-bg { background: var(--gradient-blue); }
 
         /* ==================== INTRO VIDEO STYLES ==================== */
         .intro-overlay {
@@ -335,7 +338,7 @@ $token = $_GET['token'] ?? '';
         .theme-btn .dot{ width:16px; height:16px; border-radius:50%; }
         .theme-btn[data-theme="blue"] .dot{ background: linear-gradient(135deg, #0080FF, #00B4FF); }
         .theme-btn[data-theme="red"] .dot{ background: linear-gradient(135deg, #FF0040, #FF5570); }
-        .theme-btn[data-theme="mixed"] .dot{ background: linear-gradient(135deg, #00B4FF, #FF0040); }
+
         .theme-btn.active{ outline: 2px solid var(--primary-blue); }
 
         .logo-section {
@@ -2120,12 +2123,7 @@ $token = $_GET['token'] ?? '';
           --gradient-blue: linear-gradient(135deg, #FF0040, #FF5570);
           --gradient-mixed: linear-gradient(135deg, #FF0040 0%, #FF5570 100%);
         }
-        body.theme-mixed {
-          --primary-blue: #00B4FF;
-          --primary-red: #FF0040;
-          --gradient-mixed: linear-gradient(135deg, #00B4FF 0%, #FF0040 100%);
-        }
-
+        
         /* Couche de verrouillage pour dashboard quand déconnecté */
         .dashboard-lock-overlay{
           position: fixed; inset: 0; z-index: 30000; backdrop-filter: blur(6px);
@@ -2179,7 +2177,6 @@ $token = $_GET['token'] ?? '';
                             <div class="theme-switcher" aria-label="Changer de thème">
                                 <button class="theme-btn" data-theme="blue" title="Bleu (par défaut)"><span class="dot"></span></button>
                                 <button class="theme-btn" data-theme="red" title="Rouge"><span class="dot"></span></button>
-                                <button class="theme-btn" data-theme="mixed" title="Mix"><span class="dot"></span></button>
                             </div>
                         <div class="logo-container">
                             <img src="https://i.goopics.net/g93k7n.png" alt="MFA CONNECT" class="logo-3d">
@@ -2671,11 +2668,10 @@ $token = $_GET['token'] ?? '';
                     </div>
                     <div class="form-group">
                         <label class="form-label">Thème préféré</label>
-                        <select class="form-select" id="editTheme" name="theme">
-                            <option value="blue">Bleu (Par défaut)</option>
-                            <option value="red">Rouge</option>
-                            <option value="mixed">Mix</option>
-                        </select>
+                                            <select class="form-select" id="editTheme" name="theme">
+                        <option value="blue">Bleu (Par défaut)</option>
+                        <option value="red">Rouge</option>
+                    </select>
                     </div>
                     <div class="first-time-actions">
                         <button type="button" class="btn-first-time btn-secondary-first" onclick="closeModal('profile')">Annuler</button>
@@ -3320,10 +3316,9 @@ $token = $_GET['token'] ?? '';
 
         // Appliquer thème préféré depuis backend quand dispo
         function applyTheme(theme){
-          document.body.classList.remove('theme-red','theme-mixed');
-          if (theme === 'red') document.body.classList.add('theme-red');
-          if (theme === 'mixed') document.body.classList.add('theme-mixed');
-        }
+  document.body.classList.remove('theme-red');
+  if (theme === 'red') document.body.classList.add('theme-red');
+}
 
         // Après chargement du profil, appliquer le thème
         const originalUpdateProfileDisplay = window.updateProfileDisplay;
@@ -3331,7 +3326,7 @@ $token = $_GET['token'] ?? '';
           if (typeof originalUpdateProfileDisplay === 'function') originalUpdateProfileDisplay(data);
           if (data && data.preferences && data.preferences.color_scheme){
             // Si le backend stocke color_scheme, on l'utilise sinon theme_preference si présent
-            const theme = (data.preferences.color_scheme === 'blue_red') ? 'mixed' : (data.preferences.color_scheme === 'red' ? 'red' : 'blue');
+            const theme = (data.preferences.color_scheme === 'red') ? 'red' : 'blue';
             applyTheme(theme);
           }
         };
@@ -3361,9 +3356,8 @@ $token = $_GET['token'] ?? '';
             });
           });
           // Marquer actif au chargement selon classe
-          if (document.body.classList.contains('theme-red')) setActive('red');
-          else if (document.body.classList.contains('theme-mixed')) setActive('mixed');
-          else setActive('blue');
+            if (document.body.classList.contains('theme-red')) setActive('red');
+  else setActive('blue');
         })();
     </script>
 </body>
