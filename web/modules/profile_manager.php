@@ -346,6 +346,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
             echo json_encode(['success' => $result]);
             break;
         
+        // --- WINS tracking ---
         case 'wins_session_start': {
             $db = new SQLite3(__DIR__ . '/../../database/database.sqlite');
             $stmt = $db->prepare('INSERT INTO user_activity_log (token, action, module, details, ip_address, user_agent, created_at) VALUES (:token, :action, :module, :details, :ip, :ua, CURRENT_TIMESTAMP)');
@@ -359,10 +360,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
             echo json_encode(['success' => (bool)$ok]);
             break;
         }
-        
         case 'wins_session_end': {
             $db = new SQLite3(__DIR__ . '/../../database/database.sqlite');
-            // calcul simple: enregistrer un log avec durée en secondes
             $data = json_decode(file_get_contents('php://input'), true) ?: [];
             $duration = isset($data['duration']) ? (int)$data['duration'] : 0;
             $stmt = $db->prepare('INSERT INTO user_activity_log (token, action, module, details, ip_address, user_agent, created_at) VALUES (:token, :action, :module, :details, :ip, :ua, CURRENT_TIMESTAMP)');
@@ -373,24 +372,97 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
             $stmt->bindValue(':ip', $_SERVER['REMOTE_ADDR'] ?? '');
             $stmt->bindValue(':ua', $_SERVER['HTTP_USER_AGENT'] ?? '');
             $ok = $stmt->execute();
-            // Mettre à jour user_stats.total_streaming_time
             if ($duration > 0) {
                 $db->exec("INSERT OR REPLACE INTO user_stats (token, total_streaming_time, updated_at) VALUES ('$token', COALESCE((SELECT total_streaming_time FROM user_stats WHERE token = '$token'), 0) + $duration, CURRENT_TIMESTAMP)");
             }
             echo json_encode(['success' => (bool)$ok]);
             break;
         }
-        
         case 'wins_today_summary': {
             $db = new SQLite3(__DIR__ . '/../../database/database.sqlite');
-            // Somme des durées loggées aujourd'hui pour wins
             $stmt = $db->prepare("SELECT SUM(CAST(json_extract(details, '$.duration_seconds') AS INTEGER)) AS total FROM user_activity_log WHERE token = :token AND module = 'wins' AND action = 'module_close' AND date(created_at) = date('now','localtime')");
             $stmt->bindValue(':token', $token, SQLITE3_TEXT);
             $res = $stmt->execute()->fetchArray(SQLITE3_ASSOC);
             echo json_encode(['wins_today_seconds' => (int)($res['total'] ?? 0)]);
             break;
         }
-            
+        
+        // --- TIMER tracking ---
+        case 'timer_session_start': {
+            $db = new SQLite3(__DIR__ . '/../../database/database.sqlite');
+            $stmt = $db->prepare('INSERT INTO user_activity_log (token, action, module, details, ip_address, user_agent, created_at) VALUES (:token, :action, :module, :details, :ip, :ua, CURRENT_TIMESTAMP)');
+            $stmt->bindValue(':token', $token, SQLITE3_TEXT);
+            $stmt->bindValue(':action', 'module_open');
+            $stmt->bindValue(':module', 'timer');
+            $stmt->bindValue(':details', json_encode(['session_id' => session_id()]));
+            $stmt->bindValue(':ip', $_SERVER['REMOTE_ADDR'] ?? '');
+            $stmt->bindValue(':ua', $_SERVER['HTTP_USER_AGENT'] ?? '');
+            $ok = $stmt->execute();
+            echo json_encode(['success' => (bool)$ok]);
+            break;
+        }
+        case 'timer_session_end': {
+            $db = new SQLite3(__DIR__ . '/../../database/database.sqlite');
+            $data = json_decode(file_get_contents('php://input'), true) ?: [];
+            $duration = isset($data['duration']) ? (int)$data['duration'] : 0;
+            $stmt = $db->prepare('INSERT INTO user_activity_log (token, action, module, details, ip_address, user_agent, created_at) VALUES (:token, :action, :module, :details, :ip, :ua, CURRENT_TIMESTAMP)');
+            $stmt->bindValue(':token', $token, SQLITE3_TEXT);
+            $stmt->bindValue(':action', 'module_close');
+            $stmt->bindValue(':module', 'timer');
+            $stmt->bindValue(':details', json_encode(['duration_seconds' => $duration]));
+            $stmt->bindValue(':ip', $_SERVER['REMOTE_ADDR'] ?? '');
+            $stmt->bindValue(':ua', $_SERVER['HTTP_USER_AGENT'] ?? '');
+            $ok = $stmt->execute();
+            echo json_encode(['success' => (bool)$ok]);
+            break;
+        }
+        case 'timer_today_summary': {
+            $db = new SQLite3(__DIR__ . '/../../database/database.sqlite');
+            $stmt = $db->prepare("SELECT SUM(CAST(json_extract(details, '$.duration_seconds') AS INTEGER)) AS total FROM user_activity_log WHERE token = :token AND module = 'timer' AND action = 'module_close' AND date(created_at) = date('now','localtime')");
+            $stmt->bindValue(':token', $token, SQLITE3_TEXT);
+            $res = $stmt->execute()->fetchArray(SQLITE3_ASSOC);
+            echo json_encode(['timer_today_seconds' => (int)($res['total'] ?? 0)]);
+            break;
+        }
+        
+        // --- BATTLE tracking ---
+        case 'battle_session_start': {
+            $db = new SQLite3(__DIR__ . '/../../database/database.sqlite');
+            $stmt = $db->prepare('INSERT INTO user_activity_log (token, action, module, details, ip_address, user_agent, created_at) VALUES (:token, :action, :module, :details, :ip, :ua, CURRENT_TIMESTAMP)');
+            $stmt->bindValue(':token', $token, SQLITE3_TEXT);
+            $stmt->bindValue(':action', 'module_open');
+            $stmt->bindValue(':module', 'battle');
+            $stmt->bindValue(':details', json_encode(['session_id' => session_id()]));
+            $stmt->bindValue(':ip', $_SERVER['REMOTE_ADDR'] ?? '');
+            $stmt->bindValue(':ua', $_SERVER['HTTP_USER_AGENT'] ?? '');
+            $ok = $stmt->execute();
+            echo json_encode(['success' => (bool)$ok]);
+            break;
+        }
+        case 'battle_session_end': {
+            $db = new SQLite3(__DIR__ . '/../../database/database.sqlite');
+            $data = json_decode(file_get_contents('php://input'), true) ?: [];
+            $duration = isset($data['duration']) ? (int)$data['duration'] : 0;
+            $stmt = $db->prepare('INSERT INTO user_activity_log (token, action, module, details, ip_address, user_agent, created_at) VALUES (:token, :action, :module, :details, :ip, :ua, CURRENT_TIMESTAMP)');
+            $stmt->bindValue(':token', $token, SQLITE3_TEXT);
+            $stmt->bindValue(':action', 'module_close');
+            $stmt->bindValue(':module', 'battle');
+            $stmt->bindValue(':details', json_encode(['duration_seconds' => $duration]));
+            $stmt->bindValue(':ip', $_SERVER['REMOTE_ADDR'] ?? '');
+            $stmt->bindValue(':ua', $_SERVER['HTTP_USER_AGENT'] ?? '');
+            $ok = $stmt->execute();
+            echo json_encode(['success' => (bool)$ok]);
+            break;
+        }
+        case 'battle_today_summary': {
+            $db = new SQLite3(__DIR__ . '/../../database/database.sqlite');
+            $stmt = $db->prepare("SELECT SUM(CAST(json_extract(details, '$.duration_seconds') AS INTEGER)) AS total FROM user_activity_log WHERE token = :token AND module = 'battle' AND action = 'module_close' AND date(created_at) = date('now','localtime')");
+            $stmt->bindValue(':token', $token, SQLITE3_TEXT);
+            $res = $stmt->execute()->fetchArray(SQLITE3_ASSOC);
+            echo json_encode(['battle_today_seconds' => (int)($res['total'] ?? 0)]);
+            break;
+        }
+        
         default:
             http_response_code(400);
             echo json_encode(['error' => 'Action non reconnue']);
