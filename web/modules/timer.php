@@ -798,6 +798,7 @@ function loadTimerState() {
         .then(response => response.json())
         .then(data => {
             if (data.success) {
+                console.log('📡 Données reçues de get_time.php:', data);
                 timerState = {
                     endTime: data.end_at,
                     paused: data.paused,
@@ -846,11 +847,12 @@ function updateDisplay() {
         const now = Math.floor(Date.now() / 1000);
         timeToShow = Math.max(0, timerState.endTime - now);
     } else if (timerState.paused) {
-        // Timer en pause
-        timeToShow = timerState.remaining;
+        // Timer en pause - utiliser duration directement
+        timeToShow = timerState.duration;
     }
     
     display.textContent = formatTime(timeToShow);
+    console.log('🔄 Affichage mis à jour:', formatTime(timeToShow), 'État:', timerState);
 }
 
 // Fonction de formatage du temps

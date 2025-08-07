@@ -60,8 +60,11 @@ $result = [
     'duration' => intval($seconds)
 ];
 
-// Si le timer est en pause mais a un endTime, calculer le temps restant
-if ($result['paused'] && $result['end_at']) {
+// Si le timer est en pause, utiliser directement la durée stockée
+if ($result['paused']) {
+    $result['duration'] = intval($seconds);
+} else if ($result['end_at']) {
+    // Si le timer est en cours, calculer le temps restant
     $now = time();
     $remaining = max(0, $result['end_at'] - $now);
     $result['duration'] = $remaining;
