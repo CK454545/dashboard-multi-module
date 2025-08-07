@@ -2089,6 +2089,31 @@ $token = $_GET['token'] ?? '';
             0% { transform: translateX(-100%); }
             100% { transform: translateX(133%); }
         }
+
+        /***** THEMES *****/
+        :root { /* valeurs par défaut (bleu) déjà définies plus haut */ }
+        body.theme-red {
+          --primary-blue: #FF0040;
+          --light-blue: #FF5570;
+          --gradient-blue: linear-gradient(135deg, #FF0040, #FF5570);
+          --gradient-mixed: linear-gradient(135deg, #FF0040 0%, #FF5570 100%);
+        }
+        body.theme-mixed {
+          --primary-blue: #00B4FF;
+          --primary-red: #FF0040;
+          --gradient-mixed: linear-gradient(135deg, #00B4FF 0%, #FF0040 100%);
+        }
+
+        /* Couche de verrouillage pour dashboard quand déconnecté */
+        .dashboard-lock-overlay{
+          position: fixed; inset: 0; z-index: 30000; backdrop-filter: blur(6px);
+          background: rgba(0,10,26,0.8); display: none; align-items: center; justify-content: center;
+        }
+        .dashboard-lock-overlay.show{ display: flex; }
+        .lock-card{ background: var(--bg-card); border:1px solid rgba(255,255,255,.15); padding: 24px; border-radius: 16px; text-align:center; max-width: 420px; }
+        .lock-card h3{ font-family: var(--font-primary); margin-bottom: 8px; }
+        .lock-card p{ color: var(--text-secondary); margin-bottom: 16px; }
+        .lock-card .btn{ display:inline-flex; align-items:center; gap:8px; padding:10px 16px; border-radius:10px; border:1px solid rgba(0,128,255,.3); background: var(--bg-card); color:#fff; text-decoration:none; }
     </style>
 </head>
 <body>
@@ -2180,7 +2205,7 @@ $token = $_GET['token'] ?? '';
                                     <i class="fas fa-history"></i>
                                     <span>Historique</span>
                                 </a>
-                                <a href="#" class="profile-action" onclick="showNotification('Déconnexion...', 'warning')">
+                                <a href="#" class="profile-action" onclick="logoutUser()">
                                     <i class="fas fa-sign-out-alt"></i>
                                     <span>Déconnexion</span>
                                 </a>
@@ -2669,6 +2694,14 @@ $token = $_GET['token'] ?? '';
         <div class="modal-body">
           <div id="historyList" style="display:flex; flex-direction:column; gap:10px;"></div>
         </div>
+      </div>
+    </div>
+
+    <div id="dashboardLock" class="dashboard-lock-overlay">
+      <div class="lock-card">
+        <h3>Session terminée</h3>
+        <p>Vous êtes déconnecté. Les modules sont bloqués.</p>
+        <a id="reloginBtn" class="btn" href="#"><i class="fas fa-key"></i>Se reconnecter</a>
       </div>
     </div>
 
@@ -3241,6 +3274,46 @@ $token = $_GET['token'] ?? '';
           `;
           openModal('history');
         }
+
+        // Déconnexion: invalide le token côté activité et verrouille l'UI sans recharger
+        async function logoutUser(){
+          try {
+            await fetch(`/modules/profile_manager.php?action=log_activity&token=${encodeURIComponent('<?= $token ?>')}`, {
+              method: 'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({action:'logout', module:'profile'})
+            });
+          } catch(e){}
+          // Lock UI
+          document.getElementById('dashboardLock').classList.add('show');
+          // Désactiver tous les liens de lancement de module
+          document.querySelectorAll('.btn-module').forEach(a=>{ a.classList.add('disabled'); a.setAttribute('tabindex','-1'); a.addEventListener('click', e=>e.preventDefault()); });
+          // Option: rediriger vers page d'accueil avec un token vide pour forcer re-login
+          const relogin = document.getElementById('reloginBtn');
+          const url = new URL(window.location.href); url.searchParams.set('token',''); relogin.href = url.toString();
+        }
+
+        // Appliquer thème préféré depuis backend quand dispo
+        function applyTheme(theme){
+          document.body.classList.remove('theme-red','theme-mixed');
+          if (theme === 'red') document.body.classList.add('theme-red');
+          if (theme === 'mixed') document.body.classList.add('theme-mixed');
+        }
+
+        // Après chargement du profil, appliquer le thème
+        const originalUpdateProfileDisplay = window.updateProfileDisplay;
+        window.updateProfileDisplay = function(data){
+          if (typeof originalUpdateProfileDisplay === 'function') originalUpdateProfileDisplay(data);
+          if (data && data.preferences && data.preferences.color_scheme){
+            // Si le backend stocke color_scheme, on l'utilise sinon theme_preference si présent
+            const theme = (data.preferences.color_scheme === 'blue_red') ? 'mixed' : (data.preferences.color_scheme === 'red' ? 'red' : 'blue');
+            applyTheme(theme);
+          }
+        };
+
+        // Lors de l'enregistrement du profil dans le modal, forcer application thème si choisi
+        (function(){
+          const themeSelect = document.getElementById('editTheme');
+          if (themeSelect){ themeSelect.addEventListener('change', ()=>applyTheme(themeSelect.value)); }
+        })();
     </script>
 </body>
 </html>
