@@ -60,23 +60,39 @@ function requireValidToken() {
 }
 
 /**
- * Fonction pour vérifier l'accès au module timer (en cours de réparation)
+ * Fonction pour vérifier l'accès au module timer
  */
 function checkTimerAccess($token) {
-    // Seul le token dev peut accéder au module timer
-    $devToken = 'dev_token_2024';
+    // Le module timer est maintenant débloqué pour tous les tokens valides
+    // Vérifier si c'est un token de développement local
+    $localTokens = ['dev_token_2024'];
     
-    // Vérifier si c'est le token de développement local
-    if ($token === $devToken) {
+    if (in_array($token, $localTokens)) {
         return true;
     }
     
-    // Bloquer tous les autres tokens (même les tokens de production valides)
-    http_response_code(503);
-    echo json_encode([
-        'error' => 'Module en cours de réparation',
-        'message' => 'Le module Timer est temporairement indisponible pour maintenance. Seuls les développeurs peuvent y accéder.'
-    ]);
+    // Vérifier si c'est un token de production valide
+    $sqlitePath = __DIR__ . '/../../database/database.db';
+    if (file_exists($sqlitePath)) {
+        try {
+            $db = new SQLite3($sqlitePath);
+            $stmt = $db->prepare('SELECT discord_id FROM users WHERE token = ?');
+            $stmt->bindValue(1, $token, SQLITE3_TEXT);
+            $result = $stmt->execute();
+            $user = $result->fetchArray(SQLITE3_ASSOC);
+            
+            if ($user) {
+                return true; // Token valide, accès autorisé
+            }
+            
+        } catch (Exception $e) {
+            error_log("Erreur SQLite checkTimerAccess: " . $e->getMessage());
+        }
+    }
+    
+    // Token invalide
+    http_response_code(401);
+    echo json_encode(['error' => 'Token invalide pour le module Timer']);
     exit;
 }
 
