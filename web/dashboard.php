@@ -434,28 +434,28 @@ $token = $_GET['token'] ?? '';
 
         /* ==================== PROFILE SYSTEM MFA CONNECT ==================== */
         .profile-dropdown {
-            position: absolute;
-            top: 100%;
-            right: 0;
+            position: fixed;
+            top: 80px;
+            right: 40px;
             background: var(--bg-card);
             border: 1px solid rgba(0, 128, 255, 0.3);
             border-radius: 15px;
             backdrop-filter: blur(20px);
             padding: 1.5rem;
-            min-width: 280px;
+            min-width: 320px;
             box-shadow: var(--shadow-card);
             opacity: 0;
             visibility: hidden;
             transform: translateY(-10px);
             transition: all 0.3s ease;
             z-index: 10050;
-            margin-top: 0.5rem;
         }
 
         .profile-dropdown.active {
             opacity: 1;
             visibility: visible;
             transform: translateY(0);
+            pointer-events: auto;
         }
 
         .profile-header {
@@ -2146,9 +2146,9 @@ $token = $_GET['token'] ?? '';
                         <!-- Profile Dropdown -->
                         <div class="profile-dropdown" id="profileDropdown">
                             <div class="profile-header">
-                                <div class="profile-avatar">
-                                    <?php echo strtoupper(substr($user['name'] ?? 'U', 0, 1)); ?>
-                                </div>
+                                                <div class="profile-avatar" id="profileAvatar">
+                    <?php echo strtoupper(substr($user['name'] ?? 'U', 0, 1)); ?>
+                </div>
                                 <div class="profile-details">
                                     <h3><?php echo htmlspecialchars($user['name'] ?? 'Utilisateur'); ?></h3>
                                     <p>Token: <?php echo substr($token, 0, 8) . '...'; ?></p>
@@ -2643,7 +2643,7 @@ $token = $_GET['token'] ?? '';
             
             // Fermer le dropdown en cliquant à l'extérieur
             document.addEventListener('click', function closeProfile(e) {
-                if (!e.target.closest('.user-section')) {
+                if (!e.target.closest('.user-section') && !e.target.closest('#profileDropdown')) {
                     dropdown.classList.remove('active');
                     document.removeEventListener('click', closeProfile);
                 }
@@ -2673,7 +2673,7 @@ $token = $_GET['token'] ?? '';
         // Mettre à jour l'affichage du profil
         function updateProfileDisplay(data) {
             // Mettre à jour l'avatar
-            const avatar = document.querySelector('.profile-avatar');
+            const avatar = document.getElementById('profileAvatar');
             if (avatar) {
                 avatar.textContent = data.display_name.charAt(0).toUpperCase();
             }
