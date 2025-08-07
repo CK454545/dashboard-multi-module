@@ -36,68 +36,67 @@ try {
     exit;
 }
 
-// Récupérer l'état actuel du timer depuis votre API existante
-// Utiliser file_get_contents si curl n'est pas disponible
-$apiUrl = "http://" . $_SERVER['HTTP_HOST'] . "/api.php?token=" . urlencode($token) . "&module=timer&action=get";
+// Accès direct à la base de données SQLite
+$dbPath = __DIR__ . '/../../database/database.db';
+$db = new SQLite3($dbPath);
 
-// Essayer d'abord avec curl
-if (function_exists('curl_init')) {
-    $ch = curl_init();
-    curl_setopt($ch, CURLOPT_URL, $apiUrl);
-    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-    curl_setopt($ch, CURLOPT_TIMEOUT, 5);
-    $response = curl_exec($ch);
-    $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-    curl_close($ch);
-} else {
-    // Fallback avec file_get_contents
-    $context = stream_context_create([
-        'http' => [
-            'timeout' => 5,
-            'method' => 'GET'
-        ]
-    ]);
-    $response = @file_get_contents($apiUrl, false, $context);
-    $httpCode = $response !== false ? 200 : 500;
+// Récupérer l'état actuel du timer directement depuis la base de données
+$seconds = getValue($db, $token, 'timer', 'seconds') ?? '0';
+$isRunning = getValue($db, $token, 'timer', 'isRunning') ?? 'false';
+$isPaused = getValue($db, $token, 'timer', 'isPaused') ?? 'false';
+$endTime = getValue($db, $token, 'timer', 'endTime') ?? null;
+
+// Si le timer est en cours et pas d'endTime, le calculer
+if ($isRunning === 'true' && !$endTime) {
+    $endTime = time() + intval($seconds);
+    setValue($db, $token, 'timer', 'endTime', strval($endTime));
 }
-
-if ($httpCode !== 200 || !$response) {
-    // Si l'API ne répond pas, retourner un état par défaut
-    echo json_encode([
-        'success' => true,
-        'end_at' => null,
-        'paused' => true,
-        'duration' => 0
-    ]);
-    exit;
-}
-
-$data = json_decode($response, true);
 
 // Formater la réponse au format Alka
 $result = [
     'success' => true,
-    'end_at' => null,
-    'paused' => true,
-    'duration' => 0
+    'end_at' => $endTime ? intval($endTime) : null,
+    'paused' => !($isRunning === 'true'),
+    'duration' => intval($seconds)
 ];
 
-if ($data && isset($data['success']) && $data['success'] && isset($data['data'])) {
-    $timerData = $data['data'];
-    
-    // Convertir les données de votre format au format Alka
-    $result['end_at'] = $timerData['endTime'] ?? null;
-    $result['paused'] = !($timerData['isRunning'] ?? false);
-    $result['duration'] = $timerData['duration'] ?? 0;
-    
-    // Si le timer est en pause mais a un endTime, on peut calculer le temps restant
-    if ($result['paused'] && $result['end_at']) {
-        $now = time();
-        $remaining = max(0, $result['end_at'] - $now);
-        $result['duration'] = $remaining;
-    }
+// Si le timer est en pause mais a un endTime, calculer le temps restant
+if ($result['paused'] && $result['end_at']) {
+    $now = time();
+    $remaining = max(0, $result['end_at'] - $now);
+    $result['duration'] = $remaining;
 }
+
+// Fermer la connexion à la base de données
+$db->close();
 
 // Retourner la réponse JSON
 echo json_encode($result);
+
+// Fonctions utilitaires pour SQLite
+function getValue($db, $token, $module, $key) {
+    $stmt = $db->prepare("SELECT value FROM user_data WHERE token = ? AND module = ? AND key = ?");
+    $stmt->bindValue(1, $token, SQLITE3_TEXT);
+    $stmt->bindValue(2, $module, SQLITE3_TEXT);
+    $stmt->bindValue(3, $key, SQLITE3_TEXT);
+    $result = $stmt->execute();
+    
+    if ($result) {
+        $row = $result->fetchArray(SQLITE3_ASSOC);
+        return $row ? $row['value'] : null;
+    }
+    return null;
+}
+
+function setValue($db, $token, $module, $key, $value) {
+    $stmt = $db->prepare("
+        INSERT OR REPLACE INTO user_data (token, module, key, value, updated_at) 
+        VALUES (?, ?, ?, ?, datetime('now'))
+    ");
+    $stmt->bindValue(1, $token, SQLITE3_TEXT);
+    $stmt->bindValue(2, $module, SQLITE3_TEXT);
+    $stmt->bindValue(3, $key, SQLITE3_TEXT);
+    $stmt->bindValue(4, $value, SQLITE3_TEXT);
+    return $stmt->execute();
+}
 ?>
