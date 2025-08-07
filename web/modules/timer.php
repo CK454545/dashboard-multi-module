@@ -808,305 +808,7 @@ function initializeSimpleMode() {
 
 async function fetchSimpleTime() {
   try {
-    const el = document.getElementById('timer-display');
-  if (el) {
-    el.textContent = formatTime(remaining);
-  }
-}
-
-function forceDisplay() {
-  let remaining = 0;
-  
-  if (timerState.isRunning && timerState.endTime) {
-    const now = Math.floor(Date.now() / 1000);
-    remaining = Math.max(0, timerState.endTime - now);
-  } else {
-    remaining = timerState.duration;
-  }
-  
-  const el = document.getElementById('timer-display');
-  if (el) {
-    el.textContent = formatTime(remaining);
-  }
-}
-
-function formatTime(totalSeconds) {
-  totalSeconds = parseInt(totalSeconds) || 0;
-  totalSeconds = Math.max(0, totalSeconds);
-  
-  const hours = Math.floor(totalSeconds / 3600);
-  const minutes = Math.floor((totalSeconds % 3600) / 60);
-  const seconds = totalSeconds % 60;
-  
-  return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
-}
-
-function initializeForTikTok() {
-  if (timerState.duration === 0 && !timerState.isRunning) {
-    timerState.duration = 0;
-    forceDisplay();
-    saveState();
-  }
-}
-
-function startRealtimeSync() {
-  setInterval(syncState, 1000);
-  syncState();
-}
-
-async function syncState() {
-  if (!TIMER_CONFIG.isRealtime) return;
-  
-  try {
-    const response = await fetch(`/api.php?token=${encodeURIComponent(TIMER_CONFIG.token)}&module=timer&action=get`, { 
-      cache: 'no-store' 
-    });
-    const data = await response.json();
-    
-    if (data.success && data.data) {
-      timerState.endTime = data.data.endTime || null;
-      timerState.duration = data.data.duration || 0;
-      timerState.isRunning = !!data.data.isRunning;
-      timerState.isPaused = !!data.data.isPaused;
-      
-      forceDisplay();
-      
-      if (timerState.isRunning && !interval) {
-        interval = setInterval(updateDisplay, 1000);
-      } else if (!timerState.isRunning && interval) {
-        clearInterval(interval);
-        interval = null;
-      }
-    }
-  } catch (err) {
-    console.error('❌ Erreur sync:', err);
-  }
-}
-
-// ==================== ACTIONS TIMER ====================
-async function startTimer(save = true) {
-  if (timerState.isRunning) return;
-  
-  const now = Math.floor(Date.now() / 1000);
-  
-  // S'assurer qu'on a une durée avant de démarrer
-  if (timerState.duration <= 0) {
-    console.warn('⚠️ Impossible de démarrer: durée = 0');
-    return;
-  }
-  
-  if (timerState.isPaused && timerState.endTime) {
-    // Reprendre depuis pause : recalculer endTime basé sur le temps restant
-    const remaining = timerState.duration;
-    timerState.endTime = now + remaining;
-    timerState.isRunning = true;
-    timerState.isPaused = false;
-  } else {
-    // Nouveau timer
-    timerState.endTime = now + timerState.duration;
-    timerState.isRunning = true;
-    timerState.isPaused = false;
-  }
-  
-  if (save) await saveState();
-  
-  if (interval) clearInterval(interval);
-  interval = setInterval(updateDisplay, 1000);
-  updateDisplay();
-}
-
-async function pauseTimer() {
-  if (!timerState.isRunning) return;
-  
-  // Calculer le temps restant et le sauvegarder dans duration
-  if (timerState.endTime) {
-    const now = Math.floor(Date.now() / 1000);
-    timerState.duration = Math.max(0, timerState.endTime - now);
-  }
-  
-  timerState.isRunning = false;
-  timerState.isPaused = true;
-  
-  if (interval) {
-    clearInterval(interval);
-    interval = null;
-  }
-  
-  updateDisplay();
-  await saveState();
-}
-
-async function resetTimer() {
-  timerState.endTime = null;
-  timerState.duration = 0;
-  timerState.isRunning = false;
-  timerState.isPaused = false;
-  
-  if (interval) {
-    clearInterval(interval);
-    interval = null;
-  }
-  
-  updateDisplay();
-  await saveState();
-}
-
-async function handleTimeAction(event, action, seconds) {
-  event?.preventDefault();
-  
-  if (action === 'add') {
-    // Ajouter du temps
-    timerState.duration += seconds;
-    
-    if (timerState.isRunning && timerState.endTime) {
-      // Si le timer tourne, ajuster endTime
-      timerState.endTime += seconds;
-    }
-  } else if (action === 'subtract') {
-    // Soustraire du temps
-    if (timerState.isRunning && timerState.endTime) {
-      // Si le timer tourne, ajuster endTime
-      const now = Math.floor(Date.now() / 1000);
-      const newEndTime = timerState.endTime - seconds;
-      
-      if (newEndTime > now) {
-        timerState.endTime = newEndTime;
-        timerState.duration = Math.max(0, newEndTime - now);
-      } else {
-        // Si on soustrait trop, arrêter le timer
-        await pauseTimer();
-        timerState.duration = 0;
-      }
-    } else {
-      // Timer pas démarré, ajuster duration directement
-      timerState.duration = Math.max(0, timerState.duration - seconds);
-    }
-  }
-  
-  updateDisplay();
-  await saveState();
-}
-
-async function saveState() {
-  if (TIMER_CONFIG.useSimpleMode) {
-    // En mode simple, on sauvegarde quand même pour les contrôles
-    // mais la synchronisation principale vient de get_time.php
-  }
-  
-  try {
-    const stateData = {
-      endTime: timerState.endTime,
-      duration: timerState.duration,
-      isRunning: timerState.isRunning,
-      isPaused: timerState.isPaused
-    };
-    
-    await fetch(`/api.php?token=${encodeURIComponent(TIMER_CONFIG.token)}&module=timer&action=set&value=${encodeURIComponent(JSON.stringify(stateData))}`, {
-      method: 'GET',
-      cache: 'no-store'
-    });
-  } catch (err) {
-    console.error('❌ Erreur sauvegarde:', err);
-  }
-}
-
-// ==================== FONCTIONS GLOBALES ====================
-window.startTimerAction = async function() {
-  await startTimer(true);
-  updateDisplay();
-};
-
-window.pauseTimerAction = async function() {
-  await pauseTimer();
-  updateDisplay();
-};
-
-window.handleTimeAction = handleTimeAction;
-window.resetTimer = resetTimer;
-
-window.addManualTime = function() {
-  const hours = parseInt(document.getElementById('manual-hours')?.value) || 0;
-  const minutes = parseInt(document.getElementById('manual-minutes')?.value) || 0;
-  const seconds = parseInt(document.getElementById('manual-seconds')?.value) || 0;
-  const totalSeconds = hours * 3600 + minutes * 60 + seconds;
-  
-  if (totalSeconds > 0) {
-    timerState.duration += totalSeconds;
-    
-    if (timerState.isRunning && timerState.endTime) {
-      timerState.endTime += totalSeconds;
-    }
-    
-    updateDisplay();
-    saveState();
-    
-    // Réinitialiser les champs
-    document.getElementById('manual-hours').value = '';
-    document.getElementById('manual-minutes').value = '';
-    document.getElementById('manual-seconds').value = '';
-  }
-};
-
-window.subtractManualTime = function() {
-  const hours = parseInt(document.getElementById('manual-hours')?.value) || 0;
-  const minutes = parseInt(document.getElementById('manual-minutes')?.value) || 0;
-  const seconds = parseInt(document.getElementById('manual-seconds')?.value) || 0;
-  const totalSeconds = hours * 3600 + minutes * 60 + seconds;
-  
-  if (totalSeconds > 0) {
-    if (timerState.isRunning && timerState.endTime) {
-      const now = Math.floor(Date.now() / 1000);
-      const newEndTime = timerState.endTime - totalSeconds;
-      
-      if (newEndTime > now) {
-        timerState.endTime = newEndTime;
-        timerState.duration = Math.max(0, newEndTime - now);
-      } else {
-        pauseTimer();
-        timerState.duration = 0;
-      }
-    } else {
-      timerState.duration = Math.max(0, timerState.duration - totalSeconds);
-    }
-    
-    updateDisplay();
-    saveState();
-    
-    // Réinitialiser les champs
-    document.getElementById('manual-hours').value = '';
-    document.getElementById('manual-minutes').value = '';
-    document.getElementById('manual-seconds').value = '';
-  }
-};
-
-// ==================== DEBUG & DIAGNOSTICS ====================
-window.debugTimer = function() {
-  console.group('🔍 Timer Debug');
-  console.log('Mode:', TIMER_CONFIG.useSimpleMode ? 'Simple' : 'Standard');
-  console.log('État:', timerState);
-  console.log('Config:', TIMER_CONFIG);
-  console.log('Interval actif:', !!interval);
-  console.log('Sync actif:', !!syncInterval);
-  console.log('Affichage:', document.getElementById('timer-display')?.textContent);
-  console.groupEnd();
-};
-
-window.switchToSimpleMode = function() {
-  console.log('🔄 Passage en mode Simple...');
-  TIMER_CONFIG.useSimpleMode = true;
-  if (syncInterval) clearInterval(syncInterval);
-  initializeSimpleMode();
-};
-
-window.switchToStandardMode = function() {
-  console.log('🔄 Passage en mode Standard...');
-  TIMER_CONFIG.useSimpleMode = false;
-  if (syncInterval) clearInterval(syncInterval);
-  initializeStandardMode();
-};
-
-console.log('✨ Timer chargé - Mode:', TIMER_CONFIG.useSimpleMode ? 'Simple' : 'Standard');
-console.log('💡 Commandes debug: debugTimer(), switchToSimpleMode(), switchToStandardMode()'); response = await fetch(`get_time.php?token=${TIMER_CONFIG.token}`, {
+    const response = await fetch(`get_time.php?token=${TIMER_CONFIG.token}`, {
       cache: 'no-store',
       headers: {
         'Accept': 'application/json'
@@ -1423,7 +1125,305 @@ function updateDisplay() {
     remaining = timerState.duration;
   }
   
-  const
+  const el = document.getElementById('timer-display');
+  if (el) {
+    el.textContent = formatTime(remaining);
+  }
+}
+
+function forceDisplay() {
+  let remaining = 0;
+  
+  if (timerState.isRunning && timerState.endTime) {
+    const now = Math.floor(Date.now() / 1000);
+    remaining = Math.max(0, timerState.endTime - now);
+  } else {
+    remaining = timerState.duration;
+  }
+  
+  const el = document.getElementById('timer-display');
+  if (el) {
+    el.textContent = formatTime(remaining);
+  }
+}
+
+function formatTime(totalSeconds) {
+  totalSeconds = parseInt(totalSeconds) || 0;
+  totalSeconds = Math.max(0, totalSeconds);
+  
+  const hours = Math.floor(totalSeconds / 3600);
+  const minutes = Math.floor((totalSeconds % 3600) / 60);
+  const seconds = totalSeconds % 60;
+  
+  return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+}
+
+function initializeForTikTok() {
+  if (timerState.duration === 0 && !timerState.isRunning) {
+    timerState.duration = 0;
+    forceDisplay();
+    saveState();
+  }
+}
+
+function startRealtimeSync() {
+  setInterval(syncState, 1000);
+  syncState();
+}
+
+async function syncState() {
+  if (!TIMER_CONFIG.isRealtime) return;
+  
+  try {
+    const response = await fetch(`/api.php?token=${encodeURIComponent(TIMER_CONFIG.token)}&module=timer&action=get`, { 
+      cache: 'no-store' 
+    });
+    const data = await response.json();
+    
+    if (data.success && data.data) {
+      timerState.endTime = data.data.endTime || null;
+      timerState.duration = data.data.duration || 0;
+      timerState.isRunning = !!data.data.isRunning;
+      timerState.isPaused = !!data.data.isPaused;
+      
+      forceDisplay();
+      
+      if (timerState.isRunning && !interval) {
+        interval = setInterval(updateDisplay, 1000);
+      } else if (!timerState.isRunning && interval) {
+        clearInterval(interval);
+        interval = null;
+      }
+    }
+  } catch (err) {
+    console.error('❌ Erreur sync:', err);
+  }
+}
+
+// ==================== ACTIONS TIMER ====================
+async function startTimer(save = true) {
+  if (timerState.isRunning) return;
+  
+  const now = Math.floor(Date.now() / 1000);
+  
+  // S'assurer qu'on a une durée avant de démarrer
+  if (timerState.duration <= 0) {
+    console.warn('⚠️ Impossible de démarrer: durée = 0');
+    return;
+  }
+  
+  if (timerState.isPaused && timerState.endTime) {
+    // Reprendre depuis pause : recalculer endTime basé sur le temps restant
+    const remaining = timerState.duration;
+    timerState.endTime = now + remaining;
+    timerState.isRunning = true;
+    timerState.isPaused = false;
+  } else {
+    // Nouveau timer
+    timerState.endTime = now + timerState.duration;
+    timerState.isRunning = true;
+    timerState.isPaused = false;
+  }
+  
+  if (save) await saveState();
+  
+  if (interval) clearInterval(interval);
+  interval = setInterval(updateDisplay, 1000);
+  updateDisplay();
+}
+
+async function pauseTimer() {
+  if (!timerState.isRunning) return;
+  
+  // Calculer le temps restant et le sauvegarder dans duration
+  if (timerState.endTime) {
+    const now = Math.floor(Date.now() / 1000);
+    timerState.duration = Math.max(0, timerState.endTime - now);
+  }
+  
+  timerState.isRunning = false;
+  timerState.isPaused = true;
+  
+  if (interval) {
+    clearInterval(interval);
+    interval = null;
+  }
+  
+  updateDisplay();
+  await saveState();
+}
+
+async function resetTimer() {
+  timerState.endTime = null;
+  timerState.duration = 0;
+  timerState.isRunning = false;
+  timerState.isPaused = false;
+  
+  if (interval) {
+    clearInterval(interval);
+    interval = null;
+  }
+  
+  updateDisplay();
+  await saveState();
+}
+
+async function handleTimeAction(event, action, seconds) {
+  event?.preventDefault();
+  
+  if (action === 'add') {
+    // Ajouter du temps
+    timerState.duration += seconds;
+    
+    if (timerState.isRunning && timerState.endTime) {
+      // Si le timer tourne, ajuster endTime
+      timerState.endTime += seconds;
+    }
+  } else if (action === 'subtract') {
+    // Soustraire du temps
+    if (timerState.isRunning && timerState.endTime) {
+      // Si le timer tourne, ajuster endTime
+      const now = Math.floor(Date.now() / 1000);
+      const newEndTime = timerState.endTime - seconds;
+      
+      if (newEndTime > now) {
+        timerState.endTime = newEndTime;
+        timerState.duration = Math.max(0, newEndTime - now);
+      } else {
+        // Si on soustrait trop, arrêter le timer
+        await pauseTimer();
+        timerState.duration = 0;
+      }
+    } else {
+      // Timer pas démarré, ajuster duration directement
+      timerState.duration = Math.max(0, timerState.duration - seconds);
+    }
+  }
+  
+  updateDisplay();
+  await saveState();
+}
+
+async function saveState() {
+  if (TIMER_CONFIG.useSimpleMode) {
+    // En mode simple, on sauvegarde quand même pour les contrôles
+    // mais la synchronisation principale vient de get_time.php
+  }
+  
+  try {
+    const stateData = {
+      endTime: timerState.endTime,
+      duration: timerState.duration,
+      isRunning: timerState.isRunning,
+      isPaused: timerState.isPaused
+    };
+    
+    await fetch(`/api.php?token=${encodeURIComponent(TIMER_CONFIG.token)}&module=timer&action=set&value=${encodeURIComponent(JSON.stringify(stateData))}`, {
+      method: 'GET',
+      cache: 'no-store'
+    });
+  } catch (err) {
+    console.error('❌ Erreur sauvegarde:', err);
+  }
+}
+
+// ==================== FONCTIONS GLOBALES ====================
+window.startTimerAction = async function() {
+  await startTimer(true);
+  updateDisplay();
+};
+
+window.pauseTimerAction = async function() {
+  await pauseTimer();
+  updateDisplay();
+};
+
+window.handleTimeAction = handleTimeAction;
+window.resetTimer = resetTimer;
+
+window.addManualTime = function() {
+  const hours = parseInt(document.getElementById('manual-hours')?.value) || 0;
+  const minutes = parseInt(document.getElementById('manual-minutes')?.value) || 0;
+  const seconds = parseInt(document.getElementById('manual-seconds')?.value) || 0;
+  const totalSeconds = hours * 3600 + minutes * 60 + seconds;
+  
+  if (totalSeconds > 0) {
+    timerState.duration += totalSeconds;
+    
+    if (timerState.isRunning && timerState.endTime) {
+      timerState.endTime += totalSeconds;
+    }
+    
+    updateDisplay();
+    saveState();
+    
+    // Réinitialiser les champs
+    if (document.getElementById('manual-hours')) document.getElementById('manual-hours').value = '';
+    if (document.getElementById('manual-minutes')) document.getElementById('manual-minutes').value = '';
+    if (document.getElementById('manual-seconds')) document.getElementById('manual-seconds').value = '';
+  }
+};
+
+window.subtractManualTime = function() {
+  const hours = parseInt(document.getElementById('manual-hours')?.value) || 0;
+  const minutes = parseInt(document.getElementById('manual-minutes')?.value) || 0;
+  const seconds = parseInt(document.getElementById('manual-seconds')?.value) || 0;
+  const totalSeconds = hours * 3600 + minutes * 60 + seconds;
+  
+  if (totalSeconds > 0) {
+    if (timerState.isRunning && timerState.endTime) {
+      const now = Math.floor(Date.now() / 1000);
+      const newEndTime = timerState.endTime - totalSeconds;
+      
+      if (newEndTime > now) {
+        timerState.endTime = newEndTime;
+        timerState.duration = Math.max(0, newEndTime - now);
+      } else {
+        pauseTimer();
+        timerState.duration = 0;
+      }
+    } else {
+      timerState.duration = Math.max(0, timerState.duration - totalSeconds);
+    }
+    
+    updateDisplay();
+    saveState();
+    
+    // Réinitialiser les champs
+    if (document.getElementById('manual-hours')) document.getElementById('manual-hours').value = '';
+    if (document.getElementById('manual-minutes')) document.getElementById('manual-minutes').value = '';
+    if (document.getElementById('manual-seconds')) document.getElementById('manual-seconds').value = '';
+  }
+};
+
+// ==================== DEBUG & DIAGNOSTICS ====================
+window.debugTimer = function() {
+  console.group('🔍 Timer Debug');
+  console.log('Mode:', TIMER_CONFIG.useSimpleMode ? 'Simple' : 'Standard');
+  console.log('État:', timerState);
+  console.log('Config:', TIMER_CONFIG);
+  console.log('Interval actif:', !!interval);
+  console.log('Sync actif:', !!syncInterval);
+  console.log('Affichage:', document.getElementById('timer-display')?.textContent);
+  console.groupEnd();
+};
+
+window.switchToSimpleMode = function() {
+  console.log('🔄 Passage en mode Simple...');
+  TIMER_CONFIG.useSimpleMode = true;
+  if (syncInterval) clearInterval(syncInterval);
+  initializeSimpleMode();
+};
+
+window.switchToStandardMode = function() {
+  console.log('🔄 Passage en mode Standard...');
+  TIMER_CONFIG.useSimpleMode = false;
+  if (syncInterval) clearInterval(syncInterval);
+  initializeStandardMode();
+};
+
+console.log('✨ Timer chargé - Mode:', TIMER_CONFIG.useSimpleMode ? 'Simple' : 'Standard');
+console.log('💡 Commandes debug: debugTimer(), switchToSimpleMode(), switchToStandardMode()');
 </script>
 </body>
 </html> 
