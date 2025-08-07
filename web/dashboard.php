@@ -426,9 +426,18 @@ $token = $_GET['token'] ?? '';
         .user-section {
             display: flex;
             align-items: center;
-            gap: 1rem;
+            gap: 0.75rem;
             position: relative;
             z-index: 20000;
+        }
+        .user-avatar {
+            width: 36px; height: 36px; border-radius: 50%;
+            background: var(--gradient-blue); color:#fff;
+            display:flex; align-items:center; justify-content:center;
+            font-family: var(--font-primary); font-weight:700; font-size: 0.95rem;
+            border:1px solid rgba(255,255,255,.15);
+            overflow:hidden; flex:0 0 36px;
+            background-size: cover; background-position: center;
         }
 
         .user-info {
@@ -2200,10 +2209,13 @@ $token = $_GET['token'] ?? '';
                         </div>
                     </div>
                     
-                    <div class="user-section">
-                        <div class="user-info" onclick="openProfileModal()">
+                    <div class="user-section" onclick="openProfileModal()">
+                        <div id="headerAvatar" class="user-avatar">
+                            <?php echo strtoupper(substr($user['name'] ?? 'U', 0, 1)); ?>
+                        </div>
+                        <div class="user-info">
                             <span class="welcome-text">Bienvenue</span>
-                            <span class="user-name"><?php echo htmlspecialchars($user['name'] ?? 'Utilisateur'); ?></span>
+                            <span class="user-name" id="headerUserName"><?php echo htmlspecialchars($user['name'] ?? 'Utilisateur'); ?></span>
                         </div>
                     </div>
                     <!-- Profil: ouverture directe en modal, dropdown supprimé -->
@@ -2789,7 +2801,25 @@ $token = $_GET['token'] ?? '';
             // Mettre à jour l'avatar
             const avatar = document.getElementById('profileAvatar');
             if (avatar) {
-                avatar.textContent = data.display_name.charAt(0).toUpperCase();
+                if (data.avatar) {
+                    avatar.style.backgroundImage = `url(${data.avatar})`;
+                    avatar.textContent = '';
+                } else {
+                    avatar.style.backgroundImage = '';
+                    avatar.textContent = data.display_name.charAt(0).toUpperCase();
+                }
+            }
+            // Header avatar + name
+            const headerAvatar = document.getElementById('headerAvatar');
+            const headerName = document.getElementById('headerUserName');
+            if (headerAvatar) {
+                if (data.avatar) { headerAvatar.style.backgroundImage = `url(${data.avatar})`; headerAvatar.textContent=''; }
+                else { headerAvatar.style.backgroundImage=''; headerAvatar.textContent = data.display_name.charAt(0).toUpperCase(); }
+            }
+            if (headerName) headerName.textContent = data.display_name;
+            // Sauver le thème s'il a changé via le modal
+            if (data.preferences && data.preferences.color_scheme) {
+                try { fetch(`/modules/profile_manager.php?action=update_preferences&token=${encodeURIComponent('<?= $token ?>')}`, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ color_scheme: data.preferences.color_scheme }) }); } catch(e){}
             }
 
             // Mettre à jour les statistiques
@@ -3439,10 +3469,10 @@ $token = $_GET['token'] ?? '';
           function spawnFly(card, text, cls){ if(!card) return; const layer=card.querySelector('.fly-layer'); if(!layer) return; const el=document.createElement('div'); el.className=`fly-number ${cls||''}`; el.textContent=text; const rect=layer.getBoundingClientRect(); const x=Math.random()*(rect.width-60)+30; const y=Math.random()*(rect.height-60)+30; const dx=(Math.random()*60-30); const rot=(Math.random()*40-20)+'deg'; el.style.setProperty('--x', x+'px'); el.style.setProperty('--y', y+'px'); el.style.setProperty('--dx', dx+'px'); el.style.setProperty('--rot', rot); el.style.left=0; el.style.top=0; el.style.animation='flyUp3D 1.2s ease-out forwards'; layer.appendChild(el); setTimeout(()=>el.remove(),1400); }
 
           // Wins demo state
-          const winsValueEl = document.getElementById('winsPreviewValue');
-          let wins = 0; let mult = 1; let multActive = false;
-          function updateWins(){ if(winsValueEl) winsValueEl.textContent = String(wins); }
-          setInterval(()=>{ const change = [ -5,-2,-1, +1,+2,+5,+10 ][Math.floor(Math.random()*7)]; wins = Math.max(0, wins + change); updateWins(); spawnFly(winsCard, `${change>0?'+':''}${change} WIN`, change>=0?'win-pos':'win-neg'); if(Math.random()<0.2){ multActive = !multActive; mult = [1,2,3][Math.floor(Math.random()*3)]; if(multActive && mult>1) spawnFly(winsCard, `x${mult} ACTIF`, 'win-multi'); } }, 1200);
+            const winsValueEl = document.getElementById('winsPreviewValue');
+  let wins = 0; let mult = 1; let multActive = false;
+  function updateWins(){ if(winsValueEl){ winsValueEl.textContent = String(wins); } }
+  setInterval(()=>{ const change = [ -5,-2,-1, +1,+2,+5,+10 ][Math.floor(Math.random()*7)]; wins = Math.max(0, wins + change); updateWins(); spawnFly(winsCard, `${change>0?'+':''}${change} WIN`, change>=0?'win-pos':'win-neg'); if(Math.random()<0.25){ multActive = !multActive; mult = [1,2,3][Math.floor(Math.random()*3)]; if(multActive && mult>1){ spawnFly(winsCard, `x${mult} ACTIF`, 'win-multi'); wins += mult; updateWins(); } } }, 1200);
 
           // Timer demo state
           const timerValueEl = document.querySelector(".module-card[data-module='timer'] .preview-value");

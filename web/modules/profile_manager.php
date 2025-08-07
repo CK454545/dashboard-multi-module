@@ -18,6 +18,10 @@ class ProfileManager {
 
 
 
+
+        $this->ensureSchema();
+
+
         $this->ensureSchema();
 
 
