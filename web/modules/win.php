@@ -7,6 +7,8 @@ $user = requireValidToken();
 
 $control = isset($_GET['control']) && $_GET['control'] === 'true';
 $token = $_GET['token'] ?? '';
+
+// Tracking ouverture/fermeture du module Wins
 ?>
 <!DOCTYPE html>
 <html lang="fr">
@@ -1715,6 +1717,23 @@ $token = $_GET['token'] ?? '';
             }
         }, 100); // Réduit à 100ms pour une initialisation plus rapide
         <?php endif; ?>
+    </script>
+    <script>
+    // Tracking de durée d'utilisation du module Wins
+    (function(){
+        const token = '<?= htmlspecialchars($token, ENT_QUOTES) ?>';
+        let sessionStartTs = Date.now();
+        // notifier l'ouverture
+        fetch(`/modules/profile_manager.php?action=wins_session_start&token=${encodeURIComponent(token)}`, {method: 'POST'}).catch(()=>{});
+        function sendDuration(){
+            const seconds = Math.max(0, Math.round((Date.now() - sessionStartTs)/1000));
+            navigator.sendBeacon ?
+                navigator.sendBeacon(`/modules/profile_manager.php?action=wins_session_end&token=${encodeURIComponent(token)}`, new Blob([JSON.stringify({duration: seconds})], {type:'application/json'}))
+                : fetch(`/modules/profile_manager.php?action=wins_session_end&token=${encodeURIComponent(token)}`, {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({duration: seconds})}).catch(()=>{});
+        }
+        window.addEventListener('beforeunload', sendDuration);
+        document.addEventListener('visibilitychange', ()=>{ if(document.visibilityState==='hidden'){ sendDuration(); } });
+    })();
     </script>
 </body>
 </html>

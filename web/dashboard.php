@@ -284,6 +284,7 @@ $token = $_GET['token'] ?? '';
             padding: 1.5rem 0;
             margin-bottom: 3rem;
             overflow: visible;
+            z-index: 10;
         }
 
         .header-bg-effect {
@@ -447,7 +448,7 @@ $token = $_GET['token'] ?? '';
             visibility: hidden;
             transform: translateY(-10px);
             transition: all 0.3s ease;
-            z-index: 1002;
+            z-index: 10050;
             margin-top: 0.5rem;
         }
 
@@ -727,6 +728,7 @@ $token = $_GET['token'] ?? '';
         .modules-section {
             margin-bottom: 4rem;
             position: relative;
+            z-index: 1;
         }
 
         .section-header {
@@ -2165,7 +2167,7 @@ $token = $_GET['token'] ?? '';
                             </div>
                             
                             <div class="profile-actions">
-                                <a href="#" class="profile-action" onclick="showNotification('Profil mis à jour', 'success')">
+                                <a href="#" class="profile-action" onclick="openProfileModal()">
                                     <i class="fas fa-user-edit"></i>
                                     <span>Modifier Profil</span>
                                 </a>
@@ -2250,7 +2252,7 @@ $token = $_GET['token'] ?? '';
                             
                             <div class="module-preview">
                                 <div class="preview-screen">
-                                    <span class="preview-value">0</span>
+                                    <span class="preview-value" id="winsPreviewValue">0</span>
                                     <span class="preview-label">WINS</span>
                                 </div>
                             </div>
@@ -2433,6 +2435,10 @@ $token = $_GET['token'] ?? '';
                     <label class="form-label">Bio</label>
                     <input type="text" class="form-input" id="bio" name="bio" 
                            placeholder="Une courte description de vous">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">URL de l'avatar</label>
+                    <input type="url" class="form-input" id="avatarUrl" name="avatarUrl" placeholder="https://...">
                 </div>
                 
                 <div class="form-group">
@@ -2717,17 +2723,16 @@ $token = $_GET['token'] ?? '';
             const formData = new FormData(form);
             
             try {
-                const response = await fetch('/modules/profile_manager.php', {
+                const response = await fetch(`/modules/profile_manager.php?action=update_profile&token=${encodeURIComponent('<?= $token ?>')}`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
                     },
                     body: JSON.stringify({
-                        action: 'update_profile',
-                        token: '<?= $token ?>',
                         display_name: formData.get('displayName'),
                         bio: formData.get('bio'),
-                        theme: formData.get('theme'),
+                        avatar_url: formData.get('avatarUrl'),
+                        theme_preference: formData.get('theme'),
                         language: formData.get('language')
                     })
                 });
