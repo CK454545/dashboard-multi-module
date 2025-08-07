@@ -315,6 +315,23 @@ $token = $_GET['token'] ?? '';
             position: relative;
             z-index: 2;
         }
+        .theme-switcher {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-right: 16px;
+        }
+        .theme-btn {
+            width: 28px; height: 28px; border-radius: 50%; border: 1px solid rgba(255,255,255,0.2);
+            background: transparent; cursor: pointer; display:inline-flex; align-items:center; justify-content:center;
+            transition: transform .2s ease, box-shadow .2s ease; position: relative;
+        }
+        .theme-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 16px rgba(0,0,0,.3);} 
+        .theme-btn .dot{ width:16px; height:16px; border-radius:50%; }
+        .theme-btn[data-theme="blue"] .dot{ background: linear-gradient(135deg, #0080FF, #00B4FF); }
+        .theme-btn[data-theme="red"] .dot{ background: linear-gradient(135deg, #FF0040, #FF5570); }
+        .theme-btn[data-theme="mixed"] .dot{ background: linear-gradient(135deg, #00B4FF, #FF0040); }
+        .theme-btn.active{ outline: 2px solid var(--primary-blue); }
 
         .logo-section {
             display: flex;
@@ -2154,6 +2171,11 @@ $token = $_GET['token'] ?? '';
                 <div class="header-bg-effect"></div>
                 <div class="header-content">
                     <div class="logo-section">
+                            <div class="theme-switcher" aria-label="Changer de thème">
+                                <button class="theme-btn" data-theme="blue" title="Bleu (par défaut)"><span class="dot"></span></button>
+                                <button class="theme-btn" data-theme="red" title="Rouge"><span class="dot"></span></button>
+                                <button class="theme-btn" data-theme="mixed" title="Mix"><span class="dot"></span></button>
+                            </div>
                         <div class="logo-container">
                             <img src="https://i.goopics.net/g93k7n.png" alt="MFA CONNECT" class="logo-3d">
                         </div>
@@ -3313,6 +3335,30 @@ $token = $_GET['token'] ?? '';
         (function(){
           const themeSelect = document.getElementById('editTheme');
           if (themeSelect){ themeSelect.addEventListener('change', ()=>applyTheme(themeSelect.value)); }
+        })();
+
+        (function initThemeSwitcher(){
+          const container = document.querySelector('.theme-switcher');
+          if (!container) return;
+          const btns = container.querySelectorAll('.theme-btn');
+          function setActive(theme){ btns.forEach(b=>b.classList.toggle('active', b.dataset.theme===theme)); }
+          btns.forEach(btn=>{
+            btn.addEventListener('click', async ()=>{
+              const theme = btn.dataset.theme;
+              applyTheme(theme);
+              setActive(theme);
+              try{
+                await fetch(`/modules/profile_manager.php?action=update_preferences&token=${encodeURIComponent('<?= $token ?>')}`, {
+                  method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ color_scheme: theme==='mixed' ? 'blue_red' : theme })
+                });
+                showNotification('Thème appliqué', 'success');
+              }catch(e){/*noop*/}
+            });
+          });
+          // Marquer actif au chargement selon classe
+          if (document.body.classList.contains('theme-red')) setActive('red');
+          else if (document.body.classList.contains('theme-mixed')) setActive('mixed');
+          else setActive('blue');
         })();
     </script>
 </body>
