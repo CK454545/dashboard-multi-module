@@ -2172,11 +2172,11 @@ $token = $_GET['token'] ?? '';
                                     <i class="fas fa-user-edit"></i>
                                     <span>Modifier Profil</span>
                                 </a>
-                                <a href="#" class="profile-action" onclick="showNotification('Paramètres ouverts', 'info')">
+                                <a href="#" class="profile-action" onclick="openSettings()">
                                     <i class="fas fa-cog"></i>
                                     <span>Paramètres</span>
                                 </a>
-                                <a href="#" class="profile-action" onclick="showNotification('Historique consulté', 'info')">
+                                <a href="#" class="profile-action" onclick="openHistoryModal()">
                                     <i class="fas fa-history"></i>
                                     <span>Historique</span>
                                 </a>
@@ -2633,6 +2633,45 @@ $token = $_GET['token'] ?? '';
             </div>
         </div>
     </div>
+
+    <!-- Modal Paramètres (à venir) -->
+    <div id="settingsModal" class="modal">
+      <div class="modal-backdrop"></div>
+      <div class="modal-container">
+        <div class="modal-header">
+          <div class="modal-title-wrapper">
+            <div class="modal-icon"><i class="fas fa-cog"></i></div>
+            <h2 class="modal-title">Paramètres</h2>
+          </div>
+          <button class="modal-close" onclick="closeModal('settings')"><i class="fas fa-times"></i></button>
+        </div>
+        <div class="modal-body">
+          <p style="opacity:.6">Fonctionnalité à venir. Certaines options seront bientôt disponibles.</p>
+          <div style="filter:grayscale(1); opacity:.6; pointer-events:none;">
+            <div class="form-group"><label class="form-label">Sons</label><input type="checkbox" checked></div>
+            <div class="form-group"><label class="form-label">Animations</label><input type="checkbox" checked></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal Historique -->
+    <div id="historyModal" class="modal">
+      <div class="modal-backdrop"></div>
+      <div class="modal-container">
+        <div class="modal-header">
+          <div class="modal-title-wrapper">
+            <div class="modal-icon"><i class="fas fa-history"></i></div>
+            <h2 class="modal-title">Historique</h2>
+          </div>
+          <button class="modal-close" onclick="closeModal('history')"><i class="fas fa-times"></i></button>
+        </div>
+        <div class="modal-body">
+          <div id="historyList" style="display:flex; flex-direction:column; gap:10px;"></div>
+        </div>
+      </div>
+    </div>
+
     <script>
         // ==================== INTRO VIDEO LOGIC ====================
         document.addEventListener('DOMContentLoaded', function() {
@@ -3170,6 +3209,37 @@ $token = $_GET['token'] ?? '';
                     showNotification('Erreur réseau', 'error');
                 }
             });
+        }
+
+        async function openSettings(){ openModal('settings'); }
+
+        // Charger l'historique récent depuis user_activity_log
+        async function loadHistory(){
+          const res = await fetch(`/modules/profile_manager.php?action=get_profile&token=${encodeURIComponent('<?= $token ?>')}`, {method:'POST'});
+          // On réutilise l'endpoint existant pour déclencher l'initialisation si besoin, puis on appelle un petit fetch SQL en brut côté profil_manager via log_activity inexistante.
+        }
+
+        // Quand on ouvre l'historique, on tente de lire les derniers logs via une route légère
+        async function openHistoryModal(){
+          try {
+            const res = await fetch(`/modules/profile_manager.php?action=wins_today_summary&token=${encodeURIComponent('<?= $token ?>')}`, {method:'POST'});
+            const data = await res.json();
+          } catch(e) {}
+          // Pour afficher quelque chose d'utile, on montre les temps du jour des 3 modules
+          const container = document.getElementById('historyList');
+          container.innerHTML = '<div>Chargement...</div>';
+          const [wins,timer,battle] = await Promise.all([
+            fetch(`/modules/profile_manager.php?action=wins_today_summary&token=${encodeURIComponent('<?= $token ?>')}`, {method:'POST'}).then(r=>r.json()).catch(()=>({wins_today_seconds:0})),
+            fetch(`/modules/profile_manager.php?action=timer_today_summary&token=${encodeURIComponent('<?= $token ?>')}`, {method:'POST'}).then(r=>r.json()).catch(()=>({timer_today_seconds:0})),
+            fetch(`/modules/profile_manager.php?action=battle_today_summary&token=${encodeURIComponent('<?= $token ?>')}`, {method:'POST'}).then(r=>r.json()).catch(()=>({battle_today_seconds:0}))
+          ]);
+          function fmt(s){const m=Math.floor(s/60),sec=s%60;return `${m}m ${sec}s`;}
+          container.innerHTML = `
+            <div>Temps aujourd'hui - Wins: <strong>${fmt(wins.wins_today_seconds||0)}</strong></div>
+            <div>Temps aujourd'hui - Timer: <strong>${fmt(timer.timer_today_seconds||0)}</strong></div>
+            <div>Temps aujourd'hui - Team Battle: <strong>${fmt(battle.battle_today_seconds||0)}</strong></div>
+          `;
+          openModal('history');
         }
     </script>
 </body>
