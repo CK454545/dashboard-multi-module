@@ -21,7 +21,6 @@ function requireValidToken() {
         ]
     ];
     
-    // Si c'est un token de développement local, le valider directement
     if (isset($localTokens[$token])) {
         return [
             'discord_id' => $localTokens[$token]['discord_id'],
@@ -30,9 +29,11 @@ function requireValidToken() {
         ];
     }
     
-    // Connexion SQLite pour les tokens de production
-    $sqlitePath = __DIR__ . '/../../database/database.db';
-    if (file_exists($sqlitePath)) {
+    // Connexion SQLite robuste (db ou sqlite)
+    $dbPathDb = __DIR__ . '/../../database/database.db';
+    $dbPathSqlite = __DIR__ . '/../../database/database.sqlite';
+    $sqlitePath = file_exists($dbPathDb) ? $dbPathDb : $dbPathSqlite;
+    if ($sqlitePath && file_exists($sqlitePath)) {
         try {
             $db = new SQLite3($sqlitePath);
             $stmt = $db->prepare('SELECT discord_id, pseudo FROM users WHERE token = ?');
@@ -80,9 +81,11 @@ function getUserData($token, $module, $key = null) {
         return getLocalTestData($token, $module, $key);
     }
     
-    // Connexion SQLite pour les tokens de production
-    $sqlitePath = __DIR__ . '/../../database/database.db';
-    if (file_exists($sqlitePath)) {
+    // Connexion SQLite robuste (db ou sqlite)
+    $dbPathDb = __DIR__ . '/../../database/database.db';
+    $dbPathSqlite = __DIR__ . '/../../database/database.sqlite';
+    $sqlitePath = file_exists($dbPathDb) ? $dbPathDb : $dbPathSqlite;
+    if ($sqlitePath && file_exists($sqlitePath)) {
         try {
             $db = new SQLite3($sqlitePath);
             
@@ -134,9 +137,11 @@ function saveUserData($token, $module, $key, $value) {
         return true;
     }
     
-    // Connexion SQLite pour les tokens de production
-    $sqlitePath = __DIR__ . '/../../database/database.db';
-    if (file_exists($sqlitePath)) {
+    // Connexion SQLite robuste (db ou sqlite)
+    $dbPathDb = __DIR__ . '/../../database/database.db';
+    $dbPathSqlite = __DIR__ . '/../../database/database.sqlite';
+    $sqlitePath = file_exists($dbPathDb) ? $dbPathDb : $dbPathSqlite;
+    if ($sqlitePath && file_exists($sqlitePath)) {
         try {
             $db = new SQLite3($sqlitePath);
             $stmt = $db->prepare('INSERT OR REPLACE INTO user_data (token, module, key, value, updated_at) VALUES (?, ?, ?, ?, CURRENT_TIMESTAMP)');
