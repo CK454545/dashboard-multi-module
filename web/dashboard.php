@@ -2588,6 +2588,51 @@ $token = $_GET['token'] ?? '';
     </div>
     </div> <!-- Fin du dashboard-content -->
 
+    <!-- Modal Profil Utilisateur -->
+    <div id="profileModal" class="modal">
+        <div class="modal-backdrop"></div>
+        <div class="modal-container">
+            <div class="modal-header">
+                <div class="modal-title-wrapper">
+                    <div class="modal-icon">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <h2 class="modal-title">Modifier le profil</h2>
+                </div>
+                <button class="modal-close" onclick="closeModal('profile')">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="profileEditForm" class="first-time-form">
+                    <div class="form-group">
+                        <label class="form-label">Nom d'affichage</label>
+                        <input type="text" class="form-input" id="editDisplayName" name="displayName" placeholder="Votre nom d'affichage">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Bio</label>
+                        <input type="text" class="form-input" id="editBio" name="bio" placeholder="Une courte description">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">URL de l'avatar</label>
+                        <input type="url" class="form-input" id="editAvatarUrl" name="avatarUrl" placeholder="https://...">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Thème préféré</label>
+                        <select class="form-select" id="editTheme" name="theme">
+                            <option value="blue">Bleu (Par défaut)</option>
+                            <option value="red">Rouge</option>
+                            <option value="mixed">Mix</option>
+                        </select>
+                    </div>
+                    <div class="first-time-actions">
+                        <button type="button" class="btn-first-time btn-secondary-first" onclick="closeModal('profile')">Annuler</button>
+                        <button type="submit" class="btn-first-time btn-primary-first">Enregistrer</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
     <script>
         // ==================== INTRO VIDEO LOGIC ====================
         document.addEventListener('DOMContentLoaded', function() {
@@ -3086,6 +3131,46 @@ $token = $_GET['token'] ?? '';
         }
         `;
         document.head.appendChild(style);
+
+        function openProfileModal(){
+            // Pré-remplir avec les données déjà affichées si dispo
+            const nameEl = document.querySelector('.profile-details h3');
+            const bioEl = document.querySelector('.profile-details p');
+            if (nameEl) document.getElementById('editDisplayName').value = nameEl.textContent.trim();
+            if (bioEl) document.getElementById('editBio').value = bioEl.textContent.replace(/^Token:.*/, '').trim();
+            openModal('profile');
+        }
+
+        // Soumission du formulaire de modification de profil
+        const profileEditForm = document.getElementById('profileEditForm');
+        if (profileEditForm){
+            profileEditForm.addEventListener('submit', async (e)=>{
+                e.preventDefault();
+                const body = {
+                    display_name: document.getElementById('editDisplayName').value,
+                    bio: document.getElementById('editBio').value,
+                    avatar_url: document.getElementById('editAvatarUrl').value,
+                    theme_preference: document.getElementById('editTheme').value
+                };
+                try {
+                    const res = await fetch(`/modules/profile_manager.php?action=update_profile&token=${encodeURIComponent('<?= $token ?>')}`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(body)
+                    });
+                    if (res.ok){
+                        showNotification('Profil mis à jour', 'success');
+                        closeModal('profile');
+                        // rafraîchir l'affichage
+                        loadProfileData();
+                    } else {
+                        showNotification('Erreur lors de la mise à jour', 'error');
+                    }
+                } catch(err){
+                    showNotification('Erreur réseau', 'error');
+                }
+            });
+        }
     </script>
 </body>
 </html>
