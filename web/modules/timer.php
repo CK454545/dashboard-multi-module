@@ -968,7 +968,15 @@ function pauseTimerAction() {
         return;
     }
     console.log('⏸️ Pause du timer');
-    fetch(`/api.php?token=${token}&module=timer&action=pause`)
+    // Calculer la durée restante exacte
+    let remaining = 0;
+    if (timerState.endTime && !timerState.paused) {
+        const now = Math.floor(Date.now() / 1000);
+        remaining = Math.max(0, Number(timerState.endTime) - now);
+    } else {
+        remaining = Number(timerState.duration || 0);
+    }
+    fetch(`/api.php?token=${token}&module=timer&action=pause&value=${remaining}`)
         .then(response => response.json())
         .then(data => {
             if (data.success) {
@@ -1062,7 +1070,7 @@ function applyTimerStyles(styles){
     if (!styles || typeof styles !== 'object') return;
     let css = '';
 
-    // Fond transparent et arrières-plans
+    // Fond transparent et arrières-plans globaux
     if (styles.general && (styles.general.transparent === true || styles.general.transparent === 'true' || styles.general.transparent === 1)) {
         css += 'html, body { background: transparent !important; } ';
         css += '.widget-container, .display { background: transparent !important; } ';
@@ -1075,7 +1083,7 @@ function applyTimerStyles(styles){
         css += `#timer-display { font-family: ${styles.general['font-family']} !important; } `;
     }
 
-    // Styles du timer
+    // Styles du timer (couleur/size/stroke/shadow + fond)
     if (styles.timer) {
         if (styles.timer.color) css += `#timer-display { color: ${styles.timer.color} !important; } `;
         if (styles.timer.size) css += `#timer-display { font-size: ${styles.timer.size}px !important; } `;
@@ -1085,61 +1093,45 @@ function applyTimerStyles(styles){
         } else {
             css += '#timer-display { text-shadow: none !important; } ';
         }
+        if ((styles.timer.showBackground === true || styles.timer.showBackground === 'true' || styles.timer.showBackground === 1) && styles.timer.background) {
+            css += `#timer-display { display: inline-block !important; background: ${styles.timer.background} !important; padding: 20px 40px !important; border-radius: 12px !important; } `;
+        } else {
+            css += '#timer-display { background: transparent !important; padding: 0 !important; } ';
+        }
     }
 
-    // Position du texte
-    if (styles.general && styles.general['text-position']) {
-        const margin = styles.general['text-margin'] || '0';
-        const map = {
-            'top-left': `.display { justify-content: flex-start; align-items: flex-start; padding-top: ${margin}px; padding-left: ${margin}px; }`,
-            'top-center': `.display { justify-content: flex-start; align-items: center; padding-top: ${margin}px; }`,
-            'top-right': `.display { justify-content: flex-start; align-items: flex-end; padding-top: ${margin}px; padding-right: ${margin}px; }`,
-            'center-left': `.display { justify-content: center; align-items: flex-start; padding-left: ${margin}px; }`,
-            'center-right': `.display { justify-content: center; align-items: flex-end; padding-right: ${margin}px; }`,
-            'bottom-left': `.display { justify-content: flex-end; align-items: flex-start; padding-bottom: ${margin}px; padding-left: ${margin}px; }`,
-            'bottom-center': `.display { justify-content: flex-end; align-items: center; padding-bottom: ${margin}px; }`,
-            'bottom-right': `.display { justify-content: flex-end; align-items: flex-end; padding-bottom: ${margin}px; padding-right: ${margin}px; }`,
-            'center': `.display { justify-content: center; align-items: center; }`
-        };
-        css += map[styles.general['text-position']] || '';
+    // Position du texte et décalage vertical
+    if (styles.general) {
+        if (styles.general['text-position']) {
+            const margin = styles.general['text-margin'] || '0';
+            const map = {
+                'top-left': `.display { justify-content: flex-start; align-items: flex-start; padding-top: ${margin}px; padding-left: ${margin}px; }`,
+                'top-center': `.display { justify-content: flex-start; align-items: center; padding-top: ${margin}px; }`,
+                'top-right': `.display { justify-content: flex-start; align-items: flex-end; padding-top: ${margin}px; padding-right: ${margin}px; }`,
+                'center-left': `.display { justify-content: center; align-items: flex-start; padding-left: ${margin}px; }`,
+                'center-right': `.display { justify-content: center; align-items: flex-end; padding-right: ${margin}px; }`,
+                'bottom-left': `.display { justify-content: flex-end; align-items: flex-start; padding-bottom: ${margin}px; padding-left: ${margin}px; }`,
+                'bottom-center': `.display { justify-content: flex-end; align-items: center; padding-bottom: ${margin}px; }`,
+                'bottom-right': `.display { justify-content: flex-end; align-items: flex-end; padding-bottom: ${margin}px; padding-right: ${margin}px; }`,
+                'center': `.display { justify-content: center; align-items: center; }`
+            };
+            css += map[styles.general['text-position']] || '';
+        }
+        if (typeof styles.general['vertical-offset'] !== 'undefined' && styles.general['vertical-offset'] !== null) {
+            const off = parseInt(styles.general['vertical-offset']) || 0;
+            css += `#timer-display { position: relative !important; transform: translateY(${off}px) !important; } `;
+        }
+    }
+
+    // Options (masquer contrôles)
+    if (styles.options && (styles.options['hide-controls'] === true || styles.options['hide-controls'] === 'true' || styles.options['hide-controls'] === 1)) {
+        // Masquer uniquement si pas en mode control=true
+        // L’HTML n’expose pas directement control ici, on masque quand même, le backend peut forcer via PHP si besoin
+        css += `.timer-action-bar { display: none !important; } `;
+    } else {
+        css += `.timer-action-bar { display: flex !important; } `;
     }
 
     const styleEl = document.getElementById('dynamic-styles');
     if (styleEl) styleEl.innerHTML = css;
 }
-
-async function loadTimerStyles(){
-    const token = getTokenFromUrl();
-    if (!token) return;
-    try {
-        const res = await fetch(`/api.php?token=${token}&module=timer-style&action=get`);
-        const data = await res.json();
-        if (data.success && data.data) {
-            timerStyles = data.data;
-            applyTimerStyles(timerStyles);
-        }
-    } catch (e) {
-        console.warn('Erreur chargement styles timer:', e);
-    }
-}
-
-// Mise à jour temps réel via BroadcastChannel (si dispo)
-try {
-    const ch = new BroadcastChannel('timer_styles_channel');
-    ch.onmessage = (event) => {
-        if (event.data && event.data.type === 'timerStylesUpdate' && event.data.styles) {
-            applyTimerStyles(event.data.styles);
-        }
-    };
-} catch(e) {}
-
-// Fallback via localStorage
-window.addEventListener('storage', () => {
-    try {
-        const s = localStorage.getItem('realtimeTimerStyles');
-        if (s) applyTimerStyles(JSON.parse(s));
-    } catch(e) {}
-});
-</script>
-</body>
-</html> 
