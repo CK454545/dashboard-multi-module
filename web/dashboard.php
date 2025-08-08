@@ -2946,6 +2946,7 @@ $token = $_GET['token'] ?? '';
             });
             
             card.addEventListener('mouseenter', () => {
+                if (window.disablePreviewAnimations) return;
                 // Démarrer l'animation des valeurs
                 let counter = 0;
                 const originalValue = previewValue.textContent;
@@ -3365,6 +3366,77 @@ $token = $_GET['token'] ?? '';
           const battleValueEl = document.querySelector(".module-card[data-module='battle'] .preview-value");
           let g=0, r=0; function renderTeams(){ if(battleValueEl) battleValueEl.textContent = `${g}-${r}`; }
           setInterval(()=>{ const team = Math.random()<0.5 ? 'g' : 'r'; const delta = [1,2,3][Math.floor(Math.random()*3)]; if(team==='g'){ g += delta; spawnFly(battleCard, `+${delta}`, 'team-green'); } else { r += delta; spawnFly(battleCard, `+${delta}`, 'team-red'); } renderTeams(); }, 1300);
+        })();
+
+        // ======== LIVE PREVIEWS: Wins / Timer / Team ========
+        (function liveDashboardPreviews(){
+          try { window.disablePreviewAnimations = true; } catch(e) {}
+          const token = '<?= $token ?>';
+          if (!token) return;
+
+          const winsEl = document.querySelector(
+            ".module-card[data-module='wins'] .preview-value"
+          );
+          const timerEl = document.querySelector(
+            ".module-card[data-module='timer'] .preview-value"
+          );
+          const teamEl = document.querySelector(
+            ".module-card[data-module='battle'] .preview-value"
+          );
+
+          function fmtTime(total){
+            total = Math.max(0, Number(total)||0);
+            const h = Math.floor(total/3600).toString().padStart(2,'0');
+            const m = Math.floor((total%3600)/60).toString().padStart(2,'0');
+            const s = (total%60).toString().padStart(2,'0');
+            return `${h}:${m}:${s}`;
+          }
+
+          async function refreshWins(){
+            if (!winsEl) return;
+            try{
+              const r = await fetch(`/api.php?token=${token}&module=wins&action=get`);
+              const j = await r.json();
+              if (j.success && j.data && typeof j.data.count !== 'undefined'){
+                winsEl.textContent = String(j.data.count);
+              }
+            }catch(e){}
+          }
+
+          async function refreshTimer(){
+            if (!timerEl) return;
+            try{
+              const r = await fetch(`/api.php?token=${token}&module=timer&action=get`);
+              const j = await r.json();
+              if (j.success && j.data){
+                const s = j.data;
+                let secs = 0;
+                if (s.isRunning && s.endTime){
+                  secs = Math.max(0, Number(s.endTime) - Math.floor(Date.now()/1000));
+                } else {
+                  secs = Number(s.duration||0);
+                }
+                timerEl.textContent = fmtTime(secs);
+              }
+            }catch(e){}
+          }
+
+          async function refreshTeams(){
+            if (!teamEl) return;
+            try{
+              const r = await fetch(`/api.php?token=${token}&module=teams&action=get`);
+              const j = await r.json();
+              if (j.success && j.data && j.data.green && j.data.red){
+                const g = Number(j.data.green.score||0);
+                const d = Number(j.data.red.score||0);
+                teamEl.textContent = `${g}-${d}`;
+              }
+            }catch(e){}
+          }
+
+          function tick(){ refreshWins(); refreshTimer(); refreshTeams(); }
+          tick();
+          setInterval(tick, 1000);
         })();
     </script>
 </body>

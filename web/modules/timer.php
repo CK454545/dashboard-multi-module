@@ -756,15 +756,18 @@ let timerState = {
     endTime: null,
     paused: true,
     remaining: 0,
-    duration: 0
+    duration: 0,
+    isRunning: false
 };
 
 let syncInterval;
+let renderInterval; // nouvelle boucle de rendu local
 let isRealtimeMode = false;
 let lastSyncTime = 0;
 
 // Configuration
 const SYNC_INTERVAL = 1000; // 1 seconde
+const RENDER_INTERVAL = 250; // rendu local plus fluide
 const REALTIME_SYNC_INTERVAL = 500; // 500ms pour le mode temps réel
 
 // Initialisation du timer
@@ -785,8 +788,7 @@ function initializeTimer() {
     // Charger l'état initial depuis l'API
     loadTimerState();
     
-    // Démarrer la synchronisation
-    startSync();
+    // (startSync déclenché en dehors pour éviter doublons)
 }
 
 // Fonction de chargement de l'état du timer
@@ -806,9 +808,16 @@ function loadTimerState() {
                     endTime: s.endTime ? Number(s.endTime) : null,
                     paused: Boolean(s.isPaused),
                     remaining: s.isRunning && s.endTime ? Math.max(0, Number(s.endTime) - Math.floor(Date.now()/1000)) : Number(s.duration || 0),
-                    duration: Number(s.duration || 0)
+                    duration: Number(s.duration || 0),
+                    isRunning: Boolean(s.isRunning)
                 };
                 updateDisplay();
+                // Démarrer / arrêter le rendu local selon l'état
+                if (timerState.endTime && !timerState.paused) {
+                    startRender();
+                } else {
+                    stopRender();
+                }
                 console.log('✅ Sync:', timerState);
             } else {
                 console.error('❌ Erreur lors du chargement:', data.error);
@@ -836,6 +845,24 @@ function startSync() {
             lastSyncTime = now;
         }
     }, SYNC_INTERVAL);
+}
+
+function startRender(){
+    if (renderInterval) return;
+    renderInterval = setInterval(() => {
+        if (timerState.endTime && !timerState.paused) {
+            updateDisplay();
+        } else {
+            stopRender();
+        }
+    }, RENDER_INTERVAL);
+}
+
+function stopRender(){
+    if (renderInterval){
+        clearInterval(renderInterval);
+        renderInterval = null;
+    }
 }
 
 // Fonction de mise à jour de l'affichage
@@ -922,8 +949,8 @@ function startTimerAction() {
         .then(response => response.json())
         .then(data => {
             if (data.success) {
-                console.log('✅ Timer démarré:', data);
-                setTimeout(() => { loadTimerState(); }, 100);
+                startRender();
+                setTimeout(() => { loadTimerState(); }, 50);
             } else {
                 console.error('❌ Erreur lors du démarrage:', data.error);
             }
@@ -945,8 +972,8 @@ function pauseTimerAction() {
         .then(response => response.json())
         .then(data => {
             if (data.success) {
-                console.log('✅ Timer en pause:', data);
-                setTimeout(() => { loadTimerState(); }, 100);
+                stopRender();
+                setTimeout(() => { loadTimerState(); }, 50);
             } else {
                 console.error('❌ Erreur lors de la pause:', data.error);
             }

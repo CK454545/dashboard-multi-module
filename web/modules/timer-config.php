@@ -1180,23 +1180,15 @@ checkTimerAccess($token);
         function applyPreviewStyles(styles) {
             const previewTimer = document.getElementById('preview-timer');
             if (!previewTimer) return;
-            
+
             if (styles.timer) {
-                if (styles.timer.color) {
-                    previewTimer.style.color = styles.timer.color;
-                }
-                if (styles.timer.size) {
-                    previewTimer.style.fontSize = `${styles.timer.size}px`;
-                }
+                if (styles.timer.color) previewTimer.style.color = styles.timer.color;
+                if (styles.timer.size) previewTimer.style.fontSize = `${styles.timer.size}px`;
                 if (styles.timer.stroke) {
                     previewTimer.style.webkitTextStroke = `2px ${styles.timer.stroke}`;
                     previewTimer.style.textStroke = `2px ${styles.timer.stroke}`;
                 }
-                if (styles.timer.shadow) {
-                    previewTimer.style.textShadow = '3px 3px 6px rgba(0,0,0,0.8)';
-                } else {
-                    previewTimer.style.textShadow = 'none';
-                }
+                if (styles.timer.shadow) previewTimer.style.textShadow = '3px 3px 6px rgba(0,0,0,0.8)'; else previewTimer.style.textShadow = 'none';
                 if (styles.timer.showBackground && styles.timer.background) {
                     previewTimer.style.background = styles.timer.background;
                     previewTimer.style.padding = '20px 40px';
@@ -1207,11 +1199,9 @@ checkTimerAccess($token);
                     previewTimer.style.borderRadius = '0';
                 }
             }
-            
+
             if (styles.general) {
-                if (styles.general['font-family']) {
-                    previewTimer.style.fontFamily = styles.general['font-family'];
-                }
+                if (styles.general['font-family']) previewTimer.style.fontFamily = styles.general['font-family'];
             }
         }
 
