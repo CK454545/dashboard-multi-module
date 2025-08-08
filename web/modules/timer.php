@@ -796,17 +796,17 @@ function loadTimerState() {
         console.error('❌ Token manquant dans l\'URL');
         return;
     }
-    
-    fetch(`/modules/get_time.php?token=${token}`)
+    fetch(`/api.php?token=${token}&module=timer&action=get`)
         .then(response => response.json())
         .then(data => {
-            if (data.success) {
-                console.log('📡 Données reçues de get_time.php:', data);
+            if (data.success && data.data) {
+                const s = data.data;
+                // Normaliser l'état local
                 timerState = {
-                    endTime: data.end_at,
-                    paused: data.paused,
-                    remaining: data.duration || 0,
-                    duration: data.duration || 0
+                    endTime: s.endTime ? Number(s.endTime) : null,
+                    paused: Boolean(s.isPaused),
+                    remaining: s.isRunning && s.endTime ? Math.max(0, Number(s.endTime) - Math.floor(Date.now()/1000)) : Number(s.duration || 0),
+                    duration: Number(s.duration || 0)
                 };
                 updateDisplay();
                 console.log('✅ Sync:', timerState);
@@ -842,19 +842,16 @@ function startSync() {
 function updateDisplay() {
     const display = document.getElementById('timer-display');
     if (!display) return;
-    
     let timeToShow = 0;
-    
     if (timerState.endTime && !timerState.paused) {
-        // Timer en cours
         const now = Math.floor(Date.now() / 1000);
-        timeToShow = Math.max(0, timerState.endTime - now);
-    } else if (timerState.paused) {
-        // Timer en pause - utiliser duration directement
-        timeToShow = timerState.duration;
+        timeToShow = Math.max(0, Number(timerState.endTime) - now);
+    } else {
+        timeToShow = Number(timerState.duration || 0);
     }
-    
     display.textContent = formatTime(timeToShow);
+    // Mémoriser la dernière valeur pour éviter les sauts à la pause
+    timerState.remaining = timeToShow;
     console.log('🔄 Affichage mis à jour:', formatTime(timeToShow), 'État:', timerState);
 }
 
@@ -916,22 +913,17 @@ function startTimerAction() {
         console.error('❌ Token manquant');
         return;
     }
-    
-    if (timerState.remaining <= 0) {
+    if ((Number(timerState.duration)||0) <= 0) {
         console.warn('⚠️ Impossible de démarrer: durée = 0');
         return;
     }
-    
     console.log('▶️ Démarrage du timer');
-    
     fetch(`/api.php?token=${token}&module=timer&action=start`)
         .then(response => response.json())
         .then(data => {
             if (data.success) {
                 console.log('✅ Timer démarré:', data);
-                setTimeout(() => {
-                    loadTimerState();
-                }, 100);
+                setTimeout(() => { loadTimerState(); }, 100);
             } else {
                 console.error('❌ Erreur lors du démarrage:', data.error);
             }
@@ -948,17 +940,13 @@ function pauseTimerAction() {
         console.error('❌ Token manquant');
         return;
     }
-    
     console.log('⏸️ Pause du timer');
-    
     fetch(`/api.php?token=${token}&module=timer&action=pause`)
         .then(response => response.json())
         .then(data => {
             if (data.success) {
                 console.log('✅ Timer en pause:', data);
-                setTimeout(() => {
-                    loadTimerState();
-                }, 100);
+                setTimeout(() => { loadTimerState(); }, 100);
             } else {
                 console.error('❌ Erreur lors de la pause:', data.error);
             }
