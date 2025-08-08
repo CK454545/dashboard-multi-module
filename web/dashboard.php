@@ -2209,18 +2209,7 @@ $token = $_GET['token'] ?? '';
                         </div>
                     </div>
                     
-                    <div class="user-section" onclick="openProfileModal()">
-                        <div id="headerAvatar" class="user-avatar">
-                            <?php echo strtoupper(substr($user['name'] ?? 'U', 0, 1)); ?>
-                        </div>
-                        <div class="user-info">
-                            <span class="welcome-text">Bienvenue</span>
-                            <span class="user-name" id="headerUserName"><?php echo htmlspecialchars($user['name'] ?? 'Utilisateur'); ?></span>
-                        </div>
-                    </div>
-                    <!-- Profil: ouverture directe en modal, dropdown supprimé -->
-                        </div>
-                    </div>
+                    <!-- Profil supprimé -->
                 </div>
             </header>
 
@@ -2450,65 +2439,6 @@ $token = $_GET['token'] ?? '';
             </section>
     </div>
 
-    <!-- First-Time Personalization Modal -->
-    <div id="firstTimeModal" class="first-time-modal">
-        <div class="first-time-container">
-            <div class="first-time-header">
-                <h1 class="first-time-title">Bienvenue sur MFA CONNECT</h1>
-                <p class="first-time-subtitle">Personnalisez votre expérience pour un contrôle optimal</p>
-            </div>
-            
-            <form class="first-time-form" id="personalizationForm">
-                <div class="form-group">
-                    <label class="form-label">Nom d'affichage</label>
-                    <input type="text" class="form-input" id="displayName" name="displayName" 
-                           value="<?php echo htmlspecialchars($user['name'] ?? ''); ?>" 
-                           placeholder="Votre nom d'affichage">
-                </div>
-                
-                <div class="form-group">
-                    <label class="form-label">Bio</label>
-                    <input type="text" class="form-input" id="bio" name="bio" 
-                           placeholder="Une courte description de vous">
-                </div>
-                <div class="form-group">
-                    <label class="form-label">URL de l'avatar</label>
-                    <input type="url" class="form-input" id="avatarUrl" name="avatarUrl" placeholder="https://...">
-                </div>
-                
-                <div class="form-group">
-                    <label class="form-label">Thème préféré</label>
-                    <select class="form-select" id="theme" name="theme">
-                        <option value="blue">Bleu (Par défaut)</option>
-                        <option value="red">Rouge</option>
-                        <option value="purple">Violet</option>
-                        <option value="green">Vert</option>
-                    </select>
-                </div>
-                
-                <div class="form-group">
-                    <label class="form-label">Langue</label>
-                    <select class="form-select" id="language" name="language">
-                        <option value="fr">Français</option>
-                        <option value="en">English</option>
-                        <option value="es">Español</option>
-                    </select>
-                </div>
-            </form>
-            
-            <div class="first-time-actions">
-                <button class="btn-first-time btn-secondary-first" onclick="skipPersonalization()">
-                    <i class="fas fa-arrow-right"></i>
-                    Passer
-                </button>
-                <button class="btn-first-time btn-primary-first" onclick="savePersonalization()">
-                    <i class="fas fa-save"></i>
-                    Sauvegarder
-                </button>
-            </div>
-        </div>
-    </div>
-
     <!-- Modal Règlement MFA CONNECT -->
     <div id="rulesModal" class="modal">
         <div class="modal-backdrop"></div>
@@ -2622,51 +2552,6 @@ $token = $_GET['token'] ?? '';
     </div>
     </div> <!-- Fin du dashboard-content -->
 
-    <!-- Modal Profil Utilisateur -->
-    <div id="profileModal" class="modal">
-        <div class="modal-backdrop"></div>
-        <div class="modal-container">
-            <div class="modal-header">
-                <div class="modal-title-wrapper">
-                    <div class="modal-icon">
-                        <i class="fas fa-user"></i>
-                    </div>
-                    <h2 class="modal-title">Modifier le profil</h2>
-                </div>
-                <button class="modal-close" onclick="closeModal('profile')">
-                    <i class="fas fa-times"></i>
-                </button>
-            </div>
-            <div class="modal-body">
-                <form id="profileEditForm" class="first-time-form">
-                    <div class="form-group">
-                        <label class="form-label">Nom d'affichage</label>
-                        <input type="text" class="form-input" id="editDisplayName" name="displayName" placeholder="Votre nom d'affichage">
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">Bio</label>
-                        <input type="text" class="form-input" id="editBio" name="bio" placeholder="Une courte description">
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">URL de l'avatar</label>
-                        <input type="url" class="form-input" id="editAvatarUrl" name="avatarUrl" placeholder="https://...">
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">Thème préféré</label>
-                                            <select class="form-select" id="editTheme" name="theme">
-                        <option value="blue">Bleu (Par défaut)</option>
-                        <option value="red">Rouge</option>
-                    </select>
-                    </div>
-                    <div class="first-time-actions">
-                        <button type="button" class="btn-first-time btn-secondary-first" onclick="closeModal('profile')">Annuler</button>
-                        <button type="submit" class="btn-first-time btn-primary-first">Enregistrer</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-
     <!-- Modal Paramètres (à venir) -->
     <div id="settingsModal" class="modal">
       <div class="modal-backdrop"></div>
@@ -2730,7 +2615,7 @@ $token = $_GET['token'] ?? '';
                 setTimeout(() => {
                     introOverlay.style.display = 'none';
                     // Vérifier la première visite après l'affichage du dashboard
-                    checkFirstTime();
+                    // checkFirstTime(); // désactivé
                 }, 1000);
             }
 
@@ -3274,23 +3159,19 @@ $token = $_GET['token'] ?? '';
 
         // Charger l'historique récent depuis user_activity_log
         async function loadHistory(){
-          const res = await fetch(`/modules/profile_manager.php?action=get_profile&token=${encodeURIComponent('<?= $token ?>')}`, {method:'POST'});
-          // On réutilise l'endpoint existant pour déclencher l'initialisation si besoin, puis on appelle un petit fetch SQL en brut côté profil_manager via log_activity inexistante.
+          // profil supprimé
         }
 
         // Quand on ouvre l'historique, on tente de lire les derniers logs via une route légère
         async function openHistoryModal(){
-          try {
-            const res = await fetch(`/modules/profile_manager.php?action=wins_today_summary&token=${encodeURIComponent('<?= $token ?>')}`, {method:'POST'});
-            const data = await res.json();
-          } catch(e) {}
+          // profil supprimé
           // Pour afficher quelque chose d'utile, on montre les temps du jour des 3 modules
           const container = document.getElementById('historyList');
           container.innerHTML = '<div>Chargement...</div>';
           const [wins,timer,battle] = await Promise.all([
-            fetch(`/modules/profile_manager.php?action=wins_today_summary&token=${encodeURIComponent('<?= $token ?>')}`, {method:'POST'}).then(r=>r.json()).catch(()=>({wins_today_seconds:0})),
-            fetch(`/modules/profile_manager.php?action=timer_today_summary&token=${encodeURIComponent('<?= $token ?>')}`, {method:'POST'}).then(r=>r.json()).catch(()=>({timer_today_seconds:0})),
-            fetch(`/modules/profile_manager.php?action=battle_today_summary&token=${encodeURIComponent('<?= $token ?>')}`, {method:'POST'}).then(r=>r.json()).catch(()=>({battle_today_seconds:0}))
+            Promise.resolve({wins_today_seconds:0}),
+            Promise.resolve({timer_today_seconds:0}),
+            Promise.resolve({battle_today_seconds:0})
           ]);
           function fmt(s){const m=Math.floor(s/60),sec=s%60;return `${m}m ${sec}s`;}
           container.innerHTML = `

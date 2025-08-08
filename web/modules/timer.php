@@ -650,6 +650,7 @@ checkTimerAccess($token);
 
 
     </style>
+    <style id="dynamic-styles"></style>
 </head>
 <body class="style-default size-medium">
     <div class="widget-container">
@@ -768,12 +769,14 @@ const REALTIME_SYNC_INTERVAL = 500; // 500ms pour le mode temps réel
 
 // Initialisation du timer
 document.addEventListener('DOMContentLoaded', function() {
-    console.log('✨ Timer chargé - Mode: Simple');
-    console.log('💡 Commandes debug: debugTimer(), switchToSimpleMode(), switchToStandardMode()');
-    
-    initializeTimer();
-    startSync();
-});
+            console.log('✨ Timer chargé - Mode: Simple');
+            console.log('💡 Commandes debug: debugTimer(), switchToSimpleMode(), switchToStandardMode()');
+            
+            initializeTimer();
+            startSync();
+            // Charger et appliquer les styles (dont fond transparent)
+            try { loadTimerStyles(); } catch (e) { console.warn('Styles timer non chargés:', e); }
+        });
 
 // Fonction d'initialisation du timer
 function initializeTimer() {
@@ -1037,20 +1040,91 @@ window.addEventListener('beforeunload', function() {
 });
 </script>
 <script>
-// Tracking de durée d'utilisation du module Timer
-(function(){
-    const token = '<?= htmlspecialchars($token, ENT_QUOTES) ?>';
-    let sessionStartTs = Date.now();
-    fetch(`/modules/profile_manager.php?action=timer_session_start&token=${encodeURIComponent(token)}`, {method: 'POST'}).catch(()=>{});
-    function sendDuration(){
-        const seconds = Math.max(0, Math.round((Date.now() - sessionStartTs)/1000));
-        navigator.sendBeacon ?
-            navigator.sendBeacon(`/modules/profile_manager.php?action=timer_session_end&token=${encodeURIComponent(token)}`, new Blob([JSON.stringify({duration: seconds})], {type:'application/json'}))
-            : fetch(`/modules/profile_manager.php?action=timer_session_end&token=${encodeURIComponent(token)}`, {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({duration: seconds})}).catch(()=>{});
+// Styles dynamiques du Timer (transparent, couleurs, taille, etc.)
+let timerStyles = {};
+
+function applyTimerStyles(styles){
+    if (!styles || typeof styles !== 'object') return;
+    let css = '';
+
+    // Fond transparent et arrières-plans
+    if (styles.general && (styles.general.transparent === true || styles.general.transparent === 'true' || styles.general.transparent === 1)) {
+        css += 'html, body { background: transparent !important; } ';
+        css += '.widget-container, .display { background: transparent !important; } ';
+    } else if (styles.general && styles.general.background) {
+        css += `html, body { background: ${styles.general.background} !important; } `;
     }
-    window.addEventListener('beforeunload', sendDuration);
-    document.addEventListener('visibilitychange', ()=>{ if(document.visibilityState==='hidden'){ sendDuration(); } });
-})();
+
+    // Police
+    if (styles.general && styles.general['font-family']) {
+        css += `#timer-display { font-family: ${styles.general['font-family']} !important; } `;
+    }
+
+    // Styles du timer
+    if (styles.timer) {
+        if (styles.timer.color) css += `#timer-display { color: ${styles.timer.color} !important; } `;
+        if (styles.timer.size) css += `#timer-display { font-size: ${styles.timer.size}px !important; } `;
+        if (styles.timer.stroke) css += `#timer-display { -webkit-text-stroke: 2px ${styles.timer.stroke} !important; text-stroke: 2px ${styles.timer.stroke} !important; } `;
+        if (styles.timer.shadow === true || styles.timer.shadow === 'true' || styles.timer.shadow === 1) {
+            css += '#timer-display { text-shadow: 3px 3px 6px rgba(0,0,0,0.8) !important; } ';
+        } else {
+            css += '#timer-display { text-shadow: none !important; } ';
+        }
+    }
+
+    // Position du texte
+    if (styles.general && styles.general['text-position']) {
+        const margin = styles.general['text-margin'] || '0';
+        const map = {
+            'top-left': `.display { justify-content: flex-start; align-items: flex-start; padding-top: ${margin}px; padding-left: ${margin}px; }`,
+            'top-center': `.display { justify-content: flex-start; align-items: center; padding-top: ${margin}px; }`,
+            'top-right': `.display { justify-content: flex-start; align-items: flex-end; padding-top: ${margin}px; padding-right: ${margin}px; }`,
+            'center-left': `.display { justify-content: center; align-items: flex-start; padding-left: ${margin}px; }`,
+            'center-right': `.display { justify-content: center; align-items: flex-end; padding-right: ${margin}px; }`,
+            'bottom-left': `.display { justify-content: flex-end; align-items: flex-start; padding-bottom: ${margin}px; padding-left: ${margin}px; }`,
+            'bottom-center': `.display { justify-content: flex-end; align-items: center; padding-bottom: ${margin}px; }`,
+            'bottom-right': `.display { justify-content: flex-end; align-items: flex-end; padding-bottom: ${margin}px; padding-right: ${margin}px; }`,
+            'center': `.display { justify-content: center; align-items: center; }`
+        };
+        css += map[styles.general['text-position']] || '';
+    }
+
+    const styleEl = document.getElementById('dynamic-styles');
+    if (styleEl) styleEl.innerHTML = css;
+}
+
+async function loadTimerStyles(){
+    const token = getTokenFromUrl();
+    if (!token) return;
+    try {
+        const res = await fetch(`/api.php?token=${token}&module=timer-style&action=get`);
+        const data = await res.json();
+        if (data.success && data.data) {
+            timerStyles = data.data;
+            applyTimerStyles(timerStyles);
+        }
+    } catch (e) {
+        console.warn('Erreur chargement styles timer:', e);
+    }
+}
+
+// Mise à jour temps réel via BroadcastChannel (si dispo)
+try {
+    const ch = new BroadcastChannel('timer_styles_channel');
+    ch.onmessage = (event) => {
+        if (event.data && event.data.type === 'timerStylesUpdate' && event.data.styles) {
+            applyTimerStyles(event.data.styles);
+        }
+    };
+} catch(e) {}
+
+// Fallback via localStorage
+window.addEventListener('storage', () => {
+    try {
+        const s = localStorage.getItem('realtimeTimerStyles');
+        if (s) applyTimerStyles(JSON.parse(s));
+    } catch(e) {}
+});
 </script>
 </body>
 </html> 
