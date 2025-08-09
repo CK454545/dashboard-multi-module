@@ -198,28 +198,73 @@ const userTokens = new Map();
 const userPseudos = new Map();
 const STREAMER_ROLE_ID = '1387780681748451403';
 
-// Attribuer le rôle streameur à un utilisateur
+// Attribuer le rôle streameur à un utilisateur (avec diagnostics détaillés)
 async function assignStreamerRole(guild, userId) {
     try {
         if (!guild) {
             logWarning('assignStreamerRole: guild manquant');
             return false;
         }
-        const member = await guild.members.fetch(userId).catch(() => null);
-        if (!member) {
-            logWarning('assignStreamerRole: membre introuvable', { userId });
+
+        // Vérifier que le rôle existe bien dans le serveur
+        const role = guild.roles.cache.get(STREAMER_ROLE_ID) || await guild.roles.fetch(STREAMER_ROLE_ID).catch(() => null);
+        if (!role) {
+            logError('assignStreamerRole: rôle introuvable dans ce serveur', null, {
+                roleId: STREAMER_ROLE_ID,
+                guildId: guild.id,
+                guildName: guild.name
+            });
             return false;
         }
-        // Déjà présent ?
+
+        // Vérifier les permissions/hierarchie du bot
+        const me = guild.members.me || await guild.members.fetchMe();
+        const hasManageRoles = me.permissions.has(PermissionFlagsBits.ManageRoles);
+        const hierarchyOk = me.roles.highest.comparePositionTo(role) > 0;
+        if (!hasManageRoles || !hierarchyOk) {
+            logError('assignStreamerRole: permissions insuffisantes ou hiérarchie invalide', null, {
+                hasManageRoles,
+                botHighestRole: me.roles.highest?.id,
+                botHighestRolePos: me.roles.highest?.position,
+                targetRolePos: role.position,
+                targetRoleId: STREAMER_ROLE_ID
+            });
+            return false;
+        }
+
+        // Récupérer le membre
+        const member = await guild.members.fetch(userId).catch(() => null);
+        if (!member) {
+            logWarning('assignStreamerRole: membre introuvable', { userId, guildId: guild.id });
+            return false;
+        }
+
+        // Si déjà présent, ne rien faire
         if (member.roles.cache.has(STREAMER_ROLE_ID)) {
-            logInfo('Rôle streameur déjà attribué', { userId });
+            logInfo('Rôle streameur déjà présent', { userId, roleId: STREAMER_ROLE_ID });
             return true;
         }
-        await member.roles.add(STREAMER_ROLE_ID);
-        logSuccess('Rôle streameur attribué', { userId, roleId: STREAMER_ROLE_ID });
+
+        await member.roles.add(role, 'Auto-attribution MFA');
+        logSuccess('Rôle streameur attribué', {
+            userId,
+            roleId: STREAMER_ROLE_ID,
+            guildId: guild.id,
+            guildName: guild.name
+        });
         return true;
     } catch (error) {
-        logError('Erreur attribution rôle streameur', error, { userId, roleId: STREAMER_ROLE_ID });
+        // Journaliser les détails utiles pour Missing Permissions (50013) ou autres
+        const extra = {
+            code: error?.code,
+            httpStatus: error?.status,
+            discordMessage: error?.rawError?.message,
+            userId,
+            roleId: STREAMER_ROLE_ID,
+            guildId: guild?.id,
+            guildName: guild?.name
+        };
+        logError('Erreur attribution rôle streameur', error, extra);
         return false;
     }
 }
