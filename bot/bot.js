@@ -2026,7 +2026,7 @@ function processNewDashboardMessages(channel) {
                 // Affichage spécial si message close système
                 const isClose = row.message.startsWith('[Système] Discussion close');
                 const content = isClose
-                    ? `🔒 [Close] ${authorMention} \`\`${token.substring(0,8)}...\`\``
+                    ? `🔒 [Close] ${authorMention} \`\`${token.substring(0,8)}...\`\` — discussion close par l’utilisateur`
                     : `🟣 [Dashboard] ${authorMention} \`\`${token.substring(0,8)}...\`\`:\n${row.message}`;
                 try {
                     const sent = await channel.send({ content });

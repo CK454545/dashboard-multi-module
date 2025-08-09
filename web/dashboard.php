@@ -2313,7 +2313,7 @@ $token = $_GET['token'] ?? '';
                             
                             <div class="module-preview">
                                 <div class="preview-screen">
-                                    <span class="preview-value">00:00</span>
+                                    <span class="preview-value">00:00:00</span>
                                     <span class="preview-label">TIMER</span>
                                 </div>
                             </div>
