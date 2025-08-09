@@ -136,6 +136,9 @@ if ($db) { // Only process if SQLite is available
         case 'teams-style':
             handleTeamsStyleSQLite($db, $token, $action, $value);
             break;
+        case 'chat':
+            handleChatSQLite($db, $token, $action, $value);
+            break;
         case 'getStyles':
             handleGetStylesSQLite($db, $token, $action, $value);
             break;
@@ -712,6 +715,68 @@ function handleTeamsStyleSQLite($db, $token, $action, $value) {
             
         default:
             echo json_encode(['success' => false, 'error' => 'Action invalide']);
+    }
+}
+
+// === Chat simple via SQLite (bridge Dashboard <-> Discord) ===
+function handleChatSQLite($db, $token, $action, $value) {
+    // Structure de table attendue:
+    // CREATE TABLE IF NOT EXISTS chat_messages (
+    //   id INTEGER PRIMARY KEY AUTOINCREMENT,
+    //   token TEXT NOT NULL,
+    //   source TEXT NOT NULL, -- 'dashboard' | 'discord'
+    //   message TEXT NOT NULL,
+    //   created_at INTEGER NOT NULL
+    // );
+
+    try {
+        // Garantir la table (idempotent)
+        $db->exec('CREATE TABLE IF NOT EXISTS chat_messages (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            token TEXT NOT NULL,
+            source TEXT NOT NULL,
+            message TEXT NOT NULL,
+            created_at INTEGER NOT NULL
+        )');
+
+        switch ($action) {
+            case 'send':
+                $payload = json_decode($value, true);
+                $text = is_array($payload) && isset($payload['message']) ? strval($payload['message']) : strval($value);
+                if ($text === '') { echo json_encode(['success' => false, 'error' => 'Message vide']); return; }
+                $stmt = $db->prepare('INSERT INTO chat_messages (token, source, message, created_at) VALUES (?, ?, ?, ?)');
+                $stmt->bindValue(1, $token, SQLITE3_TEXT);
+                $stmt->bindValue(2, 'dashboard', SQLITE3_TEXT);
+                $stmt->bindValue(3, $text, SQLITE3_TEXT);
+                $stmt->bindValue(4, time(), SQLITE3_INTEGER);
+                $ok = $stmt->execute();
+                echo json_encode(['success' => $ok !== false]);
+                break;
+
+            case 'list':
+                $since = intval($_GET['since'] ?? 0);
+                if ($since > 0) {
+                    $stmt = $db->prepare('SELECT id, source, message, created_at FROM chat_messages WHERE token = ? AND created_at > ? ORDER BY id ASC LIMIT 200');
+                    $stmt->bindValue(1, $token, SQLITE3_TEXT);
+                    $stmt->bindValue(2, $since, SQLITE3_INTEGER);
+                } else {
+                    $stmt = $db->prepare('SELECT id, source, message, created_at FROM chat_messages WHERE token = ? ORDER BY id DESC LIMIT 50');
+                    $stmt->bindValue(1, $token, SQLITE3_TEXT);
+                }
+                $result = $stmt->execute();
+                $rows = [];
+                while ($row = $result->fetchArray(SQLITE3_ASSOC)) { $rows[] = $row; }
+                // Si pas de since, on renvoie trié croissant pour l'affichage
+                if ($since === 0) { $rows = array_reverse($rows); }
+                echo json_encode(['success' => true, 'messages' => $rows, 'now' => time()]);
+                break;
+
+            default:
+                echo json_encode(['success' => false, 'error' => 'Action invalide']);
+        }
+    } catch (Exception $e) {
+        error_log('Erreur handleChatSQLite: ' . $e->getMessage());
+        echo json_encode(['success' => false, 'error' => 'Erreur chat']);
     }
 }
 

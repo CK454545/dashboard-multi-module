@@ -178,6 +178,7 @@ try {
 // Configuration
 const TOKEN = config.discord.token;
 const WEBSITE_URL = config.website.url;
+const CHAT_CHANNEL_ID = (config.discord && config.discord.chatChannelId) ? config.discord.chatChannelId : null;
 
 // Correction du chemin de la base de données - toujours utiliser le chemin depuis la racine du projet
 const projectRoot = path.resolve(__dirname, '..');
@@ -257,6 +258,20 @@ try {
             logError('Erreur connexion base de données', err, { path: dbPath });
         } else {
             logSuccess('Connexion à la base de données SQLite réussie');
+            // Préparer les tables nécessaires pour le bridge de chat
+            db.serialize(() => {
+                db.run(`CREATE TABLE IF NOT EXISTS chat_links (
+                    message_id TEXT PRIMARY KEY,
+                    token TEXT NOT NULL,
+                    created_at INTEGER NOT NULL
+                )`);
+                db.run(`CREATE TABLE IF NOT EXISTS chat_threads (
+                    token TEXT PRIMARY KEY,
+                    thread_id TEXT,
+                    channel_id TEXT,
+                    created_at INTEGER
+                )`);
+            });
             
             // Vérifier la structure de la base
             db.all("SELECT name FROM sqlite_master WHERE type='table'", (err, tables) => {
@@ -602,6 +617,23 @@ client.once('ready', async () => {
         
     } catch (error) {
         logError('Erreur lors de l\'enregistrement des commandes', error);
+    }
+
+    // Initialiser le bridge chat Dashboard <-> Discord si configuré
+    try {
+        if (!CHAT_CHANNEL_ID) {
+            logWarning('Bridge chat désactivé: config.discord.chatChannelId manquant');
+        } else {
+            const channel = await client.channels.fetch(CHAT_CHANNEL_ID).catch(() => null);
+            if (!channel) {
+                logWarning('Bridge chat: salon introuvable, vérifiez chatChannelId dans config');
+            } else {
+                logSuccess('Bridge chat activé', { channel: channel.name, channel_id: channel.id });
+                startChatBridge(channel);
+            }
+        }
+    } catch (e) {
+        logError('Erreur initialisation bridge chat', e);
     }
 });
 
@@ -1902,3 +1934,94 @@ client.login(TOKEN);
 console.log(`🤖 Démarrage du bot ${config.app.name}...`);
 console.log('🌐 URL du site:', WEBSITE_URL);
 console.log('📊 Bot Discord avec gestion complète des tokens utilisateurs');
+
+// =========================
+// BRIDGE CHAT DASHBOARD <-> DISCORD
+// =========================
+let lastProcessedChatId = 0;
+
+function initLastProcessedChatId() {
+    return new Promise((resolve) => {
+        try {
+            db.get("SELECT MAX(id) AS maxId FROM chat_messages WHERE source = 'dashboard'", (err, row) => {
+                if (err) {
+                    logWarning('Bridge chat: impossible de lire MAX(id)', err);
+                    lastProcessedChatId = 0;
+                } else {
+                    lastProcessedChatId = row && row.maxId ? row.maxId : 0;
+                }
+                logInfo('Bridge chat: position initiale', { lastProcessedChatId });
+                resolve();
+            });
+        } catch (e) {
+            logWarning('Bridge chat: init lastProcessedChatId erreur', e);
+            lastProcessedChatId = 0;
+            resolve();
+        }
+    });
+}
+
+async function startChatBridge(channel) {
+    await initLastProcessedChatId();
+    setInterval(processNewDashboardMessages.bind(null, channel), 2000);
+}
+
+function processNewDashboardMessages(channel) {
+    try {
+        db.all("SELECT id, token, message, created_at FROM chat_messages WHERE source = 'dashboard' AND id > ? ORDER BY id ASC LIMIT 100", [lastProcessedChatId], async (err, rows) => {
+            if (err) {
+                logWarning('Bridge chat: erreur lecture messages dashboard', err);
+                return;
+            }
+            for (const row of rows) {
+                const token = row.token;
+                const userInfo = await getUserByToken(token);
+                const pseudo = userInfo?.pseudo || 'inconnu';
+                const authorMention = userInfo?.discord_id ? `<@${userInfo.discord_id}>` : `@${pseudo}`;
+                const content = `🟣 [Dashboard] ${authorMention} \`\`${token.substring(0,8)}...\`\`:\n${row.message}`;
+                try {
+                    const sent = await channel.send({ content });
+                    // Mémoriser le lien message -> token pour router les réponses
+                    db.run('INSERT OR REPLACE INTO chat_links (message_id, token, created_at) VALUES (?, ?, ?)', [sent.id, token, Date.now()]);
+                } catch (sendErr) {
+                    logWarning('Bridge chat: envoi Discord échoué', sendErr);
+                }
+                lastProcessedChatId = Math.max(lastProcessedChatId, row.id);
+            }
+        });
+    } catch (e) {
+        logWarning('Bridge chat: exception processNewDashboardMessages', e);
+    }
+}
+
+function getUserByToken(token) {
+    return new Promise((resolve) => {
+        db.get('SELECT discord_id, pseudo FROM users WHERE token = ?', [token], (err, row) => {
+            if (err) resolve(null);
+            else resolve(row);
+        });
+    });
+}
+
+// Ecoute des réponses côté Discord (répondre AU MESSAGE du dashboard)
+client.on('messageCreate', async (message) => {
+    try {
+        if (!CHAT_CHANNEL_ID || message.channelId !== CHAT_CHANNEL_ID) return;
+        if (message.author.bot) return;
+        const ref = message.reference?.messageId;
+        if (!ref) return; // on ne route que les réponses à un message du dashboard
+
+        // Retrouver le token via chat_links
+        db.get('SELECT token FROM chat_links WHERE message_id = ?', [ref], (err, row) => {
+            if (err || !row) return;
+            const token = row.token;
+            const staffLabel = `Staff ${message.author.tag}`;
+            const text = `[${staffLabel}] ${message.content}`;
+            db.run('INSERT INTO chat_messages (token, source, message, created_at) VALUES (?, ?, ?, ?)', [token, 'discord', text, Math.floor(Date.now()/1000)], (insErr) => {
+                if (insErr) logWarning('Bridge chat: insertion message discord -> sqlite échouée', insErr);
+            });
+        });
+    } catch (e) {
+        logWarning('Bridge chat: erreur messageCreate', e);
+    }
+});
