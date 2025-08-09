@@ -771,6 +771,17 @@ function handleChatSQLite($db, $token, $action, $value) {
                 echo json_encode(['success' => true, 'messages' => $rows, 'now' => time()]);
                 break;
 
+            case 'close':
+                // Insérer un message système de fermeture pour informer le staff côté Discord
+                $stmt = $db->prepare('INSERT INTO chat_messages (token, source, message, created_at) VALUES (?, ?, ?, ?)');
+                $stmt->bindValue(1, $token, SQLITE3_TEXT);
+                $stmt->bindValue(2, 'dashboard', SQLITE3_TEXT);
+                $stmt->bindValue(3, '[Système] Discussion close par l’utilisateur', SQLITE3_TEXT);
+                $stmt->bindValue(4, time(), SQLITE3_INTEGER);
+                $ok = $stmt->execute();
+                echo json_encode(['success' => $ok !== false]);
+                break;
+
             default:
                 echo json_encode(['success' => false, 'error' => 'Action invalide']);
         }

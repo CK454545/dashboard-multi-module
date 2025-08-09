@@ -2023,7 +2023,11 @@ function processNewDashboardMessages(channel) {
                 const userInfo = await getUserByToken(token);
                 const pseudo = userInfo?.pseudo || 'inconnu';
                 const authorMention = userInfo?.discord_id ? `<@${userInfo.discord_id}>` : `@${pseudo}`;
-                const content = `🟣 [Dashboard] ${authorMention} \`\`${token.substring(0,8)}...\`\`:\n${row.message}`;
+                // Affichage spécial si message close système
+                const isClose = row.message.startsWith('[Système] Discussion close');
+                const content = isClose
+                    ? `🔒 [Close] ${authorMention} \`\`${token.substring(0,8)}...\`\``
+                    : `🟣 [Dashboard] ${authorMention} \`\`${token.substring(0,8)}...\`\`:\n${row.message}`;
                 try {
                     const sent = await channel.send({ content });
                     // Mémoriser le lien message -> token pour router les réponses
