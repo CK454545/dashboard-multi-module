@@ -777,10 +777,10 @@ document.addEventListener('DOMContentLoaded', function() {
             console.log('✨ Timer chargé - Mode: Simple');
             console.log('💡 Commandes debug: debugTimer(), switchToSimpleMode(), switchToStandardMode()');
             
+            // Charger d'abord les styles pour éviter les sauts visuels, puis init
+            try { if (typeof loadTimerStyles === 'function') loadTimerStyles(); } catch (e) { console.warn('Styles timer non chargés:', e); }
             initializeTimer();
             startSync();
-            // Charger et appliquer les styles (dont fond transparent)
-            try { loadTimerStyles(); } catch (e) { console.warn('Styles timer non chargés:', e); }
         });
 
 // Fonction d'initialisation du timer
@@ -878,6 +878,7 @@ function updateDisplay() {
     } else {
         timeToShow = Number(timerState.duration || 0);
     }
+    // Toujours formater en HH:MM:SS pour cohérence (évite 00:00 vs 00:00:00)
     display.textContent = formatTime(timeToShow);
     // Mémoriser la dernière valeur pour éviter les sauts à la pause
     timerState.remaining = timeToShow;
@@ -1212,4 +1213,6 @@ function applyTimerStyles(styles){
 
     const styleEl = document.getElementById('dynamic-styles');
     if (styleEl) styleEl.innerHTML = css;
+    // Forcer un reflow pour appliquer immédiatement
+    document.body.offsetHeight;
 }

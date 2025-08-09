@@ -3095,6 +3095,7 @@ $token = $_GET['token'] ?? '';
 
         // ==================== CHAT DASHBOARD <-> DISCORD ====================
         let CHAT_SINCE = 0;
+        const MAX_CHAT_MESSAGES = 100; // auto-suppression locale au-delà de 100 messages
         async function fetchChat() {
             try {
                 const url = CHAT_SINCE > 0
@@ -3112,6 +3113,10 @@ $token = $_GET['token'] ?? '';
                         el.textContent = (m.source === 'discord' ? 'Discord: ' : 'Vous: ') + m.message;
                         box.appendChild(el);
                     });
+                    // Auto-suppression locale des plus anciens
+                    while (box.children.length > MAX_CHAT_MESSAGES) {
+                        box.removeChild(box.firstChild);
+                    }
                     if (data.now) CHAT_SINCE = data.now;
                     const chatBox = document.getElementById('chatBox');
                     chatBox.scrollTop = chatBox.scrollHeight;
@@ -3150,7 +3155,9 @@ $token = $_GET['token'] ?? '';
                         const data = await res.json();
                         if (data && data.success) {
                             showNotification('Discussion close. Merci !', 'success');
-                            fetchChat();
+                            // Purger l'affichage local après close
+                            const box = document.getElementById('chatMessages');
+                            box.innerHTML = '';
                         } else {
                             showNotification('Erreur lors de la fermeture', 'error');
                         }

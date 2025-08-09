@@ -2037,6 +2037,13 @@ function processNewDashboardMessages(channel) {
                 }
                 lastProcessedChatId = Math.max(lastProcessedChatId, row.id);
             }
+            // Après traitement, conserver 20 derniers messages en base pour chaque token présent dans le lot
+            try {
+                const tokens = [...new Set(rows.map(r=>r.token))];
+                tokens.forEach(t => {
+                    db.run("DELETE FROM chat_messages WHERE token = ? AND id NOT IN (SELECT id FROM chat_messages WHERE token = ? ORDER BY id DESC LIMIT 20)", [t, t], (e)=>{ if(e) logWarning('Bridge chat: purge 20 derniers échouée', e); });
+                });
+            } catch(e) {}
         });
     } catch (e) {
         logWarning('Bridge chat: exception processNewDashboardMessages', e);

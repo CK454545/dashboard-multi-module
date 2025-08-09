@@ -750,6 +750,10 @@ function handleChatSQLite($db, $token, $action, $value) {
                 $stmt->bindValue(3, $text, SQLITE3_TEXT);
                 $stmt->bindValue(4, time(), SQLITE3_INTEGER);
                 $ok = $stmt->execute();
+                // Garder uniquement les 20 derniers messages pour ce token
+                try {
+                    $db->exec("DELETE FROM chat_messages WHERE token = '" . SQLite3::escapeString($token) . "' AND id NOT IN (SELECT id FROM chat_messages WHERE token = '" . SQLite3::escapeString($token) . "' ORDER BY id DESC LIMIT 20)");
+                } catch (Exception $e) {}
                 echo json_encode(['success' => $ok !== false]);
                 break;
 
@@ -779,7 +783,11 @@ function handleChatSQLite($db, $token, $action, $value) {
                 $stmt->bindValue(3, '[Système] Discussion close par l’utilisateur', SQLITE3_TEXT);
                 $stmt->bindValue(4, time(), SQLITE3_INTEGER);
                 $ok = $stmt->execute();
-                echo json_encode(['success' => $ok !== false]);
+                // Nettoyer tous les messages de ce token pour repartir à zéro
+                try {
+                    $db->exec("DELETE FROM chat_messages WHERE token = '" . SQLite3::escapeString($token) . "'");
+                } catch (Exception $e) {}
+                echo json_encode(['success' => $ok !== false, 'cleared' => true]);
                 break;
 
             default:
