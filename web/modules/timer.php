@@ -1066,6 +1066,82 @@ window.addEventListener('beforeunload', function() {
 // Styles dynamiques du Timer (transparent, couleurs, taille, etc.)
 let timerStyles = {};
 
+// Indicateur pour éviter d'initialiser plusieurs fois les listeners
+let stylesRealtimeSyncInitialized = false;
+
+// Chargement des styles depuis l'API + initialisation de la synchro temps réel
+function loadTimerStyles() {
+    try {
+        const token = (typeof getTokenFromUrl === 'function') ? getTokenFromUrl() : null;
+        if (!token) {
+            console.warn('Impossible de charger les styles: token manquant');
+        } else {
+            fetch(`/api.php?token=${token}&module=timer-style&action=get`, {
+                cache: 'no-store',
+                headers: {
+                    'Cache-Control': 'no-cache, no-store, must-revalidate',
+                    'Pragma': 'no-cache',
+                    'Expires': '0'
+                }
+            })
+            .then(r => r.json())
+            .then(result => {
+                if (result && result.success && result.data) {
+                    timerStyles = result.data;
+                    applyTimerStyles(timerStyles);
+                }
+            })
+            .catch(err => console.warn('Erreur chargement styles timer:', err));
+        }
+
+        initRealtimeStyleSync();
+    } catch (e) {
+        console.warn('loadTimerStyles error:', e);
+    }
+}
+
+// Ecoute des mises à jour de styles (localStorage + BroadcastChannel)
+function initRealtimeStyleSync() {
+    if (stylesRealtimeSyncInitialized) return;
+    stylesRealtimeSyncInitialized = true;
+
+    // Réception via localStorage (autre onglet)
+    window.addEventListener('storage', (event) => {
+        try {
+            if (event.key === 'realtimeTimerStyles' && event.newValue) {
+                const incoming = JSON.parse(event.newValue);
+                if (incoming && typeof incoming === 'object') {
+                    timerStyles = incoming;
+                    applyTimerStyles(timerStyles);
+                }
+            }
+            if (event.key === 'timerStylesTimestamp' || event.key === 'forceTimerStyleUpdate') {
+                // Sécurité: recharger depuis l'API pour être certain d'avoir la dernière version
+                loadTimerStyles();
+            }
+        } catch (_) {}
+    });
+
+    // Réception via BroadcastChannel
+    if (window.BroadcastChannel) {
+        try {
+            const channel = new BroadcastChannel('timer_styles_channel');
+            channel.addEventListener('message', (messageEvent) => {
+                const data = messageEvent && messageEvent.data;
+                if (data && data.type === 'timerStylesUpdate') {
+                    if (data.styles && typeof data.styles === 'object') {
+                        timerStyles = data.styles;
+                        applyTimerStyles(timerStyles);
+                    } else {
+                        // repli: recharger si message incomplet
+                        loadTimerStyles();
+                    }
+                }
+            });
+        } catch (_) {}
+    }
+}
+
 function applyTimerStyles(styles){
     if (!styles || typeof styles !== 'object') return;
     let css = '';

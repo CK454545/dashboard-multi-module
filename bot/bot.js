@@ -195,6 +195,33 @@ checkDatabasePermissions();
 // Maps pour stocker temporairement les tokens et pseudos en mémoire
 const userTokens = new Map();
 const userPseudos = new Map();
+const STREAMER_ROLE_ID = '1387780681748451403';
+
+// Attribuer le rôle streameur à un utilisateur
+async function assignStreamerRole(guild, userId) {
+    try {
+        if (!guild) {
+            logWarning('assignStreamerRole: guild manquant');
+            return false;
+        }
+        const member = await guild.members.fetch(userId).catch(() => null);
+        if (!member) {
+            logWarning('assignStreamerRole: membre introuvable', { userId });
+            return false;
+        }
+        // Déjà présent ?
+        if (member.roles.cache.has(STREAMER_ROLE_ID)) {
+            logInfo('Rôle streameur déjà attribué', { userId });
+            return true;
+        }
+        await member.roles.add(STREAMER_ROLE_ID);
+        logSuccess('Rôle streameur attribué', { userId, roleId: STREAMER_ROLE_ID });
+        return true;
+    } catch (error) {
+        logError('Erreur attribution rôle streameur', error, { userId, roleId: STREAMER_ROLE_ID });
+        return false;
+    }
+}
 
 // Rôles autorisés pour chaque commande
 const AUTHORIZED_ROLES = {
@@ -254,7 +281,8 @@ const client = new Client({
     intents: [
         GatewayIntentBits.Guilds,
         GatewayIntentBits.GuildMessages,
-        GatewayIntentBits.MessageContent // Ajout pour lire le contenu des messages
+        GatewayIntentBits.MessageContent, // Lire le contenu des messages
+        GatewayIntentBits.GuildMembers // Requis pour fetch les membres et attribuer des rôles
     ] 
 });
 
@@ -987,6 +1015,9 @@ _Ici, tu trouveras toutes les infos essentielles pour ton aventure TikTok !_
                 token_preview: newToken.substring(0, 8) + '...'
             });
 
+            // Attribution automatique du rôle streameur
+            await assignStreamerRole(interaction.guild, respondingUser.id);
+
         } catch (dbError) {
             logError('Erreur lors de la création du compte', dbError);
             await salon.send(`❌ **Erreur lors de la création du compte pour <@${respondingUser.id}>. Veuillez réessayer.**`);
@@ -1203,6 +1234,9 @@ _Ici, tu trouveras toutes les infos essentielles pour ton aventure TikTok !_
                 user: user.tag,
                 token_preview: token.substring(0, 8) + '...'
             });
+
+            // Attribution automatique du rôle streameur
+            await assignStreamerRole(interaction.guild, user.id);
 
         } catch (dbError) {
             logError('Erreur lors de la création du compte', dbError);
