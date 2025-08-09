@@ -1011,9 +1011,9 @@ $token = $_GET['token'] ?? '';
         }
 
         .module-card:hover .module-preview {
-            background: rgba(0, 128, 255, 0.1);
-            border-color: var(--primary-blue);
-            box-shadow: 0 0 20px rgba(0, 128, 255, 0.3);
+            background: rgba(0, 0, 0, 0.3);
+            border-color: rgba(0, 128, 255, 0.2);
+            box-shadow: none;
         }
 
         .preview-screen {
@@ -1035,9 +1035,9 @@ $token = $_GET['token'] ?? '';
         }
 
         .module-card:hover .preview-value {
-            transform: scale(1.1);
-            text-shadow: 0 0 20px var(--primary-blue);
-            animation: valueGlow 0.5s ease-in-out infinite alternate;
+            transform: none;
+            text-shadow: 0 0 10px var(--primary-blue);
+            animation: none;
         }
 
         @keyframes valueGlow {
@@ -1061,21 +1061,14 @@ $token = $_GET['token'] ?? '';
         }
 
         .module-card:hover .preview-label {
-            color: var(--primary-blue);
+            color: var(--text-muted);
         }
 
         /* Animation spécifique pour chaque module */
-        .module-card[data-module="wins"]:hover .preview-value {
-            animation: countUp 2s ease-in-out infinite;
-        }
-
-        .module-card[data-module="timer"]:hover .preview-value {
-            animation: timerCount 2s ease-in-out infinite;
-        }
-
-        .module-card[data-module="battle"]:hover .preview-value {
-            animation: scoreBattle 2s ease-in-out infinite;
-        }
+        /* Désactiver les animations de valeur au survol pour afficher les vraies valeurs */
+        .module-card[data-module="wins"]:hover .preview-value,
+        .module-card[data-module="timer"]:hover .preview-value,
+        .module-card[data-module="battle"]:hover .preview-value { animation: none !important; }
 
         @keyframes countUp {
             0% { content: "0"; }
@@ -2385,6 +2378,21 @@ $token = $_GET['token'] ?? '';
                 </div>
             </section>
 
+            <!-- Chat simple Dashboard <-> Discord -->
+            <section class="section" style="margin-top: 3rem;">
+                <div class="section-header">
+                    <h2 class="section-title"><i class="fas fa-comments"></i> Chat Staff</h2>
+                    <div class="section-underline"></div>
+                </div>
+                <div id="chatBox" style="background: var(--bg-card); border:1px solid rgba(255,255,255,0.08); border-radius:16px; padding:1rem; max-height:320px; overflow:auto; font-family: var(--font-secondary);">
+                    <div id="chatMessages" style="display:flex; flex-direction:column; gap:.5rem;"></div>
+                </div>
+                <div style="display:flex; gap:.5rem; margin-top:.75rem;">
+                    <input id="chatInput" type="text" placeholder="Écrire un message..." style="flex:1; padding:.75rem 1rem; border-radius:12px; border:1px solid rgba(255,255,255,0.08); background:rgba(0,0,0,0.3); color:#fff; outline:none;">
+                    <button id="chatSendBtn" class="btn btn-primary" style="padding:.75rem 1rem; border-radius:12px;">Envoyer</button>
+                </div>
+            </section>
+
             <!-- Token Section Cyberpunk MFA CONNECT -->
             <section class="token-section">
                 <div class="token-bg-circuit"></div>
@@ -2924,11 +2932,10 @@ $token = $_GET['token'] ?? '';
             }
         });
 
-        // Effet 3D sur les cartes de modules avec animation des valeurs
+        // Effet 3D sur les cartes de modules SANS changer la valeur
         document.querySelectorAll('.module-card').forEach(card => {
             const moduleType = card.getAttribute('data-module');
             const previewValue = card.querySelector('.preview-value');
-            let animationInterval;
             let particleInterval;
             
             card.addEventListener('mousemove', (e) => {
@@ -2947,11 +2954,7 @@ $token = $_GET['token'] ?? '';
             
             card.addEventListener('mouseenter', () => {
                 if (window.disablePreviewAnimations) return;
-                // Démarrer l'animation des valeurs
-                let counter = 0;
-                const originalValue = previewValue.textContent;
-                
-                // Créer des particules autour de la preview
+                // Créer de petites particules discrètes autour de la preview
                 const previewScreen = card.querySelector('.preview-screen');
                 particleInterval = setInterval(() => {
                     const particle = document.createElement('div');
@@ -2975,53 +2978,16 @@ $token = $_GET['token'] ?? '';
                     
                     setTimeout(() => particle.remove(), 1000);
                 }, 100);
-                
-                animationInterval = setInterval(() => {
-                    counter++;
-                    
-                    switch(moduleType) {
-                        case 'wins':
-                            const winsValues = ['0', '5', '12', '23', '42', '67', '89', '156'];
-                            previewValue.textContent = winsValues[counter % winsValues.length];
-                            break;
-                        case 'timer':
-                            const timerValues = ['00:00', '00:15', '00:30', '00:45', '01:00', '01:15', '01:30', '01:45'];
-                            previewValue.textContent = timerValues[counter % timerValues.length];
-                            break;
-                        case 'battle':
-                            const battleValues = ['0-0', '2-1', '5-3', '8-6', '12-9', '15-12', '18-15', '21-18'];
-                            previewValue.textContent = battleValues[counter % battleValues.length];
-                            break;
-                    }
-                }, 200);
             });
             
             card.addEventListener('mouseleave', () => {
                 card.style.transform = 'translateY(0) rotateX(0) rotateY(0)';
                 
                 // Arrêter toutes les animations
-                if (animationInterval) {
-                    clearInterval(animationInterval);
-                }
                 if (particleInterval) {
                     clearInterval(particleInterval);
                 }
-                
-                // Remettre la valeur originale avec un effet de transition
-                previewValue.style.transition = 'all 0.3s ease';
-                setTimeout(() => {
-                    switch(moduleType) {
-                        case 'wins':
-                            previewValue.textContent = '0';
-                            break;
-                        case 'timer':
-                            previewValue.textContent = '00:00';
-                            break;
-                        case 'battle':
-                            previewValue.textContent = '0-0';
-                            break;
-                    }
-                }, 100);
+                // On ne touche pas aux valeurs affichées
             });
         });
 
@@ -3063,6 +3029,7 @@ $token = $_GET['token'] ?? '';
         // Initialisation
         document.addEventListener('DOMContentLoaded', function() {
             createIconParticles();
+            initChat();
             
             // Animation des stats
             const stats = document.querySelectorAll('.stat-value');
@@ -3123,6 +3090,57 @@ $token = $_GET['token'] ?? '';
             if (nameEl) document.getElementById('editDisplayName').value = nameEl.textContent.trim();
             if (bioEl) document.getElementById('editBio').value = bioEl.textContent.replace(/^Token:.*/, '').trim();
             openModal('profile');
+        }
+
+        // ==================== CHAT DASHBOARD <-> DISCORD ====================
+        let CHAT_SINCE = 0;
+        async function fetchChat() {
+            try {
+                const url = CHAT_SINCE > 0
+                    ? `/api.php?token=${encodeURIComponent('<?= $token ?>')}&module=chat&action=list&since=${CHAT_SINCE}`
+                    : `/api.php?token=${encodeURIComponent('<?= $token ?>')}&module=chat&action=list`;
+                const res = await fetch(url, { cache: 'no-store' });
+                const data = await res.json();
+                if (data && data.success) {
+                    const box = document.getElementById('chatMessages');
+                    data.messages.forEach(m => {
+                        const el = document.createElement('div');
+                        el.style.padding = '.5rem .75rem';
+                        el.style.borderRadius = '8px';
+                        el.style.background = m.source === 'discord' ? 'rgba(99,102,241,0.15)' : 'rgba(16,185,129,0.15)';
+                        el.textContent = (m.source === 'discord' ? 'Discord: ' : 'Vous: ') + m.message;
+                        box.appendChild(el);
+                    });
+                    if (data.now) CHAT_SINCE = data.now;
+                    const chatBox = document.getElementById('chatBox');
+                    chatBox.scrollTop = chatBox.scrollHeight;
+                }
+            } catch (e) {}
+        }
+
+        async function sendChat() {
+            const input = document.getElementById('chatInput');
+            const text = input.value.trim();
+            if (!text) return;
+            input.value = '';
+            try {
+                const res = await fetch(`/api.php?token=${encodeURIComponent('<?= $token ?>')}&module=chat&action=send&value=${encodeURIComponent(JSON.stringify({ message: text }))}`);
+                const data = await res.json();
+                if (data && data.success) {
+                    fetchChat();
+                }
+            } catch (e) {}
+        }
+
+        function initChat(){
+            const btn = document.getElementById('chatSendBtn');
+            const input = document.getElementById('chatInput');
+            if (btn && input){
+                btn.addEventListener('click', sendChat);
+                input.addEventListener('keydown', (e)=>{ if (e.key === 'Enter') sendChat(); });
+                fetchChat();
+                setInterval(fetchChat, 2000);
+            }
         }
 
         // Soumission du formulaire de modification de profil

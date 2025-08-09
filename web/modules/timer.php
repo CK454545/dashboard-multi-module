@@ -752,6 +752,8 @@ checkTimerAccess($token);
 
 <script>
 // Variables globales du timer
+// Patch sécurité: définir un stub no-op pour loadTimerStyles s'il n'existe pas encore
+if (typeof window.loadTimerStyles !== 'function') { window.loadTimerStyles = function(){}; }
 let timerState = {
     endTime: null,
     paused: true,
